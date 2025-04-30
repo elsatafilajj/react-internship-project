@@ -12,7 +12,7 @@ import {
 export const login = async (data: LoginInput) =>
   apiRequest<LoginInput, LoginResponse>({
     method: 'POST',
-    url: 'users/auth/login',
+    url: 'auth/login',
     data,
   });
 
