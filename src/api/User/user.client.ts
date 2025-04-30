@@ -1,0 +1,60 @@
+import { apiRequest } from '../Api';
+import {
+  LoginInput,
+  RegisterInput,
+  User,
+  SetPasswordInput,
+  SetPasswordResponse,
+  LoginResponse,
+  ChangePasswordInput,
+} from './user.types';
+
+export const login = async (data: LoginInput) =>
+  apiRequest<LoginInput, LoginResponse>({
+    method: 'POST',
+    url: 'users/auth/login',
+    data,
+  });
+
+export const register = async (data: RegisterInput) =>
+  apiRequest<RegisterInput, User>({
+    method: 'POST',
+    url: 'auth/register',
+    data,
+  });
+
+export const forgotPassword = async ({ email }: { email: string }) =>
+  apiRequest<{ email: string }, { result: boolean }>({
+    method: 'POST',
+    url: 'users/auth/forgot-password',
+    data: { email },
+  });
+
+export const resetPassword = async (data: SetPasswordInput, token: string) =>
+  apiRequest<SetPasswordInput, SetPasswordResponse>({
+    method: 'POST',
+    url: `auth/reset-password`,
+    data,
+    params: {
+      token,
+    },
+  });
+
+export const editProfile = async (data: Partial<User>) => {
+  return apiRequest<Partial<User>, User>({
+    method: 'PATCH',
+    url: 'users',
+    data,
+  });
+};
+
+export const changePassword = async (data: ChangePasswordInput) => {
+  return apiRequest<ChangePasswordInput, User>({
+    method: 'PATCH',
+    url: 'users/change-password',
+    data,
+  });
+};
+
+export const getUserDetails = async () =>
+  apiRequest<undefined, User>({ method: 'GET', url: 'users' });

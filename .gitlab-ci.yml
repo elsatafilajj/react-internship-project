@@ -1,0 +1,13 @@
+image: node:latest
+
+cache:
+  paths:
+    - node_modules/
+    - .npm # Caching npm to speed up installs
+
+before_script:
+  - npm ci # Use npm ci instead of npm install
+
+test-build:
+  script:
+    - npm run build
