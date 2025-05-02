@@ -3,18 +3,18 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
 import { register } from '@/api/User/user.client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
+import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { RegisterSchema } from '@/schemas/RegisterSchema';
-
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 
 export const RegisterForm = () => {
   const registerMutation = useMutation({
     mutationFn: register,
     onSuccess: () => {
-      toast.success('Register successful!');
+      toast.success('Registered successfully! 🎉');
     },
     onError: (error) => {
       toast.error(error.message);
@@ -35,9 +35,8 @@ export const RegisterForm = () => {
         await registerMutation.mutateAsync(values);
         formikHelpers.resetForm();
       } catch {
-        console.error('Register failed! ');
+        console.error('Register failed!');
       }
-      console.log(values, formikHelpers);
 
       formikHelpers.resetForm();
     },
@@ -65,7 +64,7 @@ export const RegisterForm = () => {
               placeholder="First Name"
               value={formik.values.firstName}
               onChange={formik.handleChange}
-              required
+              error={getFormikError(formik, 'firstName')}
             />
             <Input
               id="lastname"
@@ -75,7 +74,7 @@ export const RegisterForm = () => {
               placeholder="Last Name"
               value={formik.values.lastName}
               onChange={formik.handleChange}
-              required
+              error={getFormikError(formik, 'lastName')}
             />
             <Input
               id="email"
@@ -85,7 +84,7 @@ export const RegisterForm = () => {
               placeholder="name@company.com"
               value={formik.values.email}
               onChange={formik.handleChange}
-              required
+              error={getFormikError(formik, 'email')}
             />
             <Input
               id="password"
@@ -96,7 +95,7 @@ export const RegisterForm = () => {
               className="placeholder:tracking-widest"
               value={formik.values.password}
               onChange={formik.handleChange}
-              required
+              error={getFormikError(formik, 'password')}
             />
             <Input
               id="passwordConfirm"
@@ -107,8 +106,9 @@ export const RegisterForm = () => {
               className="placeholder:tracking-widest"
               value={formik.values.passwordConfirm}
               onChange={formik.handleChange}
-              required
+              error={getFormikError(formik, 'passwordConfirm')}
             />
+
             <div className="flex text-xs  flex-col space-y-5 items-center justify-between">
               <div className="text-sm text-black text-center">
                 Already have an account?{' '}
