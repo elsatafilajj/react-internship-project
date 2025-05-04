@@ -18,6 +18,11 @@ export const RouteWrapper = ({
 }: RouteWrapperProps) => {
   const { isAuthenticated, isLoading, user } = useAuthContext();
 
+  console.log(
+    'From route wrapper: ',
+    `Is autheticated: ${isAuthenticated}, is authentication page: ${isAuthenticationPage}`,
+  );
+
   if (isLoading) {
     return (
       <div

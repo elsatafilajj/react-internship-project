@@ -7,7 +7,7 @@ import { Dashboard } from '@/pages/Dashboard';
 import { Error404 } from '@/pages/Error404';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import { Login } from '@/pages/Login';
-import { Profile } from '@/pages/Profile';
+// import { Profile } from '@/pages/Profile';
 import { Register } from '@/pages/Register';
 
 export const appRoutes: RouteObject[] = [
@@ -24,10 +24,10 @@ export const appRoutes: RouteObject[] = [
     element: <MainLayout />,
     children: [
       { index: true, element: <Dashboard /> },
-      {
-        path: RouteNames.Profile,
-        element: <Profile />,
-      },
+      // {
+      //   path: RouteNames.Profile,
+      //   element: <Profile />,
+      // },
     ],
   },
   {

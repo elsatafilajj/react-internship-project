@@ -57,4 +57,4 @@ export const changePassword = async (data: ChangePasswordInput) => {
 };
 
 export const getUserDetails = async () =>
-  apiRequest<undefined, User>({ method: 'GET', url: 'users' });
+  apiRequest<undefined, User>({ method: 'GET', url: 'user/me' });
