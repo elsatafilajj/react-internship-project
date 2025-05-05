@@ -91,8 +91,7 @@ export const RegisterForm = () => {
               type="password"
               name="password"
               label="Your password"
-              placeholder="••••••••"
-              className="placeholder:tracking-widest"
+              placeholder="Enter your password"
               value={formik.values.password}
               onChange={formik.handleChange}
               error={getFormikError(formik, 'password')}
@@ -102,8 +101,7 @@ export const RegisterForm = () => {
               type="password"
               name="passwordConfirm"
               label="Password Confirm"
-              placeholder="••••••••"
-              className="placeholder:tracking-widest"
+              placeholder="Confirm your password"
               value={formik.values.passwordConfirm}
               onChange={formik.handleChange}
               error={getFormikError(formik, 'passwordConfirm')}

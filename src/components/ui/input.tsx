@@ -61,7 +61,7 @@ export function Input(
           onChange={onChange}
           data-slot="input"
           className={cn(
-            'w-full px-0 py-2 text-black text-sm bg-transparent border-b  border-input',
+            'w-full px-0 py-2  text-black text-sm bg-transparent border-b  border-input',
             'placeholder-placeholder-color focus:outline-none focus:border-primary focus:black',
             'transition-all duration-300 ease-in-out',
             'focus:ring-0 focus:shadow-[0_1px_0_0_#30efa6]',
@@ -78,7 +78,7 @@ export function Input(
           onChange={onChange}
           data-slot="input"
           className={cn(
-            'w-full px-0 py-2 text-black text-sm bg-transparent border-b border-input',
+            'w-full px-0 py-2 tracking-wide text-black text-sm bg-transparent border-b border-input',
             'placeholder-placeholder-color focus:outline-none focus:border-primary focus:black',
             'transition-all duration-300 ease-in-out',
             'focus:ring-0 focus:shadow-[0_1px_0_0_#30efa6]',
