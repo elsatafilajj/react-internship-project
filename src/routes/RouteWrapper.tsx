@@ -21,7 +21,7 @@ export const RouteWrapper = ({
   if (isLoading) {
     return (
       <div
-        className="flex-center"
+        className="flex items-center justify-center"
         style={{
           height: '100vh',
         }}

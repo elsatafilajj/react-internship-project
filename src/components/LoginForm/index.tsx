@@ -58,7 +58,6 @@ export const LoginForm = () => {
           value={formik.values.email}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'email')}
-          required
         />
         <Input
           name="password"
@@ -69,7 +68,6 @@ export const LoginForm = () => {
           value={formik.values.password}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
-          required
         />
         <div className="flex text-xs flex-col space-y-5 items-center justify-between">
           <Link
