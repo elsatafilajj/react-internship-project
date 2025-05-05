@@ -74,7 +74,7 @@ export function Input(
             'w-full px-0 py-2 text-black text-sm bg-transparent border-b border-muted-foreground/45',
             'placeholder:text-muted-foreground/50 active:bg-transparent focus:outline-none focus:border-primary focus:text-black',
             'transition-all duration-300 ease-in-out',
-            'focus:ring-0 focus:shadow-[0_1px_0_0_#30efa6]',
+            'focus:ring-0 focus:shadow-2xs focus:shadow-primary',
             className,
           )}
           {...(rest as React.InputHTMLAttributes<HTMLInputElement>)}

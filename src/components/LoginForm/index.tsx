@@ -64,7 +64,7 @@ export const LoginForm = () => {
           type="password"
           placeholder="••••••••"
           id="password"
-          className="mb-2 placeholder:tracking-widest"
+          className="mb-2 placeholder:tracking-widest tracking-widest"
           value={formik.values.password}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
@@ -72,7 +72,7 @@ export const LoginForm = () => {
         <div className="flex text-xs flex-col space-y-5 items-center justify-between">
           <Link
             to={RouteNames.ForgotPassword}
-            className="font-medium text-primary underline"
+            className="font-medium text-black underline"
           >
             Forgot your password?
           </Link>
@@ -87,7 +87,7 @@ export const LoginForm = () => {
             Dont have an account?{' '}
             <Link
               to={RouteNames.Register}
-              className=" font-medium text-primary underline"
+              className="font-medium text-black underline"
             >
               Create one
             </Link>
