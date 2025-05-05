@@ -20,12 +20,7 @@ export const RouteWrapper = ({
 
   if (isLoading) {
     return (
-      <div
-        className="flex items-center justify-center"
-        style={{
-          height: '100vh',
-        }}
-      >
+      <div className="h-screen flex items-center justify-center">
         <img src={logo} alt="Logo" width={200} className="animate-pulse" />
       </div>
     );
