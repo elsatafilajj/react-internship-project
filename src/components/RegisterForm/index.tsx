@@ -117,6 +117,7 @@ export const RegisterForm = () => {
                 </Link>
               </div>
               <Button type="submit">Create an account</Button>
+
               <p className="text-xs text-center text-gray-500">
                 © {new Date().getFullYear()} Stuck ™
               </p>
