@@ -1,7 +1,20 @@
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
-export const CompanyDashboard = () => {
-  const { user } = useAuthContext();
+import { Button } from '../ui/button';
 
-  return <div>Company Dashboard {user?.firstName}</div>;
+export const CompanyDashboard = () => {
+  const { user, logout } = useAuthContext();
+
+  return (
+    <div>
+      Company Dashboard {user?.firstName}
+      <Button
+        onClick={() => {
+          logout();
+        }}
+      >
+        Logout
+      </Button>
+    </div>
+  );
 };

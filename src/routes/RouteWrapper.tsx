@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { UserRole } from '@/api/User/user.types';
-import logo from '@/assets/images/logo.svg';
+import logo from '@/assets/images/logo-small.svg';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 interface RouteWrapperProps {
@@ -20,12 +20,7 @@ export const RouteWrapper = ({
 
   if (isLoading) {
     return (
-      <div
-        className="flex-center"
-        style={{
-          height: '100vh',
-        }}
-      >
+      <div className="h-screen flex items-center justify-center">
         <img src={logo} alt="Logo" width={200} className="animate-pulse" />
       </div>
     );
