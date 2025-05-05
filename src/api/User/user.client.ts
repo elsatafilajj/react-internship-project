@@ -23,6 +23,17 @@ export const register = async (data: RegisterInput) =>
     data,
   });
 
+export const logout = async () => {
+  const token = localStorage.getItem('token');
+  return apiRequest({
+    method: 'POST',
+    url: 'auth/logout',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export const forgotPassword = async ({ email }: { email: string }) =>
   apiRequest<{ email: string }, { result: boolean }>({
     method: 'POST',
