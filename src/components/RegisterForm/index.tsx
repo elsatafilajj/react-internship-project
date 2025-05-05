@@ -37,8 +37,6 @@ export const RegisterForm = () => {
       } catch {
         console.error('Register failed! ');
       }
-
-      formikHelpers.resetForm();
     },
   });
 
@@ -81,7 +79,7 @@ export const RegisterForm = () => {
               type="text"
               name="email"
               label="Your email"
-              placeholder="name@company.com"
+              placeholder="Enter your email address"
               value={formik.values.email}
               onChange={formik.handleChange}
               error={getFormikError(formik, 'email')}
