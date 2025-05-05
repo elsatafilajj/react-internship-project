@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { UserRole } from '@/api/User/user.types';
-import logo from '@/assets/images/logo.svg';
+import logo from '@/assets/images/logo-small.svg';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 interface RouteWrapperProps {
@@ -17,11 +17,6 @@ export const RouteWrapper = ({
   allowedRoles,
 }: RouteWrapperProps) => {
   const { isAuthenticated, isLoading, user } = useAuthContext();
-
-  console.log(
-    'From route wrapper: ',
-    `Is autheticated: ${isAuthenticated}, is authentication page: ${isAuthenticationPage}`,
-  );
 
   if (isLoading) {
     return (

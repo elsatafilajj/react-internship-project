@@ -6,6 +6,7 @@ type CommonProps = {
   name: string;
   label?: string;
   className?: string;
+  type?: React.HTMLInputTypeAttribute;
 };
 
 type TextareaProps = CommonProps & {
@@ -14,7 +15,6 @@ type TextareaProps = CommonProps & {
 
 type TextInputProps = CommonProps & {
   isTextArea?: false;
-  type?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 type Props = TextareaProps | TextInputProps;
@@ -29,6 +29,7 @@ export function Input(
   const {
     name,
     label,
+    type,
     className,
     isTextArea = false,
     value,
@@ -65,7 +66,7 @@ export function Input(
         <input
           id={name}
           name={name}
-          type="text"
+          type={type}
           value={value}
           onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
           data-slot="input"
