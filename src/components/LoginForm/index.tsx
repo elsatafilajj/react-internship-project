@@ -54,7 +54,7 @@ export const LoginForm = () => {
           name="email"
           id="email"
           type="email"
-          placeholder="Enter yout email address"
+          placeholder="Enter your email address"
           value={formik.values.email}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'email')}
