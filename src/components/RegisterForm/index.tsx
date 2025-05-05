@@ -107,10 +107,7 @@ export const RegisterForm = () => {
             <div className="flex text-xs  flex-col space-y-5 items-center justify-between">
               <div className="text-sm text-black text-center">
                 Already have an account?{' '}
-                <Link
-                  to={RouteNames.Login}
-                  className="font-medium text-primary underline"
-                >
+                <Link to={RouteNames.Login} className="font-medium  underline">
                   Log in
                 </Link>
               </div>
