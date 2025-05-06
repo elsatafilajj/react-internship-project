@@ -83,12 +83,9 @@ export const LoginForm = () => {
           >
             Log In
           </Button>
-          <p>
+          <p className="text-black">
             Dont have an account?{' '}
-            <Link
-              to={RouteNames.Register}
-              className="font-medium text-black underline"
-            >
+            <Link to={RouteNames.Register} className="font-medium underline">
               Create one
             </Link>
           </p>
