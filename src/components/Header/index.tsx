@@ -1,11 +1,4 @@
-import {
-  House,
-  List,
-  Search,
-  MessageSquare,
-  Bell,
-  ChevronDown,
-} from 'lucide-react';
+import { House, List, Search, Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,6 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -59,13 +53,13 @@ export default function Topbar() {
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link to="/messages">
                   <MessageSquare className="w-5 h-5" />
                 </Link>
               </NavigationMenuLink>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link to="/notifications">
@@ -77,21 +71,24 @@ export default function Topbar() {
         </NavigationMenu>
 
         {/* User Info */}
-        <div className="flex items-center gap-4">
-          <div>
-            <h3 className="text-sm font-medium">{user?.firstName}</h3>
-          </div>
+        <Link
+          to="/profile"
+          className="flex items-center gap-2 hover:opacity-80 transition"
+        >
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
-          <Link to="/profile">
-            <ChevronDown className="w-4 h-4" />
-          </Link>
-        </div>
-        <div>
-          <button onClick={logout}>Logout</button>
-        </div>
+          <div>
+            <h3 className="text-sm font-medium">{user?.firstName}</h3>
+            <p className="text-xs text-muted-foreground">View Profile</p>
+          </div>
+        </Link>
+
+        {/* Logout Button */}
+        <Button onClick={logout} variant="outline" size="sm">
+          Logout
+        </Button>
       </div>
     </div>
   );

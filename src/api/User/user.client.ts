@@ -40,7 +40,7 @@ export const forgotPassword = async ({ email }: { email: string }) =>
 export const resetPassword = async (data: SetPasswordInput, token: string) =>
   apiRequest<SetPasswordInput, SetPasswordResponse>({
     method: 'POST',
-    url: `user/reset/${token}`,
+    url: `users/reset/${token}`,
     data,
   });
 
