@@ -33,7 +33,7 @@ export const logout = async () => {
 export const forgotPassword = async ({ email }: { email: string }) =>
   apiRequest<{ email: string }, { result: boolean }>({
     method: 'POST',
-    url: 'users/auth/forgot-password',
+    url: 'user/forgot',
     data: { email },
   });
 
