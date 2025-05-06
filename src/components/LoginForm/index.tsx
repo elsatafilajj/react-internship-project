@@ -3,7 +3,8 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
 import { login } from '@/api/User/user.client';
-import { InputField } from '@/components/shared/InputField';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getFormikError } from '@/helpers/getFormikError';
@@ -41,51 +42,58 @@ export const LoginForm = () => {
   });
 
   return (
-    <div className="login-page__container">
-      <h2 className="login-page__title">Welcome</h2>
-      <p className="login-page__subtitle">Login to continue</p>
+    <>
+      <div className="flex items-center flex-col justify-center">
+        <h1 className="text-3xl font-semibold leading-wide tracking-tight text-black md:text-4xl">
+          Log in
+        </h1>
+      </div>
 
-      <form onSubmit={formik.handleSubmit}>
-        <InputField
-          id="email"
+      <form className="space-y-4 md:space-y-6" onSubmit={formik.handleSubmit}>
+        <Input
           name="email"
-          label="Email"
-          className="mb-4"
+          id="email"
+          type="email"
+          placeholder="Enter your email address"
           value={formik.values.email}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'email')}
         />
-
-        <InputField
-          id="password"
+        <Input
           name="password"
-          label="Password"
-          className="mb-2"
-          value={formik.values.password}
           type="password"
+          placeholder="••••••••"
+          id="password"
+          className="mb-2 placeholder:tracking-widest tracking-widest"
+          value={formik.values.password}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
         />
-
-        <Link
-          to={RouteNames.ForgotPassword}
-          className="login-page__forgot-password"
-        >
-          Forgot your password?
-        </Link>
-
-        <button
-          type="submit"
-          className="login-page__login-btn"
-          disabled={formik.isSubmitting}
-        >
-          Log In
-        </button>
+        <div className="flex text-sm flex-col space-y-5 items-center justify-between">
+          <Link
+            to={RouteNames.ForgotPassword}
+            className="font-medium text-black underline"
+          >
+            Forgot your password?
+          </Link>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={formik.isSubmitting}
+          >
+            Log In
+          </Button>
+          <p>
+            Dont have an account?{' '}
+            <Link
+              to={RouteNames.Register}
+              className="font-medium text-black underline"
+            >
+              Create one
+            </Link>
+          </p>
+        </div>
       </form>
-
-      <p className="login-page__copyright-text">
-        © {new Date().getFullYear()} DoSA Safety Enhancements Inc TM
-      </p>
-    </div>
+    </>
   );
 };
