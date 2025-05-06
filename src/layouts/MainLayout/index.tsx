@@ -10,7 +10,7 @@ export const MainLayout = () => {
       <Header />
       <Sidebar />
 
-      <div className="page-wrapper">
+      <div className="bg-gradient-to-b from-background to-white dark:bg-gray-100">
         <Outlet />
       </div>
     </RouteWrapper>

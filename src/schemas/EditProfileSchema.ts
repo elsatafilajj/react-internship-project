@@ -6,5 +6,4 @@ export const EditProfileSchema = object().shape({
   email: string()
     .required('Email is required!')
     .email('Please enter a valid email address'),
-  department: string().required('Department is required!'),
 });
