@@ -69,7 +69,7 @@ export const LoginForm = () => {
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
         />
-        <div className="flex text-xs flex-col space-y-5 items-center justify-between">
+        <div className="flex text-sm flex-col space-y-5 items-center justify-between">
           <Link
             to={RouteNames.ForgotPassword}
             className="font-medium text-black underline"

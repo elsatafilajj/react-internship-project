@@ -23,6 +23,13 @@ export const register = async (data: RegisterInput) =>
     data,
   });
 
+export const logout = async () => {
+  return apiRequest({
+    method: 'POST',
+    url: 'auth/logout',
+  });
+};
+
 export const forgotPassword = async ({ email }: { email: string }) =>
   apiRequest<{ email: string }, { result: boolean }>({
     method: 'POST',
