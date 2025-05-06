@@ -3,7 +3,8 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { forgotPassword } from '@/api/User/user.client';
-import { InputField } from '@/components/shared/InputField';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
@@ -36,37 +37,33 @@ export const ForgotPasswordForm = () => {
   });
 
   return (
-    <div className="login-page__container">
-      <h2 className="login-page__title">Reset Password</h2>
-      <p className="login-page__subtitle">Enter email to continue</p>
+    <div>
+      <h2 className="text-2xl md:text-3xl font-semibold text-center text-black mb-8">
+        Reset Password
+      </h2>
 
-      <form onSubmit={formik.handleSubmit}>
-        <InputField
+      <form onSubmit={formik.handleSubmit} className="space-y-6">
+        <Input
           id="email"
           name="email"
-          label="Email"
-          className="mb-4"
+          type="email"
+          placeholder="Enter your email to continue"
           value={formik.values.email}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'email')}
         />
 
-        <Link to={RouteNames.Login} className="login-page__forgot-password">
-          Return to Login
-        </Link>
+        <p className="text-sm text-center text-black ">
+          Go back to{' '}
+          <Link to={RouteNames.Login} className="font-medium underline">
+            Login
+          </Link>
+        </p>
 
-        <button
-          type="submit"
-          className="login-page__login-btn"
-          disabled={formik.isSubmitting}
-        >
+        <Button type="submit" disabled={formik.isSubmitting}>
           Forgot Password
-        </button>
+        </Button>
       </form>
-
-      <p className="login-page__copyright-text">
-        © {new Date().getFullYear()} DoSA Safety Enhancements Inc TM
-      </p>
     </div>
   );
 };
