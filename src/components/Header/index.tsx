@@ -30,7 +30,7 @@ import {
 import { Toggle } from '@/components/ui/toggle';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
-import LogoImg from '../../../public/logo-full.svg';
+import LogoImg from '../../assets/images/logo-full.svg';
 
 const routeNameMap: Record<string, string> = {
   '': 'Dashboard',
