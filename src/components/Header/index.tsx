@@ -1,6 +1,16 @@
-import { House, List, Search, Bell } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Search, Bell, MoonIcon } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Breadcrumb,
@@ -17,35 +27,75 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
+import { Toggle } from '@/components/ui/toggle';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+
+import LogoImg from '../../../public/logo-full.svg';
+
+const routeNameMap: Record<string, string> = {
+  '': 'Dashboard',
+  profile: 'Profile',
+  rooms: 'Rooms',
+  notifications: 'Notifications',
+  'reset-password': 'Reset Password',
+  'forgot-password': 'Forgot Password',
+  login: 'Login',
+  register: 'Register',
+};
 
 export default function Topbar() {
   const { user, logout } = useAuthContext();
+  const location = useLocation();
+  const segments = location.pathname.split('/').filter(Boolean);
 
   return (
     <div className="flex bg-white flex-wrap justify-between items-center p-5 gap-4">
-      {/* Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList className="flex items-center gap-2">
           <BreadcrumbItem className="flex items-center gap-1">
-            <House className="w-4 h-4" />
             <BreadcrumbLink asChild>
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/">
+                <img src={LogoImg} alt="logo" className="max-w-[100px]" />
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem className="flex items-center gap-1">
-            <List className="w-4 h-4" />
-            <BreadcrumbPage>Data List</BreadcrumbPage>
-          </BreadcrumbItem>
+
+          {segments.map((segment, index) => {
+            const fullPath = `/${segments.slice(0, index + 1).join('/')}`;
+            const isLast = index === segments.length - 1;
+
+            return (
+              <div key={fullPath} className="flex items-center gap-1">
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  {isLast ? (
+                    <BreadcrumbPage>
+                      {routeNameMap[segment] || segment}
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink asChild>
+                      <Link to={fullPath}>
+                        {routeNameMap[segment] || segment}
+                      </Link>
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+              </div>
+            );
+          })}
         </BreadcrumbList>
       </Breadcrumb>
 
-      {/* Navigation & Profile */}
-      <div className="flex flex-wrap gap-4 items-center">
-        {/* Navigation Menu Icons */}
+      <div className="flex gap-4 items-center">
         <NavigationMenu>
           <NavigationMenuList className="flex items-center gap-2">
+            <NavigationMenuItem>
+              <NavigationMenuLink>
+                <Toggle aria-label="Toggle dark mode" className="rounded-full">
+                  <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                </Toggle>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link to="/search">
@@ -53,13 +103,6 @@ export default function Topbar() {
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-            {/* <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link to="/messages">
-                  <MessageSquare className="w-5 h-5" />
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem> */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link to="/notifications">
@@ -70,7 +113,6 @@ export default function Topbar() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* User Info */}
         <Link
           to="/profile"
           className="flex items-center gap-2 hover:opacity-80 transition"
@@ -85,10 +127,32 @@ export default function Topbar() {
           </div>
         </Link>
 
-        {/* Logout Button */}
-        <Button onClick={logout} variant="outline" size="sm">
-          Logout
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              Logout
+            </Button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent className="bg-white ">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-black">
+                Are you absolutely sure?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-black">
+                This will log you out from your account.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+              <Button onClick={logout} className="text-black">
+                Log Out
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
