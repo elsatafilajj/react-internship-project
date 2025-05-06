@@ -1,19 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
-import { logout } from '@/api/User/user.client';
+import { logout as apiLogout } from '@/api/User/user.client';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 import { Button } from '../ui/button';
 
 export const CompanyDashboard = () => {
-  const { user, logout: logoutHelper } = useAuthContext();
+  const { user, logout } = useAuthContext();
 
   const logoutMutation = useMutation({
-    mutationFn: logout,
+    mutationFn: apiLogout,
     onSuccess: () => {
       toast.success('Logout successful!');
-      logoutHelper();
+      logout();
     },
   });
 

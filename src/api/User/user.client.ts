@@ -24,13 +24,9 @@ export const register = async (data: RegisterInput) =>
   });
 
 export const logout = async () => {
-  const token = localStorage.getItem('token');
   return apiRequest({
     method: 'POST',
     url: 'auth/logout',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 };
 
