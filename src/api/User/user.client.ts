@@ -33,8 +33,11 @@ export const forgotPassword = async ({ email }: { email: string }) =>
 export const resetPassword = async (data: SetPasswordInput, token: string) =>
   apiRequest<SetPasswordInput, SetPasswordResponse>({
     method: 'POST',
-    url: `users/reset/${token}`,
+    url: `auth/reset-password`,
     data,
+    params: {
+      token,
+    },
   });
 
 export const editProfile = async (data: Partial<User>) => {
