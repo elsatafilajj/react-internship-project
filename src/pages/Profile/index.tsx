@@ -106,9 +106,12 @@ export const Profile = () => {
                   src="/placeholder-user.jpg"
                   alt="Profile Picture"
                 />
-                <AvatarFallback>JP</AvatarFallback>
+                <AvatarFallback>{user?.firstName[0]}</AvatarFallback>
               </Avatar>
-              <Button variant="outline" size="sm">
+              <Button
+                className="max-w-[150px] bg-transparent hover:bg-transparent border hover:border-primary"
+                size="sm"
+              >
                 <UploadIcon className="mr-2 h-4 w-4" />
                 Change Photo
               </Button>
@@ -143,6 +146,7 @@ export const Profile = () => {
                   error={getFormikError(formikProfile, 'email')}
                   onChange={formikProfile.handleChange}
                   onBlur={formikProfile.handleBlur}
+                  disabled
                 />
               </CardContent>
               <CardFooter>
