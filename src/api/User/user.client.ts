@@ -50,7 +50,7 @@ export const resetPassword = async (data: SetPasswordInput, token: string) =>
 export const editProfile = async (data: Partial<User>) => {
   return apiRequest<Partial<User>, User>({
     method: 'PATCH',
-    url: 'users',
+    url: 'user/me',
     data,
   });
 };

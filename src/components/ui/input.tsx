@@ -43,7 +43,7 @@ export function Input(
       {label && (
         <label
           htmlFor={name}
-          className="block mb-2 text-sm font-medium text-green-900"
+          className="block mb-2 text-sm font-medium text-black"
         >
           {label}
         </label>
