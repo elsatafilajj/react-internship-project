@@ -1,0 +1,114 @@
+import { useMutation } from '@tanstack/react-query';
+import { CircleCheck } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link, useParams } from 'react-router-dom';
+
+import { resetPassword } from '@/api/User/user.client';
+import { SetPasswordInput } from '@/api/User/user.types';
+import { RouteNames } from '@/constants/routeNames';
+import { getFormikError } from '@/helpers/getFormikError';
+import { useForm } from '@/hooks/useForm';
+import { ResetPasswordSchema } from '@/schemas/ResetPasswordSchema';
+
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+
+const ResetPasswordForm = () => {
+  const { token, firstName } = useParams();
+  const [messageSent, setMessageSent] = useState(false);
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: ({ data, token }: { data: SetPasswordInput; token: string }) =>
+      resetPassword(data, token),
+    onSuccess: () => {
+      setMessageSent(true);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const formikPassword = useForm({
+    schema: ResetPasswordSchema,
+    initialValues: {
+      newPassword: '',
+      confirmPassword: '',
+    },
+    onSubmit: async (values, formikHelpers) => {
+      try {
+        if (!token) return '';
+
+        await resetPasswordMutation.mutateAsync({
+          data: values,
+          token: token,
+        });
+        formikHelpers.resetForm();
+      } catch (error) {
+        console.error('Reset Password failed!', error);
+      }
+    },
+  });
+
+  return (
+    <div>
+      {messageSent ? (
+        <div>
+          <Alert>
+            <AlertTitle>
+              <CircleCheck />
+            </AlertTitle>
+            <AlertTitle>Password reset</AlertTitle>
+            <AlertDescription>
+              <Link
+                to={RouteNames.Login}
+                className="flex items-center gap-1 hover:underline"
+              >
+                Login now
+                <ChevronRight size={16} />
+              </Link>
+            </AlertDescription>
+          </Alert>
+        </div>
+      ) : (
+        <>
+          <p className="text-[18px] ">Hello, {firstName}</p>
+          <p className="text-[14px] text-stone-400">
+            A request has been made to reset your password. If you made this
+            request, now u can reset your password{' '}
+          </p>
+          <form
+            onSubmit={formikPassword.handleSubmit}
+            className="space-y-8 mt-4"
+          >
+            <Input
+              id="newPassword"
+              name="newPassword"
+              type="password"
+              placeholder="New Password"
+              error={getFormikError(formikPassword, 'newPassword')}
+              value={formikPassword.values.newPassword}
+              onChange={formikPassword.handleChange}
+            />
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              error={getFormikError(formikPassword, 'confirmPassword')}
+              value={formikPassword.values.confirmPassword}
+              onChange={formikPassword.handleChange}
+            />
+            <Button type="submit" className="">
+              Reset password
+            </Button>
+          </form>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default ResetPasswordForm;

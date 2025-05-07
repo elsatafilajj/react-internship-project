@@ -2,8 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { UploadIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { editProfile, resetPassword } from '@/api/User/user.client';
-import { SetPasswordInput } from '@/api/User/user.types';
+import { editProfile } from '@/api/User/user.client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,28 +18,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
-import { ChangePasswordSchema } from '@/schemas/ChangePasswordSchema';
 import { EditProfileSchema } from '@/schemas/EditProfileSchema';
 
 export const Profile = () => {
   const { user } = useAuthContext();
-  const token = localStorage.getItem('token');
 
   const editProfileMutation = useMutation({
     mutationFn: editProfile,
     onSuccess: () => {
       toast.success('Your profile has been updated!');
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const resetPasswordMutation = useMutation({
-    mutationFn: ({ data, token }: { data: SetPasswordInput; token: string }) =>
-      resetPassword(data, token),
-    onSuccess: () => {
-      toast.success('Your password has been updated!');
     },
     onError: (error) => {
       toast.error(error.message);
@@ -60,26 +46,6 @@ export const Profile = () => {
         formikHelpers.resetForm();
       } catch (error) {
         console.error('Edit Profile failed!', error);
-      }
-    },
-  });
-
-  const formikPassword = useForm({
-    schema: ChangePasswordSchema,
-    initialValues: {
-      oldPassword: '',
-      password: '',
-      passwordConfirm: '',
-    },
-    onSubmit: async (values, formikHelpers) => {
-      try {
-        await resetPasswordMutation.mutateAsync({
-          data: values,
-          token: token ?? '',
-        });
-        formikHelpers.resetForm();
-      } catch (error) {
-        console.error('Edit Password failed!', error);
       }
     },
   });
@@ -166,42 +132,6 @@ export const Profile = () => {
                 Change your password. After saving, you'll be logged out.
               </CardDescription>
             </CardHeader>
-            <form onSubmit={formikPassword.handleSubmit}>
-              <CardContent className="space-y-4">
-                <Input
-                  id="oldPassword"
-                  name="oldPassword"
-                  type="password"
-                  placeholder="Old Password"
-                  error={getFormikError(formikPassword, 'oldPassword')}
-                  value={formikPassword.values.oldPassword}
-                  onChange={formikPassword.handleChange}
-                />
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="New Password"
-                  value={formikPassword.values.password}
-                  onChange={formikPassword.handleChange}
-                  error={getFormikError(formikPassword, 'password')}
-                />
-                <Input
-                  id="passwordConfirm"
-                  name="passwordConfirm"
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={formikPassword.values.passwordConfirm}
-                  onChange={formikPassword.handleChange}
-                  error={getFormikError(formikPassword, 'passwordConfirm')}
-                />
-              </CardContent>
-              <CardFooter>
-                <Button type="submit" className="mt-6">
-                  Save password
-                </Button>
-              </CardFooter>
-            </form>
           </Card>
         </TabsContent>
       </Tabs>
