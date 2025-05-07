@@ -1,36 +1,54 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
-import { ThemeContext } from './ThemeContext';
+import { ThemeContext, ThemeContextType } from './ThemeContext';
 
 interface ThemeContextProviderProps {
   children: ReactNode;
 }
 
-const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
-  const [isDark, setIsDark] = useState(() => {
+const getInitialTheme = (): ThemeContextType['theme'] => {
+  if (typeof window !== 'undefined') {
     const storedTheme = localStorage.getItem('theme');
-    return storedTheme === 'dark';
-  });
 
-  const toggleTheme = () => {
-    setIsDark((prev) => !prev);
+    if (storedTheme === 'light' || storedTheme === 'dark') {
+      return storedTheme;
+    }
+
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches;
+
+    return prefersDark ? 'dark' : 'light';
+  }
+  return 'os';
+};
+
+const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
+  const [theme, setTheme] =
+    useState<ThemeContextType['theme']>(getInitialTheme);
+
+  const handleChangeTheme = (newTheme: string) => {
+    if (newTheme === 'light' || newTheme === 'dark' || newTheme === 'os') {
+      setTheme(newTheme);
+    }
+    if (theme === 'light') {
+      document.documentElement.classList.remove('dark');
+      localStorage.theme = 'light';
+    } else if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+    } else if (theme === 'os') {
+      localStorage.removeItem('theme');
+      const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)',
+      ).matches;
+      document.documentElement.classList.toggle('dark', prefersDark);
+    }
   };
 
-  useEffect(() => {
-    const root = document.documentElement;
-
-    if (isDark) {
-      root.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
-
   const themeContext = {
-    isDark,
-    changeTheme: toggleTheme,
+    theme,
+    changeTheme: handleChangeTheme,
   };
 
   return (

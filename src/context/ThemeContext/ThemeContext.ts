@@ -3,12 +3,12 @@ import { useContext, createContext } from 'react';
 import { emptyFunction } from '@/helpers/emptyFunction';
 
 export interface ThemeContextType {
-  isDark: boolean;
-  changeTheme: () => void;
+  theme: 'light' | 'dark' | 'os';
+  changeTheme: (newTheme: string) => void;
 }
 
 const ThemeContextValues: ThemeContextType = {
-  isDark: false,
+  theme: 'os',
   changeTheme: emptyFunction,
 };
 
