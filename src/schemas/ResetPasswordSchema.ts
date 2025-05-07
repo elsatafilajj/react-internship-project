@@ -1,10 +1,10 @@
 import { object, ref, string } from 'yup';
 
 export const ResetPasswordSchema = object({
-  newPassword: string()
+  password: string()
     .min(8, 'Password must be at least 8 characters')
     .required('New password is required'),
-  confirmPassword: string()
+  passwordConfirm: string()
     .required('Confirm password is required')
-    .oneOf([ref('newPassword')], 'Passwords must match'),
+    .oneOf([ref('password')], 'Passwords must match'),
 });

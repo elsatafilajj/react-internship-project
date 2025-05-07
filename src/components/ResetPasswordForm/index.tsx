@@ -3,7 +3,7 @@ import { CircleCheck } from 'lucide-react';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { resetPassword } from '@/api/User/user.client';
 import { SetPasswordInput } from '@/api/User/user.types';
@@ -17,7 +17,10 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 const ResetPasswordForm = () => {
-  const { token, firstName } = useParams();
+  const [params] = useSearchParams();
+  const token = params.get('token');
+
+  // console.log(token);
   const [messageSent, setMessageSent] = useState(false);
 
   const resetPasswordMutation = useMutation({
@@ -34,8 +37,8 @@ const ResetPasswordForm = () => {
   const formikPassword = useForm({
     schema: ResetPasswordSchema,
     initialValues: {
-      newPassword: '',
-      confirmPassword: '',
+      password: '',
+      passwordConfirm: '',
     },
     onSubmit: async (values, formikHelpers) => {
       try {
@@ -74,7 +77,7 @@ const ResetPasswordForm = () => {
         </div>
       ) : (
         <>
-          <p className="text-[18px] ">Hello, {firstName}</p>
+          {/* <p className="text-[18px] ">Hello, {firstName}</p> */}
           <p className="text-[14px] text-stone-400">
             A request has been made to reset your password. If you made this
             request, now u can reset your password{' '}
@@ -84,26 +87,24 @@ const ResetPasswordForm = () => {
             className="space-y-8 mt-4"
           >
             <Input
-              id="newPassword"
-              name="newPassword"
+              id="password"
+              name="password"
               type="password"
               placeholder="New Password"
-              error={getFormikError(formikPassword, 'newPassword')}
-              value={formikPassword.values.newPassword}
+              error={getFormikError(formikPassword, 'password')}
+              value={formikPassword.values.password}
               onChange={formikPassword.handleChange}
             />
             <Input
-              id="confirmPassword"
-              name="confirmPassword"
+              id="passwordConfirm"
+              name="passwordConfirm"
               type="password"
               placeholder="Confirm Password"
-              error={getFormikError(formikPassword, 'confirmPassword')}
-              value={formikPassword.values.confirmPassword}
+              error={getFormikError(formikPassword, 'passwordConfirm')}
+              value={formikPassword.values.passwordConfirm}
               onChange={formikPassword.handleChange}
             />
-            <Button type="submit" className="">
-              Reset password
-            </Button>
+            <Button type="submit">Reset password</Button>
           </form>
         </>
       )}
