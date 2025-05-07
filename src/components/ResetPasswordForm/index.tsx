@@ -19,8 +19,7 @@ import { Input } from '../ui/input';
 const ResetPasswordForm = () => {
   const [params] = useSearchParams();
   const token = params.get('token');
-
-  // console.log(token);
+  const firstName = params.get('firstName');
   const [messageSent, setMessageSent] = useState(false);
 
   const resetPasswordMutation = useMutation({
@@ -77,7 +76,7 @@ const ResetPasswordForm = () => {
         </div>
       ) : (
         <>
-          {/* <p className="text-[18px] ">Hello, {firstName}</p> */}
+          <p className="text-[18px] ">Hello, {firstName}</p>
           <p className="text-[14px] text-stone-400">
             A request has been made to reset your password. If you made this
             request, now u can reset your password{' '}
