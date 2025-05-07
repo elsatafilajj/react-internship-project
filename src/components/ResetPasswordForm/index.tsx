@@ -7,14 +7,13 @@ import { Link, useSearchParams } from 'react-router-dom';
 
 import { resetPassword } from '@/api/User/user.client';
 import { SetPasswordInput } from '@/api/User/user.types';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { ResetPasswordSchema } from '@/schemas/ResetPasswordSchema';
-
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 
 const ResetPasswordForm = () => {
   const [params] = useSearchParams();
@@ -41,7 +40,10 @@ const ResetPasswordForm = () => {
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        if (!token) return '';
+        if (!token) {
+          toast.error('Invalid or missing token!');
+          return;
+        }
 
         await resetPasswordMutation.mutateAsync({
           data: values,
