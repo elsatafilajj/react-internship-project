@@ -43,7 +43,7 @@ export function Input(
       {label && (
         <label
           htmlFor={name}
-          className="block mb-2 text-sm font-medium text-black"
+          className="block mb-2 text-sm font-medium text-foreground"
         >
           {label}
         </label>
@@ -57,7 +57,7 @@ export function Input(
           onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
           data-slot="input"
           className={cn(
-            'bg-transparent border-b border-muted-foreground/45 text-black placeholder:text-muted-foreground/50 text-sm rounded-lg focus:ring-0 focus:border-primary w-full p-2.5  shadow-xs outline-none transition-[color,box-shadow] active:bg-transparent ',
+            'bg-transparent border-b border-muted-foreground/45 text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-0 focus:border-primary w-full p-2.5  shadow-xs outline-none transition-[color,box-shadow] active:bg-transparent ',
             className,
           )}
           {...(rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
@@ -71,8 +71,8 @@ export function Input(
           onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
           data-slot="input"
           className={cn(
-            'w-full px-0 py-2 text-black text-sm bg-transparent border-b border-muted-foreground/45',
-            'placeholder:text-muted-foreground/50 active:bg-transparent focus:outline-none focus:border-primary focus:text-black',
+            'w-full px-0 py-2 text-foreground text-sm bg-transparent border-b border-muted-foreground/45',
+            'placeholder:text-muted-foreground active:bg-transparent focus:outline-none focus:border-primary ',
             'transition-all duration-300 ease-in-out',
             'focus:ring-0 focus:shadow-2xs focus:shadow-primary',
             className,
