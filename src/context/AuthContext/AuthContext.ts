@@ -7,7 +7,15 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user?: User;
-  setUser: ({ user, token }: { user: User; token?: string }) => void;
+  setUser: ({
+    user,
+    accessToken,
+    refreshToken,
+  }: {
+    user: User;
+    accessToken?: string;
+    refreshToken?: string;
+  }) => void;
   logout: () => void;
 }
 

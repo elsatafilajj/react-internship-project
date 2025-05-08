@@ -25,16 +25,16 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const accessToken = localStorage.getItem('accessToken');
 
-        if (!token) {
+        if (!accessToken) {
           return;
         }
 
         const response = await getUserDetails();
         setUser(response.data);
       } catch {
-        localStorage.removeItem('token');
+        localStorage.removeItem('accessToken');
       } finally {
         setIsLoading(false);
       }
@@ -43,15 +43,25 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     checkAuthentication();
   }, []);
 
-  const updateUser = ({ user, token }: { user: User; token?: string }) => {
-    if (token) {
-      localStorage.setItem('token', token);
+  const updateUser = ({
+    user,
+    accessToken,
+    refreshToken,
+  }: {
+    user: User;
+    accessToken?: string;
+    refreshToken?: string;
+  }) => {
+    if (accessToken && refreshToken) {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
     }
     setUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     setUser(undefined);
   };
 

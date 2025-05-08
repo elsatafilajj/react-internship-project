@@ -18,7 +18,11 @@ export const LoginForm = () => {
     mutationFn: login,
     onSuccess: (data) => {
       toast.success('Login successful!');
-      setUser({ user: data.data.user, token: data.data.accessToken });
+      setUser({
+        user: data.data.user,
+        accessToken: data.data.accessToken,
+        refreshToken: data.data.refreshToken,
+      });
     },
     onError: (error) => {
       toast.error(error.message);
