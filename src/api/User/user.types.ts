@@ -35,9 +35,9 @@ export interface LoginRegisterResponse {
 export interface RegisterInput {
   firstName: string;
   lastName: string;
-  dateOfBirth: string;
   email: string;
   password: string;
+  passwordConfirm: string;
 }
 
 export interface LoginInput {
@@ -46,8 +46,8 @@ export interface LoginInput {
 }
 
 export interface SetPasswordInput {
-  new_password: string;
-  confirm_password: string;
+  password: string;
+  passwordConfirm: string;
 }
 
 export interface SetPasswordResponse {

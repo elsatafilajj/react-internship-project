@@ -12,7 +12,7 @@ import {
 export const login = async (data: LoginInput) =>
   apiRequest<LoginInput, LoginResponse>({
     method: 'POST',
-    url: 'users/auth/login',
+    url: 'auth/login',
     data,
   });
 
@@ -23,21 +23,25 @@ export const register = async (data: RegisterInput) =>
     data,
   });
 
+export const logout = async () => {
+  return apiRequest({
+    method: 'POST',
+    url: 'auth/logout',
+  });
+};
+
 export const forgotPassword = async ({ email }: { email: string }) =>
   apiRequest<{ email: string }, { result: boolean }>({
     method: 'POST',
-    url: 'users/auth/forgot-password',
+    url: 'user/forgot',
     data: { email },
   });
 
 export const resetPassword = async (data: SetPasswordInput, token: string) =>
   apiRequest<SetPasswordInput, SetPasswordResponse>({
     method: 'POST',
-    url: `auth/reset-password`,
+    url: `user/reset/${token}`,
     data,
-    params: {
-      token,
-    },
   });
 
 export const editProfile = async (data: Partial<User>) => {
@@ -57,4 +61,4 @@ export const changePassword = async (data: ChangePasswordInput) => {
 };
 
 export const getUserDetails = async () =>
-  apiRequest<undefined, User>({ method: 'GET', url: 'users' });
+  apiRequest<undefined, User>({ method: 'GET', url: 'user/me' });

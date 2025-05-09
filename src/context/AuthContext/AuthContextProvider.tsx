@@ -57,6 +57,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const context: AuthContextType = {
     isAuthenticated: !!user,
+
     isLoading,
     setUser: updateUser,
     logout,
