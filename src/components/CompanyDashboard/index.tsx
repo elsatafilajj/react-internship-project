@@ -2,10 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { logout as apiLogout } from '@/api/User/user.client';
+import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
+import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
-
-import { ThemeChangeToggle } from '../shared/ThemeChangeToggle';
-import { Button } from '../ui/button';
 
 export const CompanyDashboard = () => {
   const { user, logout } = useAuthContext();

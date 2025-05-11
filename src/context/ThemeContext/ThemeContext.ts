@@ -1,17 +1,17 @@
-import { useContext, createContext } from 'react';
+import { createContext, useContext } from 'react';
 
 import { emptyFunction } from '@/helpers/emptyFunction';
 
+export type ThemeMode = 'light' | 'dark';
+
 export interface ThemeContextType {
-  theme: 'light' | 'dark' | 'os';
-  changeTheme: (newTheme: string) => void;
+  theme: ThemeMode;
+  changeTheme: (newTheme: ThemeMode) => void;
 }
 
-const ThemeContextValues: ThemeContextType = {
-  theme: 'os',
+export const ThemeContext = createContext<ThemeContextType>({
+  theme: 'light',
   changeTheme: emptyFunction,
-};
-
-export const ThemeContext = createContext(ThemeContextValues);
+});
 
 export const useThemeContext = () => useContext(ThemeContext);

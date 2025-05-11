@@ -1,58 +1,41 @@
-import { ReactNode, useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 
-import { ThemeContext, ThemeContextType } from './ThemeContext';
+import { ThemeContext, ThemeMode } from './ThemeContext';
 
 interface ThemeContextProviderProps {
   children: ReactNode;
 }
 
-const getInitialTheme = (): ThemeContextType['theme'] => {
-  if (typeof window !== 'undefined') {
-    const storedTheme = localStorage.getItem('theme');
+const getSystemTheme = (): ThemeMode =>
+  window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
-    if (storedTheme === 'light' || storedTheme === 'dark') {
-      return storedTheme;
-    }
+const getInitialTheme = (): ThemeMode => {
+  if (typeof window === 'undefined') return 'light';
 
-    const prefersDark = window.matchMedia(
-      '(prefers-color-scheme: dark)',
-    ).matches;
-
-    return prefersDark ? 'dark' : 'light';
+  const storedTheme = localStorage.getItem('theme') as ThemeMode | null;
+  if (storedTheme === 'light' || storedTheme === 'dark') {
+    return storedTheme;
   }
-  return 'os';
+
+  const systemTheme = getSystemTheme();
+  localStorage.setItem('theme', systemTheme);
+  return systemTheme;
 };
 
 const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
-  const [theme, setTheme] =
-    useState<ThemeContextType['theme']>(getInitialTheme);
+  const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
 
-  const handleChangeTheme = (newTheme: string) => {
-    if (newTheme === 'light' || newTheme === 'dark' || newTheme === 'os') {
-      setTheme(newTheme);
-    }
-    if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-      localStorage.theme = 'light';
-    } else if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      localStorage.theme = 'dark';
-    } else if (theme === 'os') {
-      localStorage.removeItem('theme');
-      const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)',
-      ).matches;
-      document.documentElement.classList.toggle('dark', prefersDark);
-    }
-  };
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
-  const themeContext = {
-    theme,
-    changeTheme: handleChangeTheme,
+  const changeTheme = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
   };
 
   return (
-    <ThemeContext.Provider value={themeContext}>
+    <ThemeContext.Provider value={{ theme, changeTheme }}>
       {children}
     </ThemeContext.Provider>
   );
