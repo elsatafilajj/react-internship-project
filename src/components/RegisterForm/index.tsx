@@ -43,7 +43,7 @@ export const RegisterForm = () => {
   return (
     <>
       <div className="flex items-center flex-col justify-center">
-        <h1 className="text-3xl font-semibold leading-wide tracking-tight text-black md:text-4xl">
+        <h1 className="text-3xl font-semibold leading-wide tracking-tight text-foreground md:text-4xl">
           Create an account
         </h1>
       </div>
@@ -94,7 +94,7 @@ export const RegisterForm = () => {
           error={getFormikError(formik, 'passwordConfirm')}
         />
         <div className="flex text-xs  flex-col space-y-5 items-center justify-between">
-          <div className="text-sm text-black text-center">
+          <div className="text-sm text-foreground text-center">
             Already have an account?{' '}
             <Link to={RouteNames.Login} className="font-medium  underline">
               Log in

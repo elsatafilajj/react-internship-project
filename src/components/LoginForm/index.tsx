@@ -44,7 +44,7 @@ export const LoginForm = () => {
   return (
     <>
       <div className="flex items-center flex-col justify-center">
-        <h1 className="text-3xl font-semibold leading-wide tracking-tight text-black md:text-4xl">
+        <h1 className="text-3xl font-semibold leading-wide tracking-tight text-foreground md:text-4xl">
           Log in
         </h1>
       </div>
@@ -72,7 +72,7 @@ export const LoginForm = () => {
         <div className="flex text-sm flex-col space-y-5 items-center justify-between">
           <Link
             to={RouteNames.ForgotPassword}
-            className="font-medium text-black underline"
+            className="font-medium text-foreground underline"
           >
             Forgot your password?
           </Link>
@@ -83,11 +83,11 @@ export const LoginForm = () => {
           >
             Log In
           </Button>
-          <p>
+          <p className="text-foreground">
             Dont have an account?{' '}
             <Link
               to={RouteNames.Register}
-              className="font-medium text-black underline"
+              className="font-medium text-foreground underline"
             >
               Create one
             </Link>
