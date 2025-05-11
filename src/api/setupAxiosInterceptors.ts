@@ -1,6 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import toast from 'react-hot-toast';
 
+import { apiRequest } from '@/api/Api';
 import { AuthContextType } from '@/context/AuthContext/AuthContext';
 
 type FailedRequest = {
@@ -29,7 +30,10 @@ const processQueue = (
   failedQueue = [];
 };
 
-export const setupAxiosInterceptors = (logout: AuthContextType['logout']) => {
+export const setupAxiosInterceptors = (
+  logout: AuthContextType['logout'],
+  updateTokens: AuthContextType['updateTokens'],
+) => {
   const authMiddleware = axios.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       const accessToken = localStorage.getItem('accessToken');
@@ -47,6 +51,7 @@ export const setupAxiosInterceptors = (logout: AuthContextType['logout']) => {
       const originalRequest = error.config as CustomAxiosRequestConfig;
 
       const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) return toast.error('Refresh token is missing');
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
@@ -55,10 +60,10 @@ export const setupAxiosInterceptors = (logout: AuthContextType['logout']) => {
           return new Promise<string>((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           })
-            .then((refreshToken) => {
+            .then((newAccessToken) => {
               if (originalRequest.headers) {
                 originalRequest.headers['Authorization'] =
-                  `Bearer ${refreshToken}`;
+                  `Bearer ${newAccessToken}`;
               }
               return axios(originalRequest);
             })
@@ -68,15 +73,22 @@ export const setupAxiosInterceptors = (logout: AuthContextType['logout']) => {
         isRefreshing = true;
 
         try {
-          const response = await axios.post<{
-            accessToken: string;
-            refreshToken: string;
-          }>(`${import.meta.env.VITE_API_URL}/auth/refresh-token`, {
-            refreshToken,
+          const response = await apiRequest<
+            { refreshToken: string },
+            {
+              accessToken: string;
+              refreshToken: string;
+            }
+          >({
+            method: 'POST',
+            url: 'auth/refresh-token',
+            data: { refreshToken },
           });
 
-          localStorage.setItem('accessToken', response.data.accessToken);
-          localStorage.setItem('refreshToken', response.data.refreshToken);
+          updateTokens({
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+          });
 
           const newAccessToken = response.data.accessToken;
           localStorage.setItem('accessToken', newAccessToken);
