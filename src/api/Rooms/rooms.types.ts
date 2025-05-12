@@ -1,9 +1,10 @@
 export interface Room {
-  id: string;
-  name: string;
-  description: string;
+  uuid: string;
+  name?: string;
+  description?: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 export interface CreateRoomInput {

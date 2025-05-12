@@ -1,5 +1,9 @@
-import { apiRequest } from '../Api';
-import { Room, CreateRoomInput, UpdateRoomInput } from './rooms.types';
+import { apiRequest } from '@/api/Api/apiRequest';
+import {
+  Room,
+  CreateRoomInput,
+  UpdateRoomInput,
+} from '@/api/Rooms/rooms.types';
 
 export const getAllRooms = async () => {
   return apiRequest<undefined, Room[]>({
@@ -9,7 +13,7 @@ export const getAllRooms = async () => {
 };
 
 export const getRoomById = async (roomId: string) => {
-  return apiRequest<undefined, Room[]>({
+  return apiRequest<undefined, Room>({
     method: 'GET',
     url: `rooms/${roomId}`,
   });
@@ -25,14 +29,14 @@ export const createRoom = async (data: CreateRoomInput) => {
 
 export const updateRoom = async (roomId: string, data: UpdateRoomInput) => {
   return apiRequest<UpdateRoomInput, Room>({
-    method: 'PUT',
+    method: 'PATCH',
     url: `rooms/${roomId}`,
     data,
   });
 };
 
 export const deleteRoom = async (roomId: string) => {
-  return apiRequest<undefined, undefined>({
+  return apiRequest<undefined, { success: boolean; message: string }>({
     method: 'DELETE',
     url: `rooms/${roomId}`,
   });
