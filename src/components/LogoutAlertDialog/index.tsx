@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
-export const LogoutAlert = () => {
+export const LogoutAlertDialog = () => {
   const { logout } = useAuthContext();
 
   const logoutMutation = useMutation({

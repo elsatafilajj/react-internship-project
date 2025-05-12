@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import logoImg from '@/assets/images/logo-full.svg';
 import logoIcon from '@/assets/images/logo-small.svg';
-import { LogoutAlert } from '@/components/LogoutAlert';
+import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -87,7 +87,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
             </Link>
             <DropdownMenu>
               <DropdownMenuItem>
-                <LogoutAlert />
+                <LogoutAlertDialog />
               </DropdownMenuItem>
             </DropdownMenu>
           </DropdownMenuContent>
