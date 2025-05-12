@@ -1,4 +1,4 @@
-import { apiRequest } from '@/api/Api/apiRequest';
+import { apiRequest } from '@/api/Api';
 import {
   Room,
   CreateRoomInput,
@@ -6,7 +6,7 @@ import {
 } from '@/api/Rooms/rooms.types';
 
 export const getAllRooms = async () => {
-  return apiRequest<undefined, Room>({
+  return apiRequest<undefined, Room[]>({
     method: 'GET',
     url: 'rooms',
   });
