@@ -5,83 +5,105 @@ import {
   Settings,
   LogOut,
   Plus,
+  PanelLeftClose,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 
-export const Sidebar = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   return (
-    <aside className="w-56 bg-white border-r border-gray-200 p-4 flex flex-col justify-between text-sm">
-      <nav className="space-y-2">
-        <Button
-          variant="ghost"
-          className="w-full justify-start font-medium"
-          asChild
-        >
-          <Link to="/sessions">
-            <Home className="mr-2 h-4 w-4" />
-            My Sessions
-          </Link>
-        </Button>
+    <>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/30 z-40" onClick={onClose} />
+      )}
 
-        <Button
-          variant="default"
-          className="w-full justify-start bg-primary hover:bg-[#28d49b] text-black font-medium"
-          asChild
-        >
-          <Link to="/sessions/new">
-            <Plus className="mr-2 h-4 w-4" />
-            New Session
-          </Link>
-        </Button>
+      <aside
+        className={`fixed top-0 left-0 h-full w-56 bg-white border-r border-gray-200 p-4 flex flex-col text-sm z-50 transition-transform duration-300 transform ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex justify-end">
+          <Button variant="ghost" onClick={onClose}>
+            <PanelLeftClose />
+          </Button>
+        </div>
 
-        <Button
-          variant="ghost"
-          className="w-full justify-start font-medium"
-          asChild
-        >
-          <Link to="/favorites">
-            <Star className="mr-2 h-4 w-4" />
-            Favorites
-          </Link>
-        </Button>
+        <nav className="space-y-2 flex-1 mt-2">
+          <Button
+            variant="ghost"
+            className="w-full justify-start font-medium"
+            asChild
+          >
+            <Link to="/boards">
+              <Home className="mr-2 h-4 w-4" />
+              My Boards
+            </Link>
+          </Button>
 
-        <Button
-          variant="ghost"
-          className="w-full justify-start font-medium"
-          asChild
-        >
-          <Link to="/archived">
-            <FolderArchive className="mr-2 h-4 w-4" />
-            Archived
-          </Link>
-        </Button>
+          <Button
+            variant="default"
+            className="w-full justify-start bg-primary hover:bg-[#28d49b] text-black font-medium"
+            asChild
+          >
+            <Link to="/sessions/new">
+              <Plus className="mr-2 h-4 w-4" />
+              New Board
+            </Link>
+          </Button>
 
-        <Button
-          variant="ghost"
-          className="w-full justify-start font-medium"
-          asChild
-        >
-          <Link to="/settings">
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Link>
-        </Button>
-      </nav>
+          <Button
+            variant="ghost"
+            className="w-full justify-start font-medium"
+            asChild
+          >
+            <Link to="/favorites">
+              <Star className="mr-2 h-4 w-4" />
+              Favorites
+            </Link>
+          </Button>
 
-      <div>
-        <Button
-          variant="ghost"
-          className="w-full justify-start font-medium"
-          asChild
-        >
-          <Link to="/logout">
-            <LogOut className="mr-2 h-4 w-4 " />
-            Logout
-          </Link>
-        </Button>
-      </div>
-    </aside>
+          <Button
+            variant="ghost"
+            className="w-full justify-start font-medium"
+            asChild
+          >
+            <Link to="/archived">
+              <FolderArchive className="mr-2 h-4 w-4" />
+              Archived
+            </Link>
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full justify-start font-medium"
+            asChild
+          >
+            <Link to="/settings">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Link>
+          </Button>
+        </nav>
+
+        <div className="mt-auto">
+          <Button
+            variant="ghost"
+            className="w-full justify-start font-medium"
+            asChild
+          >
+            <Link to="/logout">
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Link>
+          </Button>
+        </div>
+      </aside>
+    </>
   );
 };

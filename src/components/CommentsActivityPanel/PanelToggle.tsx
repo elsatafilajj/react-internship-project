@@ -1,10 +1,10 @@
 import { MessageSquare } from 'lucide-react';
 
-import { CommentsActivityPanel } from '@/components/CommentsActivityPanel/CommentsActivityPanel';
+import { CommentsActivityPanel } from '@/components/CommentsActivityPanel';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
-export const CommentsActivityPanelToggle = () => {
+export const PanelToggle = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
