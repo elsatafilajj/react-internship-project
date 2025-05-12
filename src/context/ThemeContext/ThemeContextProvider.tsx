@@ -1,13 +1,10 @@
 import { useEffect, useState, ReactNode } from 'react';
 
-import { ThemeContext, ThemeMode } from './ThemeContext';
+import { ThemeContext, ThemeContextType, ThemeMode } from './ThemeContext';
 
 interface ThemeContextProviderProps {
   children: ReactNode;
 }
-
-const getSystemTheme = (): ThemeMode =>
-  window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
 const getInitialTheme = (): ThemeMode => {
   if (typeof window === 'undefined') return 'light';
@@ -17,8 +14,12 @@ const getInitialTheme = (): ThemeMode => {
     return storedTheme;
   }
 
-  const systemTheme = getSystemTheme();
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+
   localStorage.setItem('theme', systemTheme);
+
   return systemTheme;
 };
 
@@ -34,8 +35,10 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
     localStorage.setItem('theme', newTheme);
   };
 
+  const themeContext: ThemeContextType = { theme, changeTheme };
+
   return (
-    <ThemeContext.Provider value={{ theme, changeTheme }}>
+    <ThemeContext.Provider value={themeContext}>
       {children}
     </ThemeContext.Provider>
   );
