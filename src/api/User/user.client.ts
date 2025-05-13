@@ -7,6 +7,8 @@ import {
   SetPasswordResponse,
   LoginResponse,
   ChangePasswordInput,
+  RefreshTokenPayload,
+  RefreshTokenResponse,
 } from './user.types';
 
 export const login = async (data: LoginInput) =>
@@ -33,24 +35,21 @@ export const logout = async () => {
 export const forgotPassword = async ({ email }: { email: string }) =>
   apiRequest<{ email: string }, { result: boolean }>({
     method: 'POST',
-    url: 'user/forgot',
+    url: 'users/forgot',
     data: { email },
   });
 
 export const resetPassword = async (data: SetPasswordInput, token: string) =>
   apiRequest<SetPasswordInput, SetPasswordResponse>({
     method: 'POST',
-    url: `auth/reset-password`,
+    url: `users/reset/${token}`,
     data,
-    params: {
-      token,
-    },
   });
 
 export const editProfile = async (data: Partial<User>) => {
   return apiRequest<Partial<User>, User>({
     method: 'PATCH',
-    url: 'user/me',
+    url: 'users/me',
     data,
   });
 };
@@ -63,5 +62,17 @@ export const changePassword = async (data: ChangePasswordInput) => {
   });
 };
 
+export const refreshTokenApi = async ({
+  refreshToken,
+}: {
+  refreshToken: string;
+}) => {
+  return apiRequest<RefreshTokenPayload, RefreshTokenResponse>({
+    method: 'POST',
+    url: 'auth/refresh-token',
+    data: { refreshToken },
+  });
+};
+
 export const getUserDetails = async () =>
-  apiRequest<undefined, User>({ method: 'GET', url: 'user/me' });
+  apiRequest<undefined, User>({ method: 'GET', url: 'users/me' });

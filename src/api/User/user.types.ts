@@ -46,8 +46,8 @@ export interface LoginInput {
 }
 
 export interface SetPasswordInput {
-  new_password: string;
-  confirm_password: string;
+  password: string;
+  passwordConfirm: string;
 }
 
 export interface SetPasswordResponse {
@@ -58,4 +58,13 @@ export interface ChangePasswordInput {
   password: string;
   passwordConfirm: string;
   oldPassword: string;
+}
+
+export interface RefreshTokenPayload {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
 }
