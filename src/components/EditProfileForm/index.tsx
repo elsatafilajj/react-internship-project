@@ -1,4 +1,3 @@
-import { TabsContent } from '@radix-ui/react-tabs';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
@@ -43,10 +42,9 @@ export const EditProfileForm = () => {
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        const valuesToChange = { ...values };
-        delete valuesToChange.email;
+        delete values.email;
 
-        await editProfileMutation.mutateAsync(valuesToChange);
+        await editProfileMutation.mutateAsync(values);
         formikHelpers.resetForm();
       } catch (error) {
         console.error('Edit Profile failed!', error);
@@ -55,57 +53,59 @@ export const EditProfileForm = () => {
   });
 
   return (
-    <TabsContent value="account">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>Edit Profile</CardTitle>
-          <CardDescription>Update your personal information</CardDescription>
-        </CardHeader>
-        <div className="flex flex-col items-center gap-4">
-          <Avatar className="h-20 w-20 border-2 border-primary">
-            <AvatarImage src="/placeholder-user.jpg" alt="Profile Picture" />
-            <AvatarFallback>{user?.firstName[0]}</AvatarFallback>
-          </Avatar>
-        </div>
-        <form onSubmit={formikProfile.handleSubmit}>
-          <CardContent className="space-y-4">
-            <Input
-              id="firstName"
-              name="firstName"
-              placeholder="First Name"
-              value={formikProfile.values.firstName}
-              onChange={formikProfile.handleChange}
-              error={getFormikError(formikProfile, 'firstName')}
-              onBlur={formikProfile.handleBlur}
-            />
-            <Input
-              id="lastName"
-              name="lastName"
-              placeholder="Last Name"
-              value={formikProfile.values.lastName}
-              onChange={formikProfile.handleChange}
-              error={getFormikError(formikProfile, 'lastName')}
-              onBlur={formikProfile.handleBlur}
-            />
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Email"
-              value={formikProfile.values.email}
-              error={getFormikError(formikProfile, 'email')}
-              onChange={formikProfile.handleChange}
-              onBlur={formikProfile.handleBlur}
-              disabled
-            />
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" className="mt-8">
-              {formikProfile.isSubmitting ? 'Saving...' : 'Save changes'}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-    </TabsContent>
+    <Card>
+      <CardHeader className="text-center">
+        <CardTitle>Edit Profile</CardTitle>
+        <CardDescription>Update your personal information</CardDescription>
+      </CardHeader>
+      <div className="flex flex-col items-center gap-4">
+        <Avatar className="h-20 w-20 border-2 border-primary">
+          <AvatarImage src="/placeholder-user.jpg" alt="Profile Picture" />
+          <AvatarFallback>{user?.firstName[0]}</AvatarFallback>
+        </Avatar>
+      </div>
+      <form onSubmit={formikProfile.handleSubmit}>
+        <CardContent className="space-y-4">
+          <Input
+            id="firstName"
+            name="firstName"
+            placeholder="First Name"
+            value={formikProfile.values.firstName}
+            onChange={formikProfile.handleChange}
+            error={getFormikError(formikProfile, 'firstName')}
+            onBlur={formikProfile.handleBlur}
+          />
+          <Input
+            id="lastName"
+            name="lastName"
+            placeholder="Last Name"
+            value={formikProfile.values.lastName}
+            onChange={formikProfile.handleChange}
+            error={getFormikError(formikProfile, 'lastName')}
+            onBlur={formikProfile.handleBlur}
+          />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formikProfile.values.email}
+            error={getFormikError(formikProfile, 'email')}
+            onChange={formikProfile.handleChange}
+            onBlur={formikProfile.handleBlur}
+            disabled
+          />
+        </CardContent>
+        <CardFooter>
+          <Button
+            type="submit"
+            className="mt-8"
+            disabled={formikProfile.isSubmitting}
+          >
+            {formikProfile.isSubmitting ? 'Saving...' : 'Save changes'}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
   );
 };

@@ -1,3 +1,5 @@
+import { TabsContent } from '@radix-ui/react-tabs';
+
 import { ChangePasswordForm } from '@/components/ChangePasswordForm';
 import { EditProfileForm } from '@/components/EditProfileForm';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,9 +12,12 @@ export const Profile = () => {
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
-
-        <EditProfileForm />
-        <ChangePasswordForm />
+        <TabsContent value="account">
+          <EditProfileForm />
+        </TabsContent>
+        <TabsContent value="password">
+          <ChangePasswordForm />
+        </TabsContent>
       </Tabs>
     </div>
   );
