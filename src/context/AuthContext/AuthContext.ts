@@ -3,21 +3,18 @@ import { createContext, useContext } from 'react';
 import { User } from '@/api/User/user.types';
 import { emptyFunction } from '@/helpers/emptyFunction';
 
+interface SetUserProps {
+  user?: User;
+  accessToken?: string;
+  refreshToken?: string;
+}
 export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user?: User;
-  setUser: ({
-    user,
-    accessToken,
-    refreshToken,
-  }: {
-    user: User;
-    accessToken?: string;
-    refreshToken?: string;
-  }) => void;
+  setUser: ({ user, accessToken, refreshToken }: SetUserProps) => void;
   logout: () => void;
-  updateTokens: (tokens: { accessToken: string; refreshToken: string }) => void;
+  updateUser: (tokens: { accessToken: string; refreshToken: string }) => void;
 }
 
 const AuthContextValues: AuthContextType = {
@@ -26,7 +23,7 @@ const AuthContextValues: AuthContextType = {
   user: undefined,
   setUser: emptyFunction,
   logout: emptyFunction,
-  updateTokens: emptyFunction,
+  updateUser: emptyFunction,
 };
 
 export const AuthContext = createContext(AuthContextValues);

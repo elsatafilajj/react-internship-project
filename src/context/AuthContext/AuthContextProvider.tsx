@@ -15,7 +15,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [user, setUser] = useState<User | undefined>(undefined);
 
   useEffect(() => {
-    const axiosInterceptor = setupAxiosInterceptors(logout, updateTokens);
+    const axiosInterceptor = setupAxiosInterceptors(logout, updateUser);
 
     return () => {
       axiosInterceptor();
@@ -48,7 +48,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     accessToken,
     refreshToken,
   }: {
-    user: User;
+    user?: User;
     accessToken?: string;
     refreshToken?: string;
   }) => {
@@ -59,17 +59,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     setUser(user);
   };
 
-  const updateTokens = ({
-    accessToken,
-    refreshToken,
-  }: {
-    accessToken: string;
-    refreshToken: string;
-  }) => {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-  };
-
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -78,7 +67,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const context: AuthContextType = {
     isAuthenticated: !!user,
-    updateTokens,
+    updateUser,
     isLoading,
     setUser: updateUser,
     logout,

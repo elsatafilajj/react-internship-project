@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import toast from 'react-hot-toast';
 
-import { apiRequest } from '@/api/Api';
+import { refreshTokenApi } from '@/api/User/user.client';
 import { AuthContextType } from '@/context/AuthContext/AuthContext';
 
 type FailedRequest = {
@@ -32,7 +32,7 @@ const processQueue = (
 
 export const setupAxiosInterceptors = (
   logout: AuthContextType['logout'],
-  updateTokens: AuthContextType['updateTokens'],
+  updateUser: AuthContextType['updateUser'],
 ) => {
   const authMiddleware = axios.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
@@ -46,69 +46,43 @@ export const setupAxiosInterceptors = (
   );
 
   const responseMiddleware = axios.interceptors.response.use(
-    (response) => response,
+    async (response) => {
+      return response;
+    },
     async (error: AxiosError) => {
       const originalRequest = error.config as CustomAxiosRequestConfig;
 
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) return toast.error('Refresh token is missing');
-
       if (error.response?.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
-
         if (isRefreshing) {
-          return new Promise<string>((resolve, reject) => {
+          return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
-          })
-            .then((newAccessToken) => {
-              if (originalRequest.headers) {
-                originalRequest.headers['Authorization'] =
-                  `Bearer ${newAccessToken}`;
-              }
-              return axios(originalRequest);
-            })
-            .catch((err) => Promise.reject(err));
+          });
         }
 
+        originalRequest._retry = true;
         isRefreshing = true;
 
         try {
-          const response = await apiRequest<
-            { refreshToken: string },
-            {
-              accessToken: string;
-              refreshToken: string;
-            }
-          >({
-            method: 'POST',
-            url: 'auth/refresh-token',
-            data: { refreshToken },
-          });
+          const refreshToken = localStorage.getItem('refreshToken');
 
-          updateTokens({
+          if (!refreshToken) {
+            throw new Error('Your session has expired.');
+          }
+
+          const response = await refreshTokenApi({ refreshToken });
+
+          updateUser({
             accessToken: response.data.accessToken,
             refreshToken: response.data.refreshToken,
           });
 
-          const newAccessToken = response.data.accessToken;
-          localStorage.setItem('accessToken', newAccessToken);
-
-          axios.defaults.headers.common['Authorization'] =
-            `Bearer ${newAccessToken}`;
-          processQueue(null, newAccessToken);
-
-          if (originalRequest.headers) {
-            originalRequest.headers['Authorization'] =
-              `Bearer ${newAccessToken}`;
-          }
+          processQueue(null, response.data.accessToken);
 
           return axios(originalRequest);
         } catch (err) {
           processQueue(err as AxiosError, null);
           logout();
-          toast.error('Your session has expired. Please sign in again.', {
-            id: 'unauthorized',
-          });
+          toast.error('Your session has expired. Please sign in again.');
           return Promise.reject(err);
         } finally {
           isRefreshing = false;
