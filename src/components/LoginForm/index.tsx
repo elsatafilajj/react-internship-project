@@ -12,13 +12,13 @@ import { useForm } from '@/hooks/useForm';
 import { LoginSchema } from '@/schemas/LoginSchema';
 
 export const LoginForm = () => {
-  const { setUser } = useAuthContext();
+  const { setAuthState } = useAuthContext();
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       toast.success('Login successful!');
-      setUser({
+      setAuthState({
         user: data.data.user,
         accessToken: data.data.accessToken,
         refreshToken: data.data.refreshToken,

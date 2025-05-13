@@ -32,7 +32,7 @@ const processQueue = (
 
 export const setupAxiosInterceptors = (
   logout: AuthContextType['logout'],
-  updateUser: AuthContextType['updateUser'],
+  setAuthState: AuthContextType['setAuthState'],
 ) => {
   const authMiddleware = axios.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
@@ -71,7 +71,7 @@ export const setupAxiosInterceptors = (
 
           const response = await refreshTokenApi({ refreshToken });
 
-          updateUser({
+          setAuthState({
             accessToken: response.data.accessToken,
             refreshToken: response.data.refreshToken,
           });
