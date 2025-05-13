@@ -7,6 +7,8 @@ import {
   SetPasswordResponse,
   LoginResponse,
   ChangePasswordInput,
+  RefreshTokenPayload,
+  RefreshTokenResponse,
 } from './user.types';
 
 export const login = async (data: LoginInput) =>
@@ -57,6 +59,18 @@ export const changePassword = async (data: ChangePasswordInput) => {
     method: 'PATCH',
     url: 'users/change-password',
     data,
+  });
+};
+
+export const refreshTokenApi = async ({
+  refreshToken,
+}: {
+  refreshToken: string;
+}) => {
+  return apiRequest<RefreshTokenPayload, RefreshTokenResponse>({
+    method: 'POST',
+    url: 'auth/refresh-token',
+    data: { refreshToken },
   });
 };
 
