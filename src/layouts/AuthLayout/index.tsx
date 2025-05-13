@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-import { LogoFullIcon } from '@/assets/icons/general/LogoFull';
+import { LogoFullIcon } from '@/components/CustomLogo/LogoFull';
 import { RouteWrapper } from '@/routes/RouteWrapper';
 
 export const AuthLayout = () => {
