@@ -44,7 +44,7 @@ export const EditProfileForm = () => {
     onSubmit: async (values, formikHelpers) => {
       try {
         const valuesToChange = { ...values };
-        delete values.email;
+        delete valuesToChange.email;
 
         await editProfileMutation.mutateAsync(valuesToChange);
         formikHelpers.resetForm();
