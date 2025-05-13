@@ -1,6 +1,6 @@
-export type Root = Root2[];
+export type UserRoomList = UserRoom[];
 
-export interface Root2 {
+export interface UserRoom {
   room: Room;
   role: string;
 }

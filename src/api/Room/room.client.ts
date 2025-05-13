@@ -1,9 +1,14 @@
 import { apiRequest } from '@/api/Api';
 
-import { Room, CreateRoomInput, UpdateRoomInput, Root } from './room.types';
+import {
+  Room,
+  CreateRoomInput,
+  UpdateRoomInput,
+  UserRoomList,
+} from './room.types';
 
-export const getAllRooms = async (): Promise<Root> => {
-  const response = await apiRequest<undefined, Root>({
+export const getAllRooms = async (): Promise<UserRoomList> => {
+  const response = await apiRequest<undefined, UserRoomList>({
     method: 'GET',
     url: 'rooms',
   });
