@@ -5,8 +5,8 @@ import { emptyFunction } from '@/helpers/emptyFunction';
 
 interface SetAuthStateProps {
   user?: User;
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 export interface AuthContextType {
   isAuthenticated: boolean;
