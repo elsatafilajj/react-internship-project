@@ -3,6 +3,7 @@ import { createBrowserRouter, RouteObject } from 'react-router-dom';
 import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
+import { Board } from '@/pages/Board';
 import { Dashboard } from '@/pages/Dashboard';
 import { Error404 } from '@/pages/Error404';
 import { ForgotPassword } from '@/pages/ForgotPassword';
@@ -22,13 +23,17 @@ export const appRoutes: RouteObject[] = [
     ],
   },
   {
-    path: RouteNames.Dashboard,
+    path: RouteNames.Board,
     element: <MainLayout />,
     children: [
-      { index: true, element: <Dashboard /> },
+      { index: true, element: <Board /> },
       {
         path: RouteNames.Profile,
         element: <Profile />,
+      },
+      {
+        path: RouteNames.Dashboard,
+        element: <Dashboard />,
       },
     ],
   },

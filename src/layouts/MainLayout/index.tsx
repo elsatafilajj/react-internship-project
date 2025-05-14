@@ -8,7 +8,7 @@ export const MainLayout = () => {
     <RouteWrapper>
       <Header />
 
-      <div className="bg-gradient-to-b from-background to-white dark:bg-gray-100">
+      <div className="h-screen">
         <Outlet />
       </div>
     </RouteWrapper>

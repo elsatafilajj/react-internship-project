@@ -1,7 +1,7 @@
 export enum RouteNames {
-  Dashboard = '/',
-  Profile = '/profile',
-
+  Dashboard = 'dashboard',
+  Profile = 'profile',
+  Board = '/rooms',
   Login = '/login',
   Register = '/register',
   ForgotPassword = '/forgot-password',

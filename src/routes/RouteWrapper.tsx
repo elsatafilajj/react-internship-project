@@ -27,7 +27,7 @@ export const RouteWrapper = ({
   }
 
   if (isAuthenticated && isAuthenticationPage) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/rooms" replace />;
   }
 
   if (!isAuthenticated && !isAuthenticationPage) {
@@ -35,7 +35,7 @@ export const RouteWrapper = ({
   }
 
   if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/rooms" replace />;
   }
 
   return <>{children}</>;
