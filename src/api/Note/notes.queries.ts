@@ -1,14 +1,14 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { GetAllNotesFromRoom } from '@/api/Note/note.client';
-import { NoteList, NoteItem } from '@/api/Note/note.types';
+import { NoteItem } from '@/api/Note/note.types';
 import { queryKeys } from '@/constants/queryKeys';
 
 export const useGetAllNotesFromRoomQuery = (
   roomId: string,
-  options?: UseQueryOptions<NoteList>,
+  options?: UseQueryOptions<NoteItem[]>,
 ) => {
-  return useQuery<NoteList>({
+  return useQuery<NoteItem[]>({
     queryKey: queryKeys.getNotesByRoomId(roomId),
     queryFn: () => GetAllNotesFromRoom(roomId),
     enabled: !!roomId,

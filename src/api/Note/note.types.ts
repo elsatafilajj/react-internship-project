@@ -1,4 +1,3 @@
-export type NoteList = NoteItem[];
 export interface NoteItem {
   uuid: string;
   createdAt: string;
@@ -45,14 +44,3 @@ export interface UpdateNoteInput {
   xAxis?: number;
   yAxis?: number;
 }
-
-export interface AddVoteToNoteInput {
-  noteId: string;
-}
-
-export interface RemoveVoteFromNoteInput {
-  noteId: string;
-}
-
-export type AddVoteToNote = boolean;
-export type RemoveVoteFromNote = boolean;
