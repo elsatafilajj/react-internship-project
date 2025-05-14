@@ -38,7 +38,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to="/boards">
+            <Link to="/rooms">
               <Home className="mr-2 h-4 w-4" />
               My Boards
             </Link>
