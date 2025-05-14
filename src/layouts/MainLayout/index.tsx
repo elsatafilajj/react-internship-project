@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 
 import { PanelToggle } from '@/components/CommentsActivityPanel/PanelToggle';
 import { Header } from '@/components/Header';
-
 import { Sidebar } from '@/components/Sidebar';
 import { ToolPalette } from '@/components/ToolPalette';
 import { RouteWrapper } from '@/routes/RouteWrapper';
@@ -13,7 +12,7 @@ export const MainLayout = () => {
 
   return (
     <RouteWrapper>
-      <div className="flex min-h-screen bg-muted text-muted-foreground relative">
+      <div className="flex min-h-screen text-muted-foreground relative">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         <div className="flex flex-col flex-1">

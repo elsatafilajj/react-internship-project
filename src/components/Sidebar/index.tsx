@@ -28,13 +28,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex justify-end">
-          <Button variant="ghost" onClick={onClose}>
-            <PanelLeftClose />
-          </Button>
-        </div>
+        <button onClick={onClose} className="absolute top-3 right-3">
+          <PanelLeftClose className="h-4 w-4" />
+        </button>
 
-        <nav className="space-y-2 flex-1 mt-2">
+        <nav className="space-y-2 flex-1 mt-4">
           <Button
             variant="ghost"
             className="w-full justify-start font-medium"

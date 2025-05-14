@@ -19,7 +19,7 @@ export const PanelToggle = () => {
 
       <SheetContent
         side="right"
-        className="w-80 mt-[72px] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 bg-white overflow-y-auto"
+        className="w-80 mt-[100px] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 bg-white overflow-y-auto"
       >
         <CommentsActivityPanel />
       </SheetContent>

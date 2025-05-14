@@ -5,8 +5,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 export const CommentsActivityPanel = () => {
   return (
-    <aside className="w-full bg-white text-black flex flex-col">
-      <Tabs defaultValue="comments" className="flex flex-col flex-1">
+    <aside className="w-full h-screen text-black flex flex-col">
+      <Tabs defaultValue="comments" className="flex flex-col flex-1 ">
         <TabsList className="grid grid-cols-2 border-b border-gray-200">
           <TabsTrigger
             value="comments"
