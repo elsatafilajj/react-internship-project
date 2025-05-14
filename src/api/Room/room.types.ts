@@ -1,6 +1,4 @@
-export type UserRoomList = UserRoom[];
-
-export interface UserRoom {
+export interface RoomWithRole {
   room: Room;
   role: string;
 }

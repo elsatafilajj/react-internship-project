@@ -1,13 +1,13 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { getAllRooms, getRoomById } from '@/api/Room/room.client';
-import { UserRoomList, Room } from '@/api/Room/room.types';
+import { Room, RoomWithRole } from '@/api/Room/room.types';
 import { queryKeys } from '@/constants/queryKeys';
 
 export const useGetAllRoomsQuery = (
-  options?: UseQueryOptions<UserRoomList>,
+  options?: UseQueryOptions<RoomWithRole[]>,
 ) => {
-  return useQuery<UserRoomList>({
+  return useQuery<RoomWithRole[]>({
     queryKey: queryKeys.getRooms(),
     queryFn: getAllRooms,
     ...options,
