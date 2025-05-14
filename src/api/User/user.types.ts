@@ -59,3 +59,12 @@ export interface ChangePasswordInput {
   passwordConfirm: string;
   oldPassword: string;
 }
+
+export interface RefreshTokenPayload {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}

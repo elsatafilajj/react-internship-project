@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import { PanelToggle } from '@/components/CommentsActivityPanel/PanelToggle';
 import { Header } from '@/components/Header';
+
 import { Sidebar } from '@/components/Sidebar';
 import { ToolPalette } from '@/components/ToolPalette';
 import { RouteWrapper } from '@/routes/RouteWrapper';

@@ -58,7 +58,7 @@ export const ForgotPasswordForm = () => {
         </div>
       ) : (
         <div>
-          <h2 className="text-[16px] text-black mb-8">
+          <h2 className="text-[16px] text-foreground mb-8">
             Enter you email and we'll send you a link to reset your password
           </h2>
 
@@ -73,7 +73,7 @@ export const ForgotPasswordForm = () => {
               error={getFormikError(formik, 'email')}
             />
 
-            <p className="text-sm text-center text-black ">
+            <p className="text-sm text-center text-foreground ">
               Go back to{' '}
               <Link to={RouteNames.Login} className="font-medium underline">
                 Login
