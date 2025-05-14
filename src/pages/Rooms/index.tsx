@@ -20,12 +20,13 @@ export const Rooms = () => {
 
   return (
     <div className="px-4 py-8 max-w-8xl rounded-3xl mx-auto">
+      <h1 className="flex justify-center">Active Rooms</h1>
       <div className="grid gap-6 m-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {data?.map((roomData) => (
           <Room
             key={roomData.room.id}
             title={roomData.room.title}
-            createdAt={roomData.room.createdAt}
+            updatedAt={roomData.room.updatedAt}
           />
         ))}
       </div>

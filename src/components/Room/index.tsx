@@ -2,10 +2,10 @@ import { StickyNote } from 'lucide-react';
 
 interface RoomProps {
   title: string;
-  createdAt: string;
+  updatedAt: string;
 }
 
-export const Room = ({ title, createdAt }: RoomProps) => {
+export const Room = ({ title, updatedAt }: RoomProps) => {
   return (
     <div className="w-full max-w-sm rounded-3xl border shadow-lg bg-white">
       <div className="h-[150px] bg-gray-100 flex items-center rounded-t-3xl justify-center">
@@ -13,12 +13,12 @@ export const Room = ({ title, createdAt }: RoomProps) => {
       </div>
 
       <div className="flex items-start gap-2 p-4">
-        <StickyNote className="text-primary w-6 h-6 mt-1" />
-        <div className="text-gray-800">
-          <p className="font-semibold text-lg">{title}</p>
-          <p className="text-sm text-gray-500">
-            Created at:{' '}
-            {new Date(createdAt).toLocaleDateString('en-GB').slice(0, 8)}
+        <StickyNote className="text-primary w-5 h-5 mt-1" />
+        <div className="text-gray-800 flex flex-col">
+          <p className="font-bold text-xl">{title}</p>
+          <p className="text-xs align-end text-gray-500">
+            Updated at:{' '}
+            {new Date(updatedAt).toLocaleDateString('en-GB').slice(0, 8)}
           </p>
         </div>
       </div>
