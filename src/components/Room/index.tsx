@@ -18,7 +18,7 @@ export const Room = ({ title, updatedAt }: RoomProps) => {
           <p className="font-bold text-xl">{title}</p>
           <p className="text-xs align-end text-gray-500">
             Updated at:{' '}
-            {new Date(updatedAt).toLocaleDateString('en-GB').slice(0, 8)}
+            {new Date(updatedAt).toLocaleDateString('en-GB').slice(0, 10)}
           </p>
         </div>
       </div>
