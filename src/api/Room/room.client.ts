@@ -1,5 +1,5 @@
 import { apiRequest } from '@/api/Api';
-import { DeleteResponse } from '@/components/shared/interfaces/DeleteResponse';
+import { DeleteResponse } from '@/types/interfaces/DeleteResponse';
 
 import {
   Room,
@@ -13,7 +13,7 @@ export const getAllRooms = async () => {
     method: 'GET',
     url: 'rooms',
   });
-  return response.data;
+  return response;
 };
 
 export const getRoomById = async (roomId: string) => {
@@ -21,7 +21,7 @@ export const getRoomById = async (roomId: string) => {
     method: 'GET',
     url: `rooms/${roomId}`,
   });
-  return response.data;
+  return response;
 };
 
 export const createRoom = async (data: CreateRoomInput) => {
@@ -30,7 +30,7 @@ export const createRoom = async (data: CreateRoomInput) => {
     url: 'rooms',
     data,
   });
-  return response.data;
+  return response;
 };
 
 export const updateRoom = async (roomId: string, data: UpdateRoomInput) => {
@@ -39,18 +39,15 @@ export const updateRoom = async (roomId: string, data: UpdateRoomInput) => {
     url: `rooms/${roomId}`,
     data,
   });
-  return response.data;
+  return response;
 };
 
-export const removeUserFromRoom = async (
-  roomId: string,
-  userId: string,
-): Promise<DeleteResponse> => {
+export const removeUserFromRoom = async (roomId: string, userId: string) => {
   const response = await apiRequest<undefined, DeleteResponse>({
     method: 'DELETE',
     url: `rooms/remove-user/${roomId}/${userId}`,
   });
-  return response.data;
+  return response;
 };
 
 export const joinRoom = async (roomId: string) => {
@@ -58,7 +55,7 @@ export const joinRoom = async (roomId: string) => {
     method: 'POST',
     url: `rooms/join/${roomId}`,
   });
-  return response.data;
+  return response;
 };
 
 export const leaveRoom = async (roomId: string) => {
@@ -66,5 +63,5 @@ export const leaveRoom = async (roomId: string) => {
     method: 'POST',
     url: `rooms/leave/${roomId}`,
   });
-  return response.data;
+  return response;
 };
