@@ -1,32 +1,31 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 
-import { GetAllNotesFromRoom } from '@/api/Note/note.client';
-import { NoteList, NoteItem } from '@/api/Note/note.types';
+import { getAllNotesFromRoom } from '@/api/Note/note.client';
+import { NoteItem } from '@/api/Note/note.types';
 import { queryKeys } from '@/constants/queryKeys';
 
 export const useGetAllNotesFromRoomQuery = (
   roomId: string,
-  options?: UseQueryOptions<NoteList>,
+  options?: UseQueryOptions<AxiosResponse<NoteItem[]>>,
 ) => {
-  return useQuery<NoteList>({
+  return useQuery<AxiosResponse<NoteItem[]>>({
     queryKey: queryKeys.getNotesByRoomId(roomId),
-    queryFn: () => GetAllNotesFromRoom(roomId),
+    queryFn: () => getAllNotesFromRoom(roomId),
     enabled: !!roomId,
     ...options,
   });
 };
 
 export const useGetNoteByIdQuery = (
+  roomId: string,
   noteId: string,
-  options?: UseQueryOptions<NoteItem>,
+  options?: UseQueryOptions<AxiosResponse<NoteItem[]>>,
 ) => {
-  return useQuery<NoteItem>({
-    queryKey: queryKeys.getSingleNote(noteId),
-    queryFn: async () => {
-      const allNotes = await GetAllNotesFromRoom('');
-      return allNotes.find((note) => note.uuid === noteId)!;
-    },
-    enabled: !!noteId,
+  return useQuery<AxiosResponse<NoteItem[]>>({
+    queryKey: queryKeys.getSingleNote(roomId, noteId),
+    queryFn: () => getAllNotesFromRoom(roomId),
+    enabled: !!roomId && !!noteId,
     ...options,
   });
 };
