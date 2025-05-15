@@ -1,5 +1,5 @@
 import { apiRequest } from '@/api/Api';
-import { DeleteResponse } from '@/types/interfaces/DeleteResponse';
+import { DeleteResponse } from '@/types/DeleteResponse';
 
 import {
   Room,
