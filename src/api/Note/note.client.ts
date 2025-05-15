@@ -45,18 +45,18 @@ export async function deleteNote(noteId: string): Promise<DeleteResponse> {
   return response.data;
 }
 
-export async function addVoteToNote(noteId: string): Promise<AddVoteToNote> {
-  const response = await apiRequest<undefined, AddVoteToNote>({
-    url: `notes/${noteId}/vote`,
-    method: 'POST',
-  });
-  return response.data;
-}
+// export async function addVoteToNote(noteId: string): Promise<AddVoteToNote> {
+//   const response = await apiRequest<undefined, AddVoteToNote>({
+//     url: `notes/${noteId}/vote`,
+//     method: 'POST',
+//   });
+//   return response.data;
+// }
 
-export async function removeVoteFromNote(noteId: string): Promise<boolean> {
-  const response = await apiRequest<undefined, boolean>({
-    url: `notes/${noteId}/vote`,
-    method: 'DELETE',
-  });
-  return response.data;
-}
+// export async function removeVoteFromNote(noteId: string): Promise<boolean> {
+//   const response = await apiRequest<undefined, boolean>({
+//     url: `notes/${noteId}/vote`,
+//     method: 'DELETE',
+//   });
+//   return response.data;
+// }

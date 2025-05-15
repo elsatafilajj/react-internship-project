@@ -46,12 +46,12 @@ export interface UpdateNoteInput {
   yAxis?: number;
 }
 
-export interface AddVoteToNoteInput {
-  noteId: string;
-}
+// export interface AddVoteToNoteInput {
+//   noteId: string;
+// }
 
-export interface RemoveVoteFromNoteInput {
-  noteId: string;
-}
+// export interface RemoveVoteFromNoteInput {
+//   noteId: string;
+// }
 
-export type AddVoteToNote = boolean;
+// export type AddVoteToNote = boolean;
