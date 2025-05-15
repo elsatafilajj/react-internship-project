@@ -1,3 +1,5 @@
+import { Room } from '@/api/Room/room.types';
+
 export interface NoteItem {
   uuid: string;
   createdAt: string;
@@ -9,16 +11,6 @@ export interface NoteItem {
   totalVotes: number;
   xAxis: number;
   yAxis: number;
-}
-
-export interface Room {
-  uuid: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  title: string;
-  slug: string;
-  isActive: string;
 }
 
 export interface Author {
