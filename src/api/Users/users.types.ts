@@ -23,3 +23,19 @@ export interface GetUsersParams {
   page?: number;
   pageSize?: number;
 }
+
+export interface RoomType {
+  id: number;
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: Date | null;
+  title: string;
+  slug: string;
+  isActive: boolean;
+}
+
+export interface Room {
+  room: RoomType;
+  role: string;
+}
