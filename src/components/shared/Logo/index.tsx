@@ -5,7 +5,6 @@ import { useThemeContext } from '@/context/ThemeContext/ThemeContext';
 
 interface LogoProps {
   small?: boolean;
-  width?: string;
   className?: string;
 }
 export const Logo = ({ small = false, className }: LogoProps) => {
