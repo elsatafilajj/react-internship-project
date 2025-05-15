@@ -4,19 +4,18 @@ import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
 import { Board } from '@/pages/Board';
-import { Dashboard } from '@/pages/Dashboard';
 import { Error404 } from '@/pages/Error404';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import { Login } from '@/pages/Login';
 import { Profile } from '@/pages/Profile';
 import { Register } from '@/pages/Register';
 import { ResetPassword } from '@/pages/ResetPassword';
-import { Rooms } from '@/pages/Rooms';
+import { Boards } from '@/pages/Rooms';
 
 export const appRoutes: RouteObject[] = [
   {
     path: '/',
-    element: <Navigate to={RouteNames.Rooms} replace />,
+    element: <Navigate to={RouteNames.Board} replace />,
   },
   {
     element: <AuthLayout />,
@@ -36,11 +35,7 @@ export const appRoutes: RouteObject[] = [
         path: RouteNames.Profile,
         element: <Profile />,
       },
-      {
-        path: RouteNames.Dashboard,
-        element: <Dashboard />,
-      },
-      { path: RouteNames.Rooms, element: <Rooms /> },
+      { path: RouteNames.Boards, element: <Boards /> },
     ],
   },
   {

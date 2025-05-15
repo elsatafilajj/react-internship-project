@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Room } from '@/components/Room';
 import { roomTableData } from '@/mock/roomTableData';
 
-export const Rooms = () => {
+export const Boards = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['rooms'],
     queryFn: () => roomTableData,
