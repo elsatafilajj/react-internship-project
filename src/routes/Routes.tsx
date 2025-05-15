@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 
 import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
@@ -14,6 +14,10 @@ import { ResetPassword } from '@/pages/ResetPassword';
 import { Rooms } from '@/pages/Rooms';
 
 export const appRoutes: RouteObject[] = [
+  {
+    path: '/',
+    element: <Navigate to={RouteNames.Rooms} replace />,
+  },
   {
     element: <AuthLayout />,
     children: [
