@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+import { createRoom } from '@/api/Room/room.client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,14 +16,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
-import { roomsCreatedTable } from '@/mock/roomsCreatedTable';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
 
 export const CreateRoomForm = () => {
   const queryClient = useQueryClient();
 
   const createRoomMutation = useMutation({
-    mutationFn: roomsCreatedTable,
+    mutationFn: createRoom,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] });
       toast.success('Your room is created!');
@@ -56,7 +56,7 @@ export const CreateRoomForm = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create project</DialogTitle>
+          <DialogTitle>Create Room</DialogTitle>
           <DialogDescription>
             Create your new room in one-click
           </DialogDescription>
@@ -82,7 +82,7 @@ export const CreateRoomForm = () => {
               className="w-[100px]"
               disabled={formik.isSubmitting}
             >
-              Create
+              {formik.isSubmitting ? 'Creating...' : 'Create'}
             </Button>
           </DialogFooter>
         </form>
