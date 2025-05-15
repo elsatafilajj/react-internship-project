@@ -10,7 +10,7 @@ export interface Room {
   deletedAt: string | null;
   title: string;
   slug: string;
-  isActive: string;
+  isActive: boolean;
   user: User[];
   note: Note[];
 }
