@@ -1,9 +1,10 @@
-import { Bell, Share2, ChevronDown, PanelLeft } from 'lucide-react';
+import { Bell, ChevronDown, PanelLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import logoImg from '@/assets/images/logo-full.svg';
 import logoIcon from '@/assets/images/logo-small.svg';
 import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
+import { ShareLinkAlert } from '@/components/ShareLinkAlert';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -63,10 +64,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90 w-fit sm:w-[100px]">
-          <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Share</span>
-        </Button>
+        <ShareLinkAlert />
 
         <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
           <Bell className="h-5 w-5" />
