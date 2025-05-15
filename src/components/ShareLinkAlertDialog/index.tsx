@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
-export const ShareLinkAlert = () => {
+export const ShareLinkAlertDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>

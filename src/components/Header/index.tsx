@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import logoImg from '@/assets/images/logo-full.svg';
 import logoIcon from '@/assets/images/logo-small.svg';
 import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
-import { ShareLinkAlert } from '@/components/ShareLinkAlert';
+import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -64,7 +64,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <ShareLinkAlert />
+        <ShareLinkAlertDialog />
 
         <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
           <Bell className="h-5 w-5" />
