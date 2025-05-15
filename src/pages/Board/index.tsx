@@ -18,6 +18,7 @@ export const Board = () => {
         limitToBounds={true}
         ref={transformRef}
         disabled={transformDisabled}
+        disablePadding={true}
         centerOnInit={true}
         panning={{ velocityDisabled: true }}
       >
