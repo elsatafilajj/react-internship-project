@@ -120,6 +120,15 @@
     font-family: 'Geist', sans-serif;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply text-foreground;
   }
 }
