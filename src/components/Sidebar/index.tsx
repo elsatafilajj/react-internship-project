@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import { CreateRoomForm } from '@/components/CreateRoomForm';
+import { CreateRoomFormDialog } from '@/components/CreateRoomFormDialog';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -34,7 +34,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         <nav className="space-y-2 flex-1 mt-4">
           <Button
-            onClick={() => isOpen}
             variant="ghost"
             className="w-full justify-start font-medium"
             asChild
@@ -45,7 +44,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </Link>
           </Button>
 
-          <CreateRoomForm />
+          <CreateRoomFormDialog />
 
           <Button
             variant="ghost"

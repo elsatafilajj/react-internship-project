@@ -14,17 +14,18 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { queryKeys } from '@/constants/queryKeys';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
 
-export const CreateRoomForm = () => {
+export const CreateRoomFormDialog = () => {
   const queryClient = useQueryClient();
 
   const createRoomMutation = useMutation({
     mutationFn: createRoom,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['rooms'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.getRooms() });
       toast.success('Your room is created!');
     },
     onError: (error) => {

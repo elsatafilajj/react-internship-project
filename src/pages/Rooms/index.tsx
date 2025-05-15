@@ -1,18 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { getAllRooms } from '@/api/Room/room.client';
+import { useGetAllRoomsQuery } from '@/api/Room/room.queries';
 import { Room } from '@/components/Room';
 
 export const Rooms = () => {
-  const {
-    data: rooms,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['rooms'],
-    queryFn: getAllRooms,
-  });
+  const { data: rooms, isLoading, isError, error } = useGetAllRoomsQuery();
 
   if (isLoading)
     return <p className="text-center mt-10 text-gray-600">Loading rooms...</p>;
