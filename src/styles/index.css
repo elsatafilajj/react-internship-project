@@ -119,4 +119,7 @@
   html {
     font-family: 'Geist', sans-serif;
   }
+  body {
+    @apply text-foreground;
+  }
 }
