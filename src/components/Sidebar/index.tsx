@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 
 import { CreateRoomFormDialog } from '@/components/CreateRoomFormDialog';
 import { Button } from '@/components/ui/button';
+import { RouteNames } from '@/constants/routeNames';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -38,9 +39,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to="/rooms">
+            <Link to={RouteNames.Rooms}>
               <Home className="mr-2 h-4 w-4" />
-              My Boards
+              My Rooms
             </Link>
           </Button>
 
