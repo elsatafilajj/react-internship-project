@@ -1,13 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-
+import { useGetAllRoomsQuery } from '@/api/Room/room.queries';
 import { Room } from '@/components/Room';
-import { roomTableData } from '@/mock/roomTableData';
 
 export const Rooms = () => {
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['rooms'],
-    queryFn: () => roomTableData,
-  });
+  const { data: rooms, isLoading, isError, error } = useGetAllRoomsQuery();
 
   if (isLoading)
     return <p className="text-center mt-10 text-gray-600">Loading rooms...</p>;
@@ -22,9 +17,9 @@ export const Rooms = () => {
     <div className="px-4 py-8 max-w-8xl rounded-3xl mx-auto">
       <h1 className="flex justify-center">Active Rooms</h1>
       <div className="grid gap-6 m-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {data?.map((roomData) => (
+        {rooms?.data.map((roomData) => (
           <Room
-            key={roomData.room.id}
+            key={roomData.room.uuid}
             title={roomData.room.title}
             updatedAt={roomData.room.updatedAt}
           />
