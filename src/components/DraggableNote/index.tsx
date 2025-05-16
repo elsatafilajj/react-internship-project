@@ -2,6 +2,8 @@ import { useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { Note } from '@/components/Note';
+
 interface NoteProps {
   id: number;
   left: number;
@@ -58,20 +60,13 @@ export const DraggableNote = ({
         position: 'absolute',
         left,
         top,
-        opacity: isDragging ? 0.8 : 1,
+        opacity: isDragging ? 0 : 1,
       }}
       onMouseDown={() => setTransformDisabled(true)}
       onDragEnd={() => setTransformDisabled(false)}
       onMouseUp={() => setTransformDisabled(false)}
     >
-      <div className="w-2xs h-min bg-background p-4 rounded-sm">
-        <p className="text-foreground">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda
-          molestiae itaque omnis nesciunt sequi! Adipisci voluptatibus deserunt
-          blanditiis, necessitatibus neque similique inventore exercitationem
-          commodi sit officia sapiente molestias enim nihil.
-        </p>
-      </div>
+      <Note />
     </div>
   );
 };
