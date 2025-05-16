@@ -1,7 +1,11 @@
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
+
 export const Note = () => {
+  const { user } = useAuthContext();
+
   return (
     <div className="flex">
-      <div className="m-4 w-50 h-50 bg-note-background-pink shadow-sm overflow-hidden">
+      <div className="m-4 w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">
         <div className="flex flex-col justify-between h-full p-2 text-xs">
           <textarea
             placeholder="Type anything..."
@@ -10,7 +14,7 @@ export const Note = () => {
             autoFocus
           />
           <span className="text-gray-700 mt-1 ml-1 tracking-wide  text-xs">
-            elsa
+            {user && user.firstName}
           </span>
         </div>
       </div>
