@@ -18,7 +18,7 @@ export const Error404 = () => {
         You may have mistyped the address or the page may have moved.
       </p>
       <Button size="lg" className="mt-4" asChild>
-        <Link to="/rooms" className="text-foreground text-sm md:text-lg">
+        <Link to="/" className="text-foreground text-sm md:text-lg">
           Go back
         </Link>
       </Button>

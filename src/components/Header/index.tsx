@@ -33,7 +33,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
       <div className="flex flex-col items-center text-center">
         <span className="text-xs text-muted-foreground tracking-wide mb-1">
-          Active Board
+          Active Room
         </span>
 
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-start">

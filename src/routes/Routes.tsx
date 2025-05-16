@@ -3,20 +3,16 @@ import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
-import { Board } from '@/pages/Board';
 import { Error404 } from '@/pages/Error404';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import { Login } from '@/pages/Login';
 import { Profile } from '@/pages/Profile';
 import { Register } from '@/pages/Register';
 import { ResetPassword } from '@/pages/ResetPassword';
-import { Boards } from '@/pages/Rooms';
+import { Room } from '@/pages/Room';
+import { Rooms } from '@/pages/Rooms';
 
 export const appRoutes: RouteObject[] = [
-  {
-    path: '/',
-    element: <Navigate to={RouteNames.Board} replace />,
-  },
   {
     element: <AuthLayout />,
     children: [
@@ -27,15 +23,20 @@ export const appRoutes: RouteObject[] = [
     ],
   },
   {
-    path: RouteNames.Board,
+    path: '/',
     element: <MainLayout />,
     children: [
-      { index: true, element: <Board /> },
+      {
+        path: '/',
+        element: <Navigate to={RouteNames.Room} replace />,
+      },
+
+      { path: RouteNames.Room, element: <Room /> },
       {
         path: RouteNames.Profile,
         element: <Profile />,
       },
-      { path: RouteNames.Boards, element: <Boards /> },
+      { path: RouteNames.Rooms, element: <Rooms /> },
     ],
   },
   {

@@ -4,7 +4,7 @@ import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { DraggableNote } from '@/components/DraggableNote';
 
-interface DroppableBoardProps {
+interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
 }
@@ -23,16 +23,16 @@ interface NoteProps {
   yAxis: number;
 }
 
-export const DroppableBoard = ({
+export const DroppableRoom = ({
   transformRef,
   setTransformDisabled,
-}: DroppableBoardProps) => {
-  const boardRef = useRef<HTMLDivElement | null>(null);
+}: DroppableRoomProps) => {
+  const roomRef = useRef<HTMLDivElement | null>(null);
   const [notes, setNotes] = useState<NoteProps[]>([]);
 
   useEffect(() => {
-    if (boardRef.current) {
-      const rect = boardRef.current.getBoundingClientRect();
+    if (roomRef.current) {
+      const rect = roomRef.current.getBoundingClientRect();
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
@@ -48,27 +48,27 @@ export const DroppableBoard = ({
     drop: (item: DraggedNoteItem, monitor) => {
       const client = monitor.getClientOffset();
 
-      const boardEl = boardRef.current;
+      const roomEl = roomRef.current;
       const transformState = transformRef.current?.instance?.transformState;
 
-      if (!client || !boardEl || !transformState) return;
+      if (!client || !roomEl || !transformState) return;
 
       const { scale, positionX, positionY } = transformState;
 
       const realX =
-        (client.x - boardEl.getBoundingClientRect().left) / scale -
+        (client.x - roomEl.getBoundingClientRect().left) / scale -
         positionX / scale -
         item.offsetX;
       const realY =
-        (client.y - boardEl.getBoundingClientRect().top) / scale -
+        (client.y - roomEl.getBoundingClientRect().top) / scale -
         positionY / scale -
         item.offsetY;
 
-      const boardWidth = boardEl.offsetWidth;
-      const boardHeight = boardEl.offsetHeight;
+      const roomWidth = roomEl.offsetWidth;
+      const roomHeight = roomEl.offsetHeight;
 
-      const withinBoundsX = Math.max(0, Math.min(boardWidth - 288, realX));
-      const withinBoundsY = Math.max(0, Math.min(boardHeight - 270, realY));
+      const withinBoundsX = Math.max(0, Math.min(roomWidth - 288, realX));
+      const withinBoundsY = Math.max(0, Math.min(roomHeight - 270, realY));
 
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
@@ -81,13 +81,13 @@ export const DroppableBoard = ({
     collect: (m) => ({ isOver: m.isOver() }),
   }));
 
-  drop(boardRef);
+  drop(roomRef);
 
   return (
     <div
-      id="board"
-      ref={boardRef}
-      className="w-full h-full min-w-[350vw] min-h-[350vh] relative bg-[url('../assets/images/dotted-pattern.svg')] bg-repeat"
+      id="room"
+      ref={roomRef}
+      className="w-full h-full min-w-[350vw] min-h-[350vh] relative bg-[url('../assets/images/polkadot-grid.svg')] bg-repeat"
     >
       <div className="absolute top-0 left-0 w-full h-full" />
 

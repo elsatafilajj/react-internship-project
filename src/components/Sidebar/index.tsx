@@ -10,6 +10,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
+import { RouteNames } from '@/constants/routeNames';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -38,9 +39,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to="/rooms/your-boards">
+            <Link to={RouteNames.Rooms}>
               <Home className="mr-2 h-4 w-4" />
-              My Boards
+              My Rooms
             </Link>
           </Button>
 
@@ -49,9 +50,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start bg-primary hover:bg-[#28d49b] text-black font-medium"
             asChild
           >
-            <Link to="/sessions/new">
+            <Link to="/rooms/new">
               <Plus className="mr-2 h-4 w-4" />
-              New Board
+              New Room
             </Link>
           </Button>
 

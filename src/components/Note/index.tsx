@@ -2,6 +2,7 @@ import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 export const Note = () => {
   const { user } = useAuthContext();
+
   return (
     <div className="flex">
       <div className="m-4 w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">

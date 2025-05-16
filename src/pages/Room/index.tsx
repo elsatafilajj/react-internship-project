@@ -4,10 +4,10 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
-import { DroppableBoard } from '@/components/DroppableBoard';
+import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
 
-export const Board = () => {
+export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
 
@@ -24,7 +24,7 @@ export const Board = () => {
         panning={{ velocityDisabled: true }}
       >
         <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
-          <DroppableBoard
+          <DroppableRoom
             transformRef={transformRef}
             setTransformDisabled={setTransformDisabled}
           />
