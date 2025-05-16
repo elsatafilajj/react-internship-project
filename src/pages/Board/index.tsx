@@ -5,6 +5,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { DroppableBoard } from '@/components/DroppableBoard';
+import { ToolPalette } from '@/components/ToolPalette';
 
 export const Board = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
@@ -28,6 +29,9 @@ export const Board = () => {
             setTransformDisabled={setTransformDisabled}
           />
         </TransformComponent>
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+          <ToolPalette />
+        </div>
       </TransformWrapper>
     </DndProvider>
   );
