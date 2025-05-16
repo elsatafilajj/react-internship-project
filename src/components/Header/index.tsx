@@ -1,6 +1,7 @@
 import { Bell, ChevronDown, PanelLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { DropDownMenu } from '@/components/DropDownMenu';
 import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Logo } from '@/components/shared/Logo';
@@ -54,6 +55,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3">
+        <DropDownMenu />
         <ShareLinkAlertDialog />
 
         <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
