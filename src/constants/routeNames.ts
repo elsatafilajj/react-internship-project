@@ -1,9 +1,9 @@
 export enum RouteNames {
-  Dashboard = '/',
   Profile = '/profile',
-
+  Room = '/rooms',
   Login = '/login',
   Register = '/register',
   ForgotPassword = '/forgot-password',
   ResetPassword = '/reset-password',
+  Rooms = '/your-rooms',
 }

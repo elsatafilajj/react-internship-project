@@ -1,15 +1,16 @@
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 
 import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
-import { Dashboard } from '@/pages/Dashboard';
 import { Error404 } from '@/pages/Error404';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import { Login } from '@/pages/Login';
 import { Profile } from '@/pages/Profile';
 import { Register } from '@/pages/Register';
 import { ResetPassword } from '@/pages/ResetPassword';
+import { Room } from '@/pages/Room';
+import { Rooms } from '@/pages/Rooms';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -22,14 +23,20 @@ export const appRoutes: RouteObject[] = [
     ],
   },
   {
-    path: RouteNames.Dashboard,
+    path: '/',
     element: <MainLayout />,
     children: [
-      { index: true, element: <Dashboard /> },
+      {
+        path: '/',
+        element: <Navigate to={RouteNames.Room} replace />,
+      },
+
+      { path: RouteNames.Room, element: <Room /> },
       {
         path: RouteNames.Profile,
         element: <Profile />,
       },
+      { path: RouteNames.Rooms, element: <Rooms /> },
     ],
   },
   {
