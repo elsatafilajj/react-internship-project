@@ -4,11 +4,11 @@ import {
   FolderArchive,
   Settings,
   LogOut,
-  Plus,
   PanelLeftClose,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { CreateRoomFormDialog } from '@/components/CreateRoomFormDialog';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -44,16 +44,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </Link>
           </Button>
 
-          <Button
-            variant="default"
-            className="w-full justify-start bg-primary hover:bg-[#28d49b] text-black font-medium"
-            asChild
-          >
-            <Link to="/sessions/new">
-              <Plus className="mr-2 h-4 w-4" />
-              New Board
-            </Link>
-          </Button>
+          <CreateRoomFormDialog />
 
           <Button
             variant="ghost"
