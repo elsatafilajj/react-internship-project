@@ -1,10 +1,9 @@
 import { Bell, ChevronDown, PanelLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import logoImg from '@/assets/images/logo-full.svg';
-import logoIcon from '@/assets/images/logo-small.svg';
 import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
+import { Logo } from '@/components/shared/Logo';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -29,16 +28,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           <PanelLeft className="h-5 w-5 " />
         </Button>
         <Link to="/" className="block">
-          <img
-            src={logoIcon}
-            alt="Logo"
-            className="block md:hidden w-[30px] drop-shadow-sm"
-          />
-          <img
-            src={logoImg}
-            alt="Logo"
-            className="hidden md:block w-[120px] drop-shadow-sm"
-          />
+          <Logo className="hidden md:block w-[120px] drop-shadow-sm" />
         </Link>
       </div>
 
