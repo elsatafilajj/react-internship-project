@@ -2,27 +2,26 @@ import { useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { NoteItem } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
+import { ItemTypes } from '@/constants/itemTypes';
 
-interface NoteProps {
-  uuid: string;
-  left: number;
-  top: number;
+interface NoteProps extends Partial<NoteItem> {
   setTransformDisabled: (b: boolean) => void;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
 }
 
 export const DraggableNote = ({
   uuid,
-  left,
-  top,
+  xAxis,
+  yAxis,
   setTransformDisabled,
   transformRef,
 }: NoteProps) => {
   const noteRef = useRef<HTMLDivElement | null>(null);
 
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'note',
+    type: ItemTypes.Note,
 
     item: (monitor) => {
       const boundingRect = noteRef.current?.getBoundingClientRect();
@@ -30,7 +29,7 @@ export const DraggableNote = ({
 
       const transformState = transformRef.current?.instance?.transformState;
       if (!transformState || !boundingRect) {
-        return { uuid, left, top, offsetX: 0, offsetY: 0 };
+        return { uuid, xAxis, yAxis, offsetX: 0, offsetY: 0 };
       }
 
       const { scale, positionX, positionY } = transformState;
@@ -40,8 +39,8 @@ export const DraggableNote = ({
 
       return {
         uuid,
-        left,
-        top,
+        xAxis,
+        yAxis,
         offsetX,
         offsetY,
       };
@@ -58,8 +57,8 @@ export const DraggableNote = ({
       ref={noteRef}
       style={{
         position: 'absolute',
-        left,
-        top,
+        left: xAxis,
+        top: yAxis,
         opacity: isDragging ? 0 : 1,
       }}
       onMouseDown={() => setTransformDisabled(true)}
