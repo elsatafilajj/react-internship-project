@@ -24,7 +24,7 @@ export const ShareLinkAlertDialog = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md space-y-2">
         <DialogHeader>
-          <DialogTitle>Share link</DialogTitle>
+          <DialogTitle className="text-base">Share link</DialogTitle>
           <DialogDescription>
             Anyone who has this link will be able to view this.
           </DialogDescription>
@@ -41,10 +41,10 @@ export const ShareLinkAlertDialog = () => {
           <Button
             type="submit"
             size="sm"
-            className="px-3 bg-white border hover:bg-gray-100"
+            className="px-3 bg-card-revert border hover:bg-foreground transform hover:scale-110 transition-transform duration-200"
           >
             <span className="sr-only">Copy</span>
-            <Copy className="text-black" />
+            <Copy className="text-card" />
           </Button>
         </div>
         <DialogFooter className="sm:justify-start ">

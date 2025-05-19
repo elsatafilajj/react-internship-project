@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import { UserRole } from '@/api/User/user.types';
 import { Logo } from '@/components/shared/Logo';
+import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 interface RouteWrapperProps {
@@ -31,7 +32,7 @@ export const RouteWrapper = ({
   }
 
   if (!isAuthenticated && !isAuthenticationPage) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={RouteNames.Login} replace />;
   }
 
   if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {

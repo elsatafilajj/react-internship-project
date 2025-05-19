@@ -12,6 +12,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-card-revert: var(--card-revert);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
@@ -47,6 +48,7 @@
   --background: oklch(95% 0.052 163.051);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
+  --card-revert: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
@@ -82,6 +84,7 @@
   --background: oklch(25% 0.052 163.051);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
+  --card-revert: oklch(1 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
@@ -90,7 +93,7 @@
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
+  --muted-foreground: oklch(0.8 0.015 286.067);
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
@@ -122,5 +125,4 @@
   body {
     @apply text-foreground;
   }
-
 }

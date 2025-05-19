@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { Button } from '@/components/ui/button';
+import { RouteNames } from '@/constants/routeNames';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       )}
 
       <aside
-        className={`fixed top-0 left-0 h-full w-56 bg-white border-r border-gray-200 p-4 flex flex-col text-sm z-50 transition-transform duration-300 transform ${
+        className={`fixed top-0 left-0 h-full w-56 bg-card border-r p-4 flex flex-col text-sm z-50 transition-transform duration-300 transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -38,9 +39,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to="/rooms">
+            <Link to={RouteNames.Rooms}>
               <Home className="mr-2 h-4 w-4" />
-              My Boards
+              My Rooms
             </Link>
           </Button>
 
