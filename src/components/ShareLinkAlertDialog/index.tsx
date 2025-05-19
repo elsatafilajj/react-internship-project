@@ -19,7 +19,7 @@ export const ShareLinkAlertDialog = () => {
       <DialogTrigger asChild>
         <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90 w-fit sm:w-[100px]">
           <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
-          Share
+          <span className="hidden md:block">Share</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md space-y-2">
@@ -29,7 +29,7 @@ export const ShareLinkAlertDialog = () => {
             Anyone who has this link will be able to view this.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 sm:space-x-0">
           <div className="grid flex-1 gap-2">
             <Input
               name="link"
