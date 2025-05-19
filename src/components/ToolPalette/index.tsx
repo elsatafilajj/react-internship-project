@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { ItemTypes } from '@/constants/itemTypes';
 
 interface ToolPaletteProps {
   setTransformDisabled: (b: boolean) => void;
@@ -38,7 +39,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
   const stickyNoteRef = useRef<HTMLDivElement>(null);
 
   const [, drag] = useDrag({
-    type: 'new_note',
+    type: ItemTypes.NewNote,
     item: (monitor) => {
       const rect = stickyNoteRef.current?.getBoundingClientRect();
       const initialOffset = monitor.getInitialClientOffset();
@@ -55,7 +56,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
       }
 
       const newItem = {
-        type: 'new_note',
+        type: ItemTypes.NewNote,
         noteId: Date.now(),
         offsetX,
         offsetY,
