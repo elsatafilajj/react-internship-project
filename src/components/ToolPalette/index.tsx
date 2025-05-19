@@ -1,6 +1,8 @@
+
 import { ZoomOutIcon, ZoomInIcon, StickerIcon } from 'lucide-react';
 import { useRef } from 'react';
 import { useDrag } from 'react-dnd';
+
 import { useControls } from 'react-zoom-pan-pinch';
 
 import { Button } from '@/components/ui/button';
@@ -22,13 +24,13 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
     {
       icon: ZoomInIcon,
       label: 'Zoom in',
-      tip: 'Click to zoom in',
+      tip: 'Zoom in',
       function: zoomIn,
     },
     {
       icon: ZoomOutIcon,
       label: 'Zoom out',
-      tip: 'Click to zoom out',
+      tip: 'Zoom out',
       function: zoomOut,
     },
   ];
