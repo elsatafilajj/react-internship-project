@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import { CreateRoomFormDialog } from '@/components/CreateRoomFormDialog';
+import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -44,7 +44,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </Link>
           </Button>
 
-          <CreateRoomFormDialog />
+          <CreateEditRoomFormDialog title="" />
 
           <Button
             variant="ghost"

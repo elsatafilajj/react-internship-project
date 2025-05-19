@@ -1,7 +1,9 @@
 import { EllipsisVertical } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { DeleteRoomDialog } from '@/components/DeleteRoomDialog';
-import { EditRoomFormDialog } from '@/components/EditRoomFormDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,14 +11,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export const DropDownMenu = () => {
+export const RoomActionsDropDown = () => {
+  const { roomId } = useParams<{ roomId: string }>();
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <EllipsisVertical />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <EditRoomFormDialog />
+        <CreateEditRoomFormDialog title={room?.data.title || ''} />
         <DropdownMenuItem>Archive</DropdownMenuItem>
         <DeleteRoomDialog />
       </DropdownMenuContent>
