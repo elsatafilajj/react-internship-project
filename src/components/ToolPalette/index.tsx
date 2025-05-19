@@ -1,4 +1,4 @@
-import { Square, ZoomOutIcon, ZoomInIcon } from 'lucide-react';
+import { StickyNote, ZoomOutIcon, ZoomInIcon } from 'lucide-react';
 import { useControls } from 'react-zoom-pan-pinch';
 
 import { Button } from '@/components/ui/button';
@@ -15,21 +15,21 @@ export const ToolPalette = () => {
 
   const tools = [
     {
-      icon: Square,
+      icon: StickyNote,
       label: 'Sticky Note',
-      tip: 'Drag note on the board',
+      tip: 'Drag Note',
       function: emptyFunction,
     },
     {
       icon: ZoomInIcon,
       label: 'Zoom in',
-      tip: 'Click to zoom in',
+      tip: 'Zoom in',
       function: zoomIn,
     },
     {
       icon: ZoomOutIcon,
       label: 'Zoom out',
-      tip: 'Click to zoom out',
+      tip: 'Zoom out',
       function: zoomOut,
     },
   ];
