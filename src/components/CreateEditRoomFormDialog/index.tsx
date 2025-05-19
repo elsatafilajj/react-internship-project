@@ -36,7 +36,6 @@ export const CreateEditRoomFormDialog = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });
-      queryClient.invalidateQueries({ queryKey: queryKeys.getRooms() });
       toast.success('Room edited successfully.');
     },
   });
@@ -62,7 +61,7 @@ export const CreateEditRoomFormDialog = () => {
         if (roomId) {
           await editMutation.mutateAsync({
             roomId,
-            data: { title: room?.data.title },
+            data: { title: values.title },
           });
         } else {
           await createRoomMutation.mutateAsync(values);
