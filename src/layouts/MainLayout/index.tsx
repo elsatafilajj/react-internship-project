@@ -11,17 +11,16 @@ export const MainLayout = () => {
 
   return (
     <RouteWrapper>
-      <div className="text-muted-foreground">
+      <div className="flex h-screen w-full text-muted-foreground overflow-hidden">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <div className="w-full">
+        <div className="flex flex-col flex-1 overflow-hidden">
           <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-          <div>
-            <main className="h-screen">
-              <Outlet />
-              <PanelToggle />
-            </main>
-          </div>
+
+          <main className="flex-1 overflow-auto">
+            <Outlet />
+            <PanelToggle />
+          </main>
         </div>
       </div>
     </RouteWrapper>
