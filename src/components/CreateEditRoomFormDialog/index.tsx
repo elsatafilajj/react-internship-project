@@ -54,7 +54,7 @@ export const CreateEditRoomFormDialog = () => {
   const formik = useForm({
     schema: CreateRoomSchema,
     initialValues: {
-      title: '',
+      title: isEditMode ? room?.data.title || '' : '',
     },
     onSubmit: async (values, formikHelpers) => {
       try {
@@ -107,7 +107,6 @@ export const CreateEditRoomFormDialog = () => {
               id="title"
               name="title"
               type="text"
-              placeholder={isEditMode ? room?.data.title : 'Enter room name'}
               value={formik.values.title}
               onChange={formik.handleChange}
               error={getFormikError(formik, 'title')}
