@@ -28,7 +28,7 @@ export const appRoutes: RouteObject[] = [
     children: [
       {
         path: '/',
-        element: <Navigate to={RouteNames.Rooms} replace />,
+        element: <Navigate to={RouteNames.RoomDetails} replace />,
       },
       {
         path: RouteNames.Profile,
