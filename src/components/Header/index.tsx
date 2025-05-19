@@ -2,6 +2,7 @@ import { ChevronDown, PanelLeft, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
+import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Logo } from '@/components/shared/Logo';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
@@ -57,6 +58,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3">
+        <RoomActionsDropDown />
         <ShareLinkAlertDialog />
 
         <ThemeChangeToggle />
