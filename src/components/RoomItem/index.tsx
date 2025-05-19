@@ -8,7 +8,7 @@ interface RoomProps {
   onClick: () => void;
 }
 
-export const Room = ({ title, updatedAt, onClick }: RoomProps) => {
+export const RoomItem = ({ title, updatedAt, onClick }: RoomProps) => {
   return (
     <div className="w-full max-w-sm border shadow-lg rounded-md bg-white">
       <div
