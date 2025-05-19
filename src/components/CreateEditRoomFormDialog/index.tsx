@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 import { createRoom, updateRoom } from '@/api/Room/room.client';
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { UpdateRoomInput } from '@/api/Room/room.types';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,14 +22,10 @@ import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
 
-interface CreateEditRoomFormDialogProps {
-  title: string;
-}
-export const CreateEditRoomFormDialog = ({
-  title,
-}: CreateEditRoomFormDialogProps) => {
+export const CreateEditRoomFormDialog = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const queryClient = useQueryClient();
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
 
   const isEditMode = Boolean(roomId);
 
@@ -39,6 +36,7 @@ export const CreateEditRoomFormDialog = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });
+      queryClient.invalidateQueries({ queryKey: queryKeys.getRooms() });
       toast.success('Room edited successfully.');
     },
   });
@@ -57,14 +55,14 @@ export const CreateEditRoomFormDialog = ({
   const formik = useForm({
     schema: CreateRoomSchema,
     initialValues: {
-      title: title,
+      title: '',
     },
     onSubmit: async (values, formikHelpers) => {
       try {
         if (roomId) {
           await editMutation.mutateAsync({
             roomId,
-            data: { title: values.title },
+            data: { title: room?.data.title },
           });
         } else {
           await createRoomMutation.mutateAsync(values);
@@ -110,7 +108,7 @@ export const CreateEditRoomFormDialog = ({
               id="title"
               name="title"
               type="text"
-              placeholder={isEditMode ? 'Change room name' : 'Enter room name'}
+              placeholder={isEditMode ? room?.data.title : 'Enter room name'}
               value={formik.values.title}
               onChange={formik.handleChange}
               error={getFormikError(formik, 'title')}

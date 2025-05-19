@@ -44,7 +44,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </Link>
           </Button>
 
-          <CreateEditRoomFormDialog title="" />
+          <CreateEditRoomFormDialog />
 
           <Button
             variant="ghost"
