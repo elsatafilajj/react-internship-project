@@ -87,7 +87,7 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-full h-full min-w-[400vw] min-h-[400vh] relative bg-gradient-to-br from-[var(--color-background-form)] to-[var(--color-background-to)] p-8 rounded-lg"
+      className="w-full h-full min-w-[400vw] min-h-[400vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
       <div className="absolute top-0 left-0 w-full h-full" />
 
