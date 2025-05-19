@@ -1,5 +1,7 @@
 import { StickyNote } from 'lucide-react';
 
+import { getFormattedDate } from '@/helpers/getFormattedDate';
+
 interface RoomProps {
   title: string;
   updatedAt: string;
@@ -22,8 +24,7 @@ export const Room = ({ title, updatedAt, onClick }: RoomProps) => {
           <div className="flex flex-col">
             <p className="font-bold text-xl">{title}</p>
             <p className="text-xs align-end text-gray-500">
-              Updated at:{' '}
-              {new Date(updatedAt).toLocaleDateString('en-GB').slice(0, 10)}
+              Updated at: {getFormattedDate(new Date(updatedAt))}
             </p>
           </div>
         </div>
