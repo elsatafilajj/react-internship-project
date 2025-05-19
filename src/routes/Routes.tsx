@@ -1,9 +1,8 @@
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 
 import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
-import { Dashboard } from '@/pages/Dashboard';
 import { Error404 } from '@/pages/Error404';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import { Login } from '@/pages/Login';
@@ -24,10 +23,13 @@ export const appRoutes: RouteObject[] = [
     ],
   },
   {
-    path: RouteNames.Dashboard,
+    path: '/',
     element: <MainLayout />,
     children: [
-      { index: true, element: <Dashboard /> },
+      {
+        path: '/',
+        element: <Navigate to={RouteNames.Rooms} replace />,
+      },
       {
         path: RouteNames.Profile,
         element: <Profile />,
