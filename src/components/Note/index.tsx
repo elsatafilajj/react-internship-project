@@ -5,7 +5,7 @@ export const Note = () => {
 
   return (
     <div className="flex">
-      <div className="m-4 w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">
+      <div className=" w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">
         <div className="flex flex-col justify-between h-full p-2 text-xs">
           <textarea
             placeholder="Type anything..."

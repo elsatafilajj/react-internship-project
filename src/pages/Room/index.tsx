@@ -30,7 +30,7 @@ export const Room = () => {
           />
         </TransformComponent>
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-          <ToolPalette />
+          <ToolPalette setTransformDisabled={setTransformDisabled} />
         </div>
       </TransformWrapper>
     </DndProvider>
