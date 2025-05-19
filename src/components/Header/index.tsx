@@ -68,10 +68,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
               <ChevronDown className="h-4 w-4 text-foreground" />
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="flex flex-col items-center p-1.5"
-          >
+          <DropdownMenuContent align="end" className="flex flex-col  p-1.5">
             <Link to="/profile">
               <DropdownMenuItem>Profile</DropdownMenuItem>
             </Link>

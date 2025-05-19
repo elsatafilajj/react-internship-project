@@ -41,7 +41,7 @@ export const ShareLinkAlertDialog = () => {
           <Button
             type="submit"
             size="sm"
-            className="px-3 bg-card-revert border"
+            className="px-3 bg-card-revert border hover:bg-foreground transform hover:scale-110 transition-transform duration-200"
           >
             <span className="sr-only">Copy</span>
             <Copy className="text-card" />
