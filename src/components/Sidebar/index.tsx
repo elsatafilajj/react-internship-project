@@ -9,6 +9,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
+import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 
@@ -87,10 +88,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to="/logout">
+            <div>
+              {' '}
               <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Link>
+              <LogoutAlertDialog />
+            </div>
           </Button>
         </div>
       </aside>
