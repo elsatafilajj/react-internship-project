@@ -25,6 +25,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
   const isUserInRoom = Boolean(roomId);
 
+  const { data } = useGetRoomByIdQuery(roomId || '');
+
   return (
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
       <div className="flex items-center gap-4">
