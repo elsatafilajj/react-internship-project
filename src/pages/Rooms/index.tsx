@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
+
 import { useGetAllRoomsQuery } from '@/api/Room/room.queries';
 import { Room } from '@/components/Room';
 
 export const Rooms = () => {
+  const navigate = useNavigate();
   const { data: rooms, isLoading, isError, error } = useGetAllRoomsQuery();
 
   if (isLoading)
@@ -17,13 +20,16 @@ export const Rooms = () => {
     <div className="h-screen bg-card px-4 py-8 max-w-8xl  mx-auto">
       <h1 className="flex justify-center">Active Rooms</h1>
       <div className="grid gap-6 m-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {rooms?.data.map((roomData) => (
-          <Room
-            key={roomData.room.uuid}
-            title={roomData.room.title}
-            updatedAt={roomData.room.updatedAt}
-          />
-        ))}
+        {rooms?.data
+          .filter((roomData) => roomData.room)
+          .map((roomData) => (
+            <Room
+              key={roomData.room.uuid}
+              title={roomData.room.title}
+              updatedAt={roomData.room.updatedAt}
+              onClick={() => navigate(`${roomData.room.uuid}`)}
+            />
+          ))}
       </div>
     </div>
   );

@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-// import { useDrop } from 'react-dnd';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { DraggableNote } from '@/components/DraggableNote';
 import { ItemTypes } from '@/constants/itemTypes';
-// import { ItemTypes } from '@/constants/itemTypes';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 
 interface DroppableRoomProps {
@@ -67,7 +65,8 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-full h-full min-w-[350vw] min-h-[350vh] relative "
+      className="w-full h-full min-w-[400vw] min-h-[400vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
+
     >
       <div className="absolute top-0 left-0 w-full h-full" />
 
