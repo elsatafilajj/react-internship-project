@@ -1,8 +1,5 @@
-
 import { ZoomOutIcon, ZoomInIcon, StickerIcon } from 'lucide-react';
 import { useRef } from 'react';
-import { useDrag } from 'react-dnd';
-
 import { useControls } from 'react-zoom-pan-pinch';
 
 import { Button } from '@/components/ui/button';
@@ -13,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { ItemTypes } from '@/constants/itemTypes';
+import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface ToolPaletteProps {
   setTransformDisabled: (b: boolean) => void;
@@ -20,6 +18,16 @@ interface ToolPaletteProps {
 
 export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
   const { zoomIn, zoomOut } = useControls();
+
+  const stickyNoteRef = useRef<HTMLDivElement>(null);
+
+  const [, drag] = useNoteDrag({
+    noteRef: stickyNoteRef,
+    type: ItemTypes.NewNote,
+    isNew: true,
+  });
+
+  drag(stickyNoteRef);
 
   const tools = [
     {
@@ -35,41 +43,6 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
       function: zoomOut,
     },
   ];
-
-  const stickyNoteRef = useRef<HTMLDivElement>(null);
-
-  const [, drag] = useDrag({
-    type: ItemTypes.NewNote,
-    item: (monitor) => {
-      const rect = stickyNoteRef.current?.getBoundingClientRect();
-      const initialOffset = monitor.getInitialClientOffset();
-
-      const noteWidth = 144;
-      const noteHeight = 288;
-
-      let offsetX;
-      let offsetY;
-
-      if (rect && initialOffset) {
-        offsetX = initialOffset.x - rect.left + noteWidth;
-        offsetY = initialOffset.y - rect.top + noteHeight;
-      }
-
-      const newItem = {
-        type: ItemTypes.NewNote,
-        noteId: Date.now(),
-        offsetX,
-        offsetY,
-      };
-
-      return newItem;
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  drag(stickyNoteRef);
 
   return (
     <TooltipProvider>

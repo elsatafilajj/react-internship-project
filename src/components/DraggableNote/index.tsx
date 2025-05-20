@@ -1,10 +1,10 @@
 import { useRef } from 'react';
-import { useDrag } from 'react-dnd';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { CreateNoteInput } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
 import { ItemTypes } from '@/constants/itemTypes';
+import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface NoteProps extends Partial<CreateNoteInput> {
   noteId: number;
@@ -23,35 +23,14 @@ export const DraggableNote = ({
 }: NoteProps) => {
   const noteRef = useRef<HTMLDivElement | null>(null);
 
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [{ isDragging }, drag] = useNoteDrag({
+    noteId,
     type: ItemTypes.Note,
-
-    item: (monitor) => {
-      const boundingRect = noteRef.current?.getBoundingClientRect();
-      const clientOffset = monitor.getClientOffset() || { x: 0, y: 0 };
-
-      const transformState = transformRef.current?.instance?.transformState;
-      if (!transformState || !boundingRect) {
-        return { noteId, xAxis, yAxis, offsetX: 0, offsetY: 0 };
-      }
-
-      const { scale, positionX, positionY } = transformState;
-
-      const offsetX = (clientOffset.x - boundingRect.left - positionX) / scale;
-      const offsetY = (clientOffset.y - boundingRect.top - positionY) / scale;
-
-      return {
-        noteId,
-        xAxis,
-        yAxis,
-        offsetX,
-        offsetY,
-      };
-    },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
+    noteRef,
+    transformRef,
+    xAxis,
+    yAxis,
+  });
 
   drag(noteRef);
 
