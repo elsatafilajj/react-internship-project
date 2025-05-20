@@ -38,8 +38,6 @@ export const DraggableNote = ({
         position: 'absolute',
         left: xAxis,
         top: yAxis,
-        left: xAxis,
-        top: yAxis,
         opacity: isDragging ? 0 : 1,
       }}
       onMouseDown={() => setTransformDisabled(true)}

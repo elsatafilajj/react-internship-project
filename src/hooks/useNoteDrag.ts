@@ -5,7 +5,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 
 interface UseNoteDragProps {
-  uuid?: number;
+  uuid?: string;
   type: DragNoteTypes;
   noteRef: RefObject<HTMLElement>;
   transformRef?: RefObject<ReactZoomPanPinchRef>;
@@ -38,7 +38,7 @@ export const useNoteDrag = ({
 
         return {
           type,
-          uuid,
+          uuid: Date.now.toString(),
           offsetX,
           offsetY,
         };
@@ -47,7 +47,13 @@ export const useNoteDrag = ({
       const transformState = transformRef?.current?.instance?.transformState;
 
       if (!transformState || !rect) {
-        return { uuid: Date.now(), xAxis, yAxis, offsetX: 0, offsetY: 0 };
+        return {
+          uuid: Date.now().toString(),
+          xAxis,
+          yAxis,
+          offsetX: 0,
+          offsetY: 0,
+        };
       }
 
       const { scale, positionX, positionY } = transformState;

@@ -1,11 +1,10 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
-import { DragNoteTypes } from '@/constants/dragNoteTypes';
-import { useNoteDrop } from '@/hooks/useNoteDrop';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 
@@ -19,20 +18,27 @@ export const DroppableRoom = ({
   setTransformDisabled,
 }: DroppableRoomProps) => {
   const roomRef = useRef<HTMLDivElement | null>(null);
+  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
 
   const { roomId } = useParams<{ roomId: string }>();
   const { data } = useGetAllNotesFromRoomQuery(roomId || '');
+
+  useEffect(() => {
+    if (data?.data) {
+      setNotes(data.data);
+    }
+  }, [data]);
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
     roomRef,
     transformRef,
     onDrop: (uuid, x, y) => {
-      // setNotes((prevNotes) =>
-      //   prevNotes.map((note) =>
-      //     note.noteId === noteId ? { ...note, xAxis: x, yAxis: y } : note,
-      //   ),
-      // );
+      setNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
+        ),
+      );
     },
   });
 
@@ -41,7 +47,7 @@ export const DroppableRoom = ({
     roomRef,
     transformRef,
     onDrop: (uuid, x, y) => {
-      // setNotes((prev) => [...prev, { noteId, xAxis: x, yAxis: y }]);
+      setNotes((prev) => [...prev, { uuid, xAxis: x, yAxis: y }]);
     },
   });
 
@@ -54,7 +60,7 @@ export const DroppableRoom = ({
       ref={roomRef}
       className="w-full h-full min-w-[350vw] min-h-[350vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
-      {data?.data.map((note) => (
+      {notes?.map((note) => (
         <DraggableNote
           key={note.uuid}
           uuid={note.uuid}
@@ -64,6 +70,16 @@ export const DroppableRoom = ({
           transformRef={transformRef}
         />
       ))}
+      {/* {data?.data.map((note) => (
+        <DraggableNote
+          key={note.uuid}
+          uuid={note.uuid}
+          xAxis={note.xAxis}
+          yAxis={note.yAxis}
+          setTransformDisabled={setTransformDisabled}
+          transformRef={transformRef}
+        />
+      ))} */}
     </div>
   );
 };
