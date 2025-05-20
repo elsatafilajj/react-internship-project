@@ -17,6 +17,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
   const { roomId } = useParams<{ roomId: string }>();
 
+  const isUserInRoom = Boolean(roomId);
+
   const { data } = useGetRoomByIdQuery(roomId || '');
 
   return (
@@ -56,7 +58,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <RoomActionsDropDown />
+        {isUserInRoom && <RoomActionsDropDown />}
         <ShareLinkAlertDialog />
 
         <ThemeChangeToggle />

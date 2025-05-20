@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 
 export const DeleteRoomDialog = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -38,7 +39,16 @@ export const DeleteRoomDialog = () => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger className="text-sm ml-2">Delete</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
+        >
+          Delete
+        </Button>
+      </AlertDialogTrigger>
+
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
