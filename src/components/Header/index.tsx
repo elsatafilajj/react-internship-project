@@ -1,6 +1,7 @@
 import { ChevronDown, PanelLeft, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
@@ -20,6 +21,9 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const { data } = useGetRoomByIdQuery(roomId || '');
 
   return (
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
@@ -39,7 +43,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-start">
           <span className="text-base font-semibold text-foreground">
-            Untitled
+            {data?.data.title || ''}
           </span>
 
           <div className="flex -space-x-2">
