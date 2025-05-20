@@ -30,7 +30,7 @@ export const DroppableRoom = ({
   setTransformDisabled,
 }: DroppableRoomProps) => {
   const roomRef = useRef<HTMLDivElement | null>(null);
-  const [notes, setNotes] = useState<NoteProps[]>([]);
+  const [, setNotes] = useState<NoteProps[]>([]);
 
   useEffect(() => {
     if (roomRef.current) {
