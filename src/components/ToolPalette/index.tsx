@@ -46,7 +46,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
 
   return (
     <TooltipProvider>
-      <div className="bg-secondary border border-muted-foreground/45 rounded-xl shadow-md px-6 py-2 flex items-center gap-6 w-fit">
+      <div className="bg-secondary border border-muted-foreground/45 rounded-xl shadow-md px-6 py-3 flex items-center gap-6 w-fit">
         <Tooltip>
           <TooltipTrigger>
             <div
@@ -56,16 +56,16 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               onMouseUp={() => setTransformDisabled(false)}
             >
               <div ref={stickyNoteRef}>
-                <Button size="icon">
+                <Button
+                  size="icon"
+                  className="transition hover:text-foreground"
+                >
                   <StickerIcon />
                 </Button>
               </div>
-              <span className="text-xs font-medium text-foreground/70">
-                Sticky Note
-              </span>
             </div>
           </TooltipTrigger>
-          <TooltipContent>Drag note on the board</TooltipContent>
+          <TooltipContent>Drag note</TooltipContent>
         </Tooltip>
         {tools.map((tool, index) => (
           <Tooltip key={index}>
@@ -74,14 +74,11 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                 <Button
                   size="icon"
                   onClick={() => tool.function()}
-                  className="transition hover:text-foreground "
+                  className="transition hover:text-foreground"
                 >
                   <tool.icon />
                 </Button>
               </TooltipTrigger>
-              <span className="text-xs font-medium text-foreground/70">
-                {tool.label}
-              </span>
             </div>
             <TooltipContent>{tool.tip}</TooltipContent>
           </Tooltip>
