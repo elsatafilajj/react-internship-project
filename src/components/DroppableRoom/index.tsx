@@ -1,21 +1,15 @@
 import { useRef } from 'react';
-import { useDrop } from 'react-dnd';
 import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
-import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { ItemTypes } from '@/constants/itemTypes';
+import { useNoteDrop } from '@/hooks/useNoteDrop';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
-}
-
-interface DraggedNoteItem extends Partial<NoteItem> {
-  offsetX: number;
-  offsetY: number;
 }
 
 export const DroppableRoom = ({
@@ -27,60 +21,30 @@ export const DroppableRoom = ({
   const { roomId } = useParams<{ roomId: string }>();
   const { data } = useGetAllNotesFromRoomQuery(roomId || '');
 
-  const [, moveDrop] = useDrop(() => ({
-    accept: ItemTypes.Note,
-    drop: (item: DraggedNoteItem, monitor) => {
-      const client = monitor.getClientOffset();
-      const roomEl = roomRef.current;
-      const transformState = transformRef.current?.instance?.transformState;
-
-      if (!client || !roomEl || !transformState) return;
-
-      const { scale, positionX, positionY } = transformState;
-
-      const realX =
-        (client.x - roomEl.getBoundingClientRect().left - positionX) / scale -
-        item.offsetX;
-      const realY =
-        (client.y - roomEl.getBoundingClientRect().top - positionY) / scale -
-        item.offsetY;
-
-      const roomWidth = roomEl.offsetWidth;
-      const roomHeight = roomEl.offsetHeight;
-
-      const withinBoundsX = Math.max(0, Math.min(roomWidth - 288, realX));
-      const withinBoundsY = Math.max(0, Math.min(roomHeight - 270, realY));
+  const moveDropRef = useNoteDrop({
+    type: ItemTypes.Note,
+    roomRef,
+    transformRef,
+    onDrop: (uuid, x, y) => {
+      // setNotes((prevNotes) =>
+      //   prevNotes.map((note) =>
+      //     note.noteId === noteId ? { ...note, xAxis: x, yAxis: y } : note,
+      //   ),
+      // );
     },
-  }));
+  });
 
-  moveDrop(roomRef);
-
-  const [, addDrop] = useDrop<DraggedNoteItem>(() => ({
-    accept: ItemTypes.NewNote,
-    drop: (item, monitor) => {
-      const client = monitor.getClientOffset();
-      const transformState = transformRef.current?.instance?.transformState;
-      const roomEl = roomRef.current;
-
-      if (!client || !transformState || !roomEl) return;
-
-      const { scale, positionX, positionY } = transformState;
-
-      const realX = (client.x - positionX) / scale - item.offsetX;
-      const realY = (client.y - positionY) / scale - item.offsetY;
-
-      const withinBoundsX = Math.max(
-        0,
-        Math.min(roomEl.offsetWidth - 288, realX),
-      );
-      const withinBoundsY = Math.max(
-        0,
-        Math.min(roomEl.offsetHeight - 270, realY),
-      );
+  const addDropRef = useNoteDrop({
+    type: ItemTypes.NewNote,
+    roomRef,
+    transformRef,
+    onDrop: (uuid, x, y) => {
+      // setNotes((prev) => [...prev, { noteId, xAxis: x, yAxis: y }]);
     },
-  }));
+  });
 
-  addDrop(roomRef);
+  moveDropRef(roomRef);
+  addDropRef(roomRef);
 
   return (
     <div
