@@ -3,10 +3,10 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { CreateNoteInput } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
-import { ItemTypes } from '@/constants/itemTypes';
+import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
-interface NoteProps extends Partial<CreateNoteInput> {
+interface NoteProps extends CreateNoteInput {
   noteId: number;
   xAxis: number;
   yAxis: number;
@@ -25,7 +25,7 @@ export const DraggableNote = ({
 
   const [{ isDragging }, drag] = useNoteDrag({
     noteId,
-    type: ItemTypes.Note,
+    type: DragNoteTypes.Note,
     noteRef,
     transformRef,
     xAxis,

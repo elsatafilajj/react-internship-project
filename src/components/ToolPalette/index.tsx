@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { ItemTypes } from '@/constants/itemTypes';
+import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface ToolPaletteProps {
@@ -23,7 +23,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
 
   const [, drag] = useNoteDrag({
     noteRef: stickyNoteRef,
-    type: ItemTypes.NewNote,
+    type: DragNoteTypes.NewNote,
     isNew: true,
   });
 

@@ -1,10 +1,10 @@
 import { useDrop } from 'react-dnd';
 import { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
-import { ItemTypes } from '@/constants/itemTypes';
+import { DragNoteTypes } from '@/constants/dragNoteTypes';
 
 interface useNoteDropProps {
-  type: ItemTypes;
+  type: DragNoteTypes;
   roomRef: React.MutableRefObject<HTMLDivElement | null>;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
   onDrop: (noteId: number, x: number, y: number) => void;
@@ -40,7 +40,7 @@ export const useNoteDrop = ({
       let realX;
       let realY;
 
-      if (type === ItemTypes.Note) {
+      if (type === DragNoteTypes.Note) {
         realX = (client.x - roomRect.left - positionX) / scale - item.offsetX;
         realY = (client.y - roomRect.top - positionY) / scale - item.offsetY;
       } else {

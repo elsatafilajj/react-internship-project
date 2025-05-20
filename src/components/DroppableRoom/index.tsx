@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { DraggableNote } from '@/components/DraggableNote';
-import { ItemTypes } from '@/constants/itemTypes';
+import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 
 interface DroppableRoomProps {
@@ -37,7 +37,7 @@ export const DroppableRoom = ({
   }, []);
 
   const moveDropRef = useNoteDrop({
-    type: ItemTypes.Note,
+    type: DragNoteTypes.Note,
     roomRef,
     transformRef,
     onDrop: (noteId, x, y) => {
@@ -50,7 +50,7 @@ export const DroppableRoom = ({
   });
 
   const addDropRef = useNoteDrop({
-    type: ItemTypes.NewNote,
+    type: DragNoteTypes.NewNote,
     roomRef,
     transformRef,
     onDrop: (noteId, x, y) => {
@@ -66,7 +66,6 @@ export const DroppableRoom = ({
       id="room"
       ref={roomRef}
       className="w-full h-full min-w-[400vw] min-h-[400vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
-
     >
       <div className="absolute top-0 left-0 w-full h-full" />
 
