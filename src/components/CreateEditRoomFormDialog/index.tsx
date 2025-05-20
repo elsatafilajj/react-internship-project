@@ -77,12 +77,12 @@ export const CreateEditRoomFormDialog = () => {
 
   return (
     <Dialog>
-      <DialogTrigger className="text-sm ml-2" asChild>
+      <DialogTrigger className="w-full" asChild>
         {isEditMode ? (
           <Button
             variant="ghost"
             size="sm"
-            className="pl-0 text-sm text-left ml-0 w-[60px] "
+            className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
           >
             Edit
           </Button>

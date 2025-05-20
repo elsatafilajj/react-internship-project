@@ -1,5 +1,5 @@
 import { ChevronDown, PanelLeft, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
@@ -20,6 +20,9 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const isRoom = Boolean(roomId);
 
   return (
     <header className="w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 top-0 z-50 border-b bg-secondary shadow-sm sm:flex-nowrap">
@@ -58,7 +61,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <RoomActionsDropDown />
+        {isRoom && <RoomActionsDropDown />}
         <ShareLinkAlertDialog />
 
         <ThemeChangeToggle />
