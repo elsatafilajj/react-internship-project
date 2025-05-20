@@ -10,7 +10,6 @@ import { Profile } from '@/pages/Profile';
 import { Register } from '@/pages/Register';
 import { ResetPassword } from '@/pages/ResetPassword';
 import { Room } from '@/pages/Room';
-// import { RoomDetails } from '@/pages/RoomDetails';
 import { Rooms } from '@/pages/Rooms';
 
 export const appRoutes: RouteObject[] = [
