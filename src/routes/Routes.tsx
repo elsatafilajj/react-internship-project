@@ -9,7 +9,7 @@ import { Login } from '@/pages/Login';
 import { Profile } from '@/pages/Profile';
 import { Register } from '@/pages/Register';
 import { ResetPassword } from '@/pages/ResetPassword';
-import { RoomDetails } from '@/pages/RoomDetails';
+import { Room } from '@/pages/Room';
 import { Rooms } from '@/pages/Rooms';
 
 export const appRoutes: RouteObject[] = [
@@ -35,7 +35,7 @@ export const appRoutes: RouteObject[] = [
         element: <Profile />,
       },
       { path: RouteNames.Rooms, element: <Rooms /> },
-      { path: RouteNames.RoomDetails, element: <RoomDetails /> },
+      { path: RouteNames.Room, element: <Room /> },
     ],
   },
   {

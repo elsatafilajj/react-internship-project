@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDrop } from 'react-dnd';
+import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 
 interface DroppableRoomProps {
@@ -28,7 +30,7 @@ export const DroppableRoom = ({
   setTransformDisabled,
 }: DroppableRoomProps) => {
   const roomRef = useRef<HTMLDivElement | null>(null);
-  const [notes, setNotes] = useState<NoteProps[]>([]);
+  const [, setNotes] = useState<NoteProps[]>([]);
 
   useEffect(() => {
     if (roomRef.current) {
@@ -42,6 +44,10 @@ export const DroppableRoom = ({
       ]);
     }
   }, []);
+
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
 
   const [, drop] = useDrop(() => ({
     accept: 'note',
@@ -87,14 +93,12 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-full h-full min-w-[400vw] min-h-[400vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
+      className="w-full h-full min-w-[350vw] min-h-[350vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
-      <div className="absolute top-0 left-0 w-full h-full" />
-
-      {notes.map((note) => (
+      {data?.data.map((note) => (
         <DraggableNote
-          key={note.id}
-          id={note.id}
+          key={note.uuid}
+          uuid={note.uuid}
           left={note.xAxis}
           top={note.yAxis}
           setTransformDisabled={setTransformDisabled}
