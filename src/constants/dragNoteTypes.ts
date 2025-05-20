@@ -1,4 +1,4 @@
-export enum ItemTypes {
+export enum DragNoteTypes {
   Note = 'note',
   NewNote = 'new-note',
 }
