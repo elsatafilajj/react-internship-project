@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import { useGetAllRoomsQuery } from '@/api/Room/room.queries';
-import { Room } from '@/components/Room';
+import { RoomCard } from '@/components/RoomCard';
 
 export const Rooms = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export const Rooms = () => {
         {rooms?.data
           .filter((roomData) => roomData.room)
           .map((roomData) => (
-            <Room
+            <RoomCard
               key={roomData.room.uuid}
               title={roomData.room.title}
               updatedAt={roomData.room.updatedAt}
