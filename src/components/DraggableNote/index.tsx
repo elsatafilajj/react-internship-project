@@ -5,7 +5,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { Note } from '@/components/Note';
 
 interface NoteProps {
-  id: number;
+  uuid: string;
   left: number;
   top: number;
   setTransformDisabled: (b: boolean) => void;
@@ -13,7 +13,7 @@ interface NoteProps {
 }
 
 export const DraggableNote = ({
-  id,
+  uuid,
   left,
   top,
   setTransformDisabled,
@@ -30,7 +30,7 @@ export const DraggableNote = ({
 
       const transformState = transformRef.current?.instance?.transformState;
       if (!transformState || !boundingRect) {
-        return { id, left, top, offsetX: 0, offsetY: 0 };
+        return { uuid, left, top, offsetX: 0, offsetY: 0 };
       }
 
       const { scale, positionX, positionY } = transformState;
@@ -39,7 +39,7 @@ export const DraggableNote = ({
       const offsetY = (clientOffset.y - boundingRect.top - positionY) / scale;
 
       return {
-        id,
+        uuid,
         left,
         top,
         offsetX,
