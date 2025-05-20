@@ -6,6 +6,8 @@ import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
+import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { useNoteDrop } from '@/hooks/useNoteDrop';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
