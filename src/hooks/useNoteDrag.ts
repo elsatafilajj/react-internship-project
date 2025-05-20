@@ -15,7 +15,7 @@ interface UseNoteDragProps {
 }
 
 export const useNoteDrag = ({
-  uuid = Date.now().toString(),
+  uuid,
   type,
   noteRef,
   transformRef,
@@ -47,7 +47,7 @@ export const useNoteDrag = ({
       const transformState = transformRef?.current?.instance?.transformState;
 
       if (!transformState || !rect) {
-        return { uuid, xAxis, yAxis, offsetX: 0, offsetY: 0 };
+        return { uuid: Date.now(), xAxis, yAxis, offsetX: 0, offsetY: 0 };
       }
 
       const { scale, positionX, positionY } = transformState;
