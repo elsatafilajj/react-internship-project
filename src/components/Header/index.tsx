@@ -23,12 +23,18 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
   return (
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-0.5 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <PanelLeft className="h-5 w-5 " />
         </Button>
+
         <Link to="/" className="block">
-          <Logo className="hidden md:block w-[120px] drop-shadow-sm" />
+          <div className="block sm:hidden">
+            <Logo className="drop-shadow-sm h-8" small />
+          </div>
+          <div className="hidden sm:block">
+            <Logo className="drop-shadow-sm w-[120px]" />
+          </div>
         </Link>
       </div>
 
@@ -37,7 +43,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           Active Room
         </span>
 
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-start">
+        <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
           <span className="text-base font-semibold text-foreground">
             {data?.data.title || 'Untitled'}
           </span>
@@ -57,8 +63,9 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+     <div className="flex items-center gap-0.5 sm:gap-3">
         {isUserInRoom && <RoomActionsDropDown />}
+
         <ShareLinkAlertDialog />
 
         <ThemeChangeToggle />
