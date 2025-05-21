@@ -18,16 +18,16 @@ export const DroppableRoom = ({
   setTransformDisabled,
 }: DroppableRoomProps) => {
   const roomRef = useRef<HTMLDivElement | null>(null);
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
 
-  const { roomId } = useParams<{ roomId: string }>();
-  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
-
   useEffect(() => {
-    if (data?.data) {
+    if (isFetched && data) {
       setNotes(data.data);
     }
-  }, [data]);
+  }, [data, isFetched]);
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
@@ -60,7 +60,7 @@ export const DroppableRoom = ({
       ref={roomRef}
       className="w-full h-full min-w-[350vw] min-h-[350vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
-      {notes?.map((note) => (
+      {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote
           key={note.uuid}
           uuid={note.uuid}
@@ -70,16 +70,6 @@ export const DroppableRoom = ({
           transformRef={transformRef}
         />
       ))}
-      {/* {data?.data.map((note) => (
-        <DraggableNote
-          key={note.uuid}
-          uuid={note.uuid}
-          xAxis={note.xAxis}
-          yAxis={note.yAxis}
-          setTransformDisabled={setTransformDisabled}
-          transformRef={transformRef}
-        />
-      ))} */}
     </div>
   );
 };
