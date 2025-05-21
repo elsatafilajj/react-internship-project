@@ -1,37 +1,20 @@
-export type Comments = CommentsResponse[];
+import { Note } from '@/api/Room/room.types';
+import { User } from '@/api/User/user.types';
 
-export interface CommentsResponse {
+export interface NoteComment {
   uuid: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
   content: string;
   user: User;
-  parent?: Parent | null;
+  parent?: Note | null;
 }
 
 export interface CommentInput {
   noteId: string;
   content: string;
   parentId?: string;
-}
-
-export interface User {
-  uuid: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-export interface Parent {
-  uuid: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  content: string;
 }
 
 export interface UpdateCommentInput {
