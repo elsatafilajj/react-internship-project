@@ -15,7 +15,7 @@ export const Room = () => {
     <DndProvider backend={HTML5Backend}>
       <TransformWrapper
         initialScale={1}
-        minScale={0.3}
+        minScale={0.45}
         limitToBounds={true}
         ref={transformRef}
         disabled={transformDisabled}
@@ -29,6 +29,7 @@ export const Room = () => {
             setTransformDisabled={setTransformDisabled}
           />
         </TransformComponent>
+
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
           <ToolPalette setTransformDisabled={setTransformDisabled} />
         </div>

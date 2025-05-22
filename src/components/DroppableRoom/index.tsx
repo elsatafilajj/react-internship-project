@@ -22,6 +22,7 @@ export const DroppableRoom = ({
 
   const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
+  console.log(data);
 
   useEffect(() => {
     if (isFetched && data) {
@@ -32,6 +33,7 @@ export const DroppableRoom = ({
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
     roomRef,
+
     transformRef,
     onDrop: (uuid, x, y) => {
       setNotes((prevNotes) =>
@@ -58,7 +60,7 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-full h-full min-w-[350vw] min-h-[350vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
+      className="w-[5000px] h-[5000px] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
       {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote

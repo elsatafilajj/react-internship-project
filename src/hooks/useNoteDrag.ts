@@ -38,7 +38,7 @@ export const useNoteDrag = ({
 
         return {
           type,
-          uuid: Date.now.toString(),
+          uuid: Date.now().toLocaleString(),
           offsetX,
           offsetY,
         };
@@ -48,7 +48,7 @@ export const useNoteDrag = ({
 
       if (!transformState || !rect) {
         return {
-          uuid: Date.now().toString(),
+          uuid,
           xAxis,
           yAxis,
           offsetX: 0,
