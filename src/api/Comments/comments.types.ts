@@ -1,16 +1,22 @@
-import { Note } from '@/api/Room/room.types';
 import { User } from '@/api/User/user.types';
 
-export interface NoteComment {
+export interface NoteCommentResponse {
   uuid: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
   content: string;
   user: User;
-  parent?: Note | null;
+  parent?: Comment | null;
 }
 
+export interface Comment {
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  content: string;
+}
 export interface CommentInput {
   noteId: string;
   content: string;

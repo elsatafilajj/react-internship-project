@@ -2,14 +2,14 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 import { getAllCommentsForNote } from '@/api/Comments/comments.client';
-import { NoteComment } from '@/api/Comments/comments.types';
+import { NoteCommentResponse } from '@/api/Comments/comments.types';
 import { queryKeys } from '@/constants/queryKeys';
 
 export const useGetAllCommentsQuery = (
   noteId: string,
-  options?: UseQueryOptions<AxiosResponse<NoteComment[]>>,
+  options?: UseQueryOptions<AxiosResponse<NoteCommentResponse[]>>,
 ) => {
-  return useQuery<AxiosResponse<NoteComment[]>>({
+  return useQuery<AxiosResponse<NoteCommentResponse[]>>({
     queryKey: queryKeys.getCommentsByNoteId(noteId),
     queryFn: () => getAllCommentsForNote(noteId),
     enabled: !!noteId,
