@@ -16,7 +16,7 @@ export const getAllCommentsForNote = async (noteId: string) =>
 export const createNewComment = async (data: CommentInput) => {
   apiRequest<CommentInput, NoteCommentResponse[]>({
     method: 'POST',
-    url: '/comments',
+    url: 'comments',
     data,
   });
 };
