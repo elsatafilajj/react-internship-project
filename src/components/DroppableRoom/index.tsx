@@ -1,28 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDrop } from 'react-dnd';
 import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
+import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { useNoteDrop } from '@/hooks/useNoteDrop';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
-}
-
-interface DraggedNoteItem {
-  id: number;
-  x: number;
-  y: number;
-  offsetX: number;
-  offsetY: number;
-}
-
-interface NoteProps {
-  id: number;
-  xAxis: number;
-  yAxis: number;
 }
 
 export const DroppableRoom = ({
@@ -30,77 +18,55 @@ export const DroppableRoom = ({
   setTransformDisabled,
 }: DroppableRoomProps) => {
   const roomRef = useRef<HTMLDivElement | null>(null);
-  const [, setNotes] = useState<NoteProps[]>([]);
-
-  useEffect(() => {
-    if (roomRef.current) {
-      const rect = roomRef.current.getBoundingClientRect();
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      setNotes([
-        { id: 1, xAxis: centerX + 100, yAxis: centerY },
-        { id: 2, xAxis: centerX - 400, yAxis: centerY - 400 },
-      ]);
-    }
-  }, []);
-
   const { roomId } = useParams<{ roomId: string }>();
 
-  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
+  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
+  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
 
-  const [, drop] = useDrop(() => ({
-    accept: 'note',
-    drop: (item: DraggedNoteItem, monitor) => {
-      const client = monitor.getClientOffset();
+  useEffect(() => {
+    if (isFetched && data) {
+      setNotes(data.data);
+    }
+  }, [data, isFetched]);
 
-      const roomEl = roomRef.current;
-      const transformState = transformRef.current?.instance?.transformState;
+  const moveDropRef = useNoteDrop({
+    type: DragNoteTypes.Note,
+    roomRef,
 
-      if (!client || !roomEl || !transformState) return;
-
-      const { scale, positionX, positionY } = transformState;
-
-      const realX =
-        (client.x - roomEl.getBoundingClientRect().left) / scale -
-        positionX / scale -
-        item.offsetX;
-      const realY =
-        (client.y - roomEl.getBoundingClientRect().top) / scale -
-        positionY / scale -
-        item.offsetY;
-
-      const roomWidth = roomEl.offsetWidth;
-      const roomHeight = roomEl.offsetHeight;
-
-      const withinBoundsX = Math.max(0, Math.min(roomWidth - 288, realX));
-      const withinBoundsY = Math.max(0, Math.min(roomHeight - 270, realY));
-
+    transformRef,
+    onDrop: (uuid, x, y) => {
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
-          note.id === item.id
-            ? { ...note, xAxis: withinBoundsX, yAxis: withinBoundsY }
-            : note,
+          note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
         ),
       );
     },
-    collect: (m) => ({ isOver: m.isOver() }),
-  }));
+  });
 
-  drop(roomRef);
+  const addDropRef = useNoteDrop({
+    type: DragNoteTypes.NewNote,
+    roomRef,
+    transformRef,
+    onDrop: (uuid, x, y) => {
+      setNotes((prev) => [...prev, { uuid, xAxis: x, yAxis: y }]);
+    },
+  });
+
+  moveDropRef(roomRef);
+  addDropRef(roomRef);
 
   return (
     <div
       id="room"
       ref={roomRef}
-      className="w-full h-full min-w-[350vw] min-h-[350vh] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
+      className="w-[5000px] h-[5000px] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
-      {data?.data.map((note) => (
+      {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote
           key={note.uuid}
           uuid={note.uuid}
-          left={note.xAxis}
-          top={note.yAxis}
+          xAxis={note.xAxis}
+          yAxis={note.yAxis}
           setTransformDisabled={setTransformDisabled}
           transformRef={transformRef}
         />

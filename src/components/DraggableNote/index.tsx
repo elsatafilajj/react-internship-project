@@ -1,55 +1,33 @@
 import { useRef } from 'react';
-import { useDrag } from 'react-dnd';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { NoteItem } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
+import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { useNoteDrag } from '@/hooks/useNoteDrag';
 
-interface NoteProps {
-  uuid: string;
-  left: number;
-  top: number;
+interface NoteProps extends Partial<NoteItem> {
   setTransformDisabled: (b: boolean) => void;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
 }
 
 export const DraggableNote = ({
   uuid,
-  left,
-  top,
+  xAxis,
+  yAxis,
   setTransformDisabled,
   transformRef,
 }: NoteProps) => {
   const noteRef = useRef<HTMLDivElement | null>(null);
 
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'note',
-
-    item: (monitor) => {
-      const boundingRect = noteRef.current?.getBoundingClientRect();
-      const clientOffset = monitor.getClientOffset() || { x: 0, y: 0 };
-
-      const transformState = transformRef.current?.instance?.transformState;
-      if (!transformState || !boundingRect) {
-        return { uuid, left, top, offsetX: 0, offsetY: 0 };
-      }
-
-      const { scale, positionX, positionY } = transformState;
-
-      const offsetX = (clientOffset.x - boundingRect.left - positionX) / scale;
-      const offsetY = (clientOffset.y - boundingRect.top - positionY) / scale;
-
-      return {
-        uuid,
-        left,
-        top,
-        offsetX,
-        offsetY,
-      };
-    },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
+  const [{ isDragging }, drag] = useNoteDrag({
+    uuid,
+    type: DragNoteTypes.Note,
+    noteRef,
+    transformRef,
+    xAxis,
+    yAxis,
+  });
 
   drag(noteRef);
 
@@ -58,8 +36,8 @@ export const DraggableNote = ({
       ref={noteRef}
       style={{
         position: 'absolute',
-        left,
-        top,
+        left: xAxis,
+        top: yAxis,
         opacity: isDragging ? 0 : 1,
       }}
       onMouseDown={() => setTransformDisabled(true)}
