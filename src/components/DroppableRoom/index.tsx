@@ -22,7 +22,6 @@ export const DroppableRoom = ({
 
   const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
-  console.log(data);
 
   useEffect(() => {
     if (isFetched && data) {
