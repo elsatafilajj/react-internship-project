@@ -1,16 +1,68 @@
-import { MessageSquare, Clock3 } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  MessageSquare,
+  Clock3,
+  SendHorizontal,
+  CornerDownLeft,
+} from 'lucide-react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
+import { createNewComment } from '@/api/Comments/comments.client';
+import { useGetAllCommentsQuery } from '@/api/Comments/comments.queries';
 import { CommentsActionsDropDown } from '@/components/CommentsActionDropDown';
+import { ReplyCommentForm } from '@/components/ReplyCommentForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { queryKeys } from '@/constants/queryKeys';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { getFormikError } from '@/helpers/getFormikError';
+import { useForm } from '@/hooks/useForm';
+import { CommentSchema } from '@/schemas/CommentSchema';
 
-export const CommentsActivityPanel = () => {
+interface CommentsActivityPanelProps {
+  noteId: string;
+}
+
+export const CommentsActivityPanel = ({
+  noteId,
+}: CommentsActivityPanelProps) => {
+  const queryClient = useQueryClient();
   const { user } = useAuthContext();
-  const [comment] = useState(false);
+  const [replyComment, setReplyComment] = useState<string | null>(null);
+
+  const { data } = useGetAllCommentsQuery(noteId);
+
+  const commentsMutation = useMutation({
+    mutationFn: createNewComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getCommentsByNoteId(noteId),
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const formik = useForm({
+    schema: CommentSchema,
+    initialValues: {
+      noteId: noteId,
+      content: '',
+      parent: null,
+    },
+    onSubmit: async (values, formikHelpers) => {
+      try {
+        await commentsMutation.mutateAsync(values);
+        formikHelpers.resetForm();
+      } catch {
+        console.error('comment creation failed');
+      }
+    },
+  });
 
   return (
     <aside className="w-full bg-card h-screen text-card-revert flex flex-col">
@@ -35,79 +87,102 @@ export const CommentsActivityPanel = () => {
         <TabsContent value="comments" className="flex-1">
           <ScrollArea className="h-full p-4 space-y-4">
             <div className="space-y-4">
-              {!comment ? (
-                <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
-                  <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                    <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                      {user?.firstName[0].toUpperCase()}
-                    </div>
-                    {user?.firstName} {user?.lastName}
+              <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
+                <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                  <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
+                    {user?.firstName[0].toUpperCase()}
                   </div>
-                  <Input
-                    id="comment"
-                    name="comment"
-                    type="text"
-                    placeholder="Comment or add others with @"
-                  />
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button
-                      size="sm"
-                      className="bg-transparent text-foreground hover:bg-transparent"
-                    >
-                      Cancel
-                    </Button>
-                    <Button size="sm">Comment</Button>
-                  </div>
+                  {user?.firstName} {user?.lastName}
                 </div>
-              ) : (
-                <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                      <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                        {user?.firstName[0].toUpperCase()}
-                      </div>
-                      <div className="flex flex-col mt-1">
-                        {user?.firstName} {user?.lastName}
-                        <span className="text-[10px] text-foreground pl-0">
-                          4:02 PM Today
-                        </span>
-                      </div>
-                    </div>
-                    <CommentsActionsDropDown />
-                  </div>
-                  <p className="text-[15px] my-3">
-                    I have an idea for this 💡!
-                  </p>
+                <form onSubmit={formik.handleSubmit} className="flex">
                   <Input
-                    id="reply"
-                    name="reply"
+                    id="content"
+                    name="content"
                     type="text"
-                    placeholder="Reply or add others with @"
+                    placeholder="Comment here . . ."
+                    value={formik.values.content}
+                    onChange={formik.handleChange}
+                    error={getFormikError(formik, 'content')}
+                    className="relative w-[230px]"
                   />
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button
-                      size="sm"
-                      className="bg-transparent text-foreground hover:bg-transparent"
-                    >
-                      Cancel
-                    </Button>
-                    <Button size="sm">Reply</Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-        </TabsContent>
 
-        <TabsContent value="activity" className="flex-1">
-          <ScrollArea className="h-full p-4 space-y-3">
-            <div className="text-sm text-foreground">
-              ✅ <span className="font-medium">Elara</span> added a sticky note
-              <span className="text-xs text-foreground ml-1">• 2 min ago</span>
-            </div>
-            <div className="text-sm text-foreground">
-              ✏️ <span className="font-medium">Ben</span> renamed the session
-              <span className="text-xs text-foreground ml-1">• 5 min ago</span>
+                  <Button
+                    size="sm"
+                    type="submit"
+                    disabled={formik.isSubmitting}
+                    className="bg-card text-foreground "
+                  >
+                    <SendHorizontal type="submit" />
+                  </Button>
+                </form>
+              </div>
+              {data?.data
+                .filter((comment) => !comment.parent)
+                .map((comment) => (
+                  <div
+                    key={comment.uuid}
+                    className="border rounded-md p-3 shadow-sm hover:shadow-md transition"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                        <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
+                          {user?.firstName[0].toUpperCase()}
+                        </div>
+                        <div className="flex flex-col mt-1">
+                          {user?.firstName} {user?.lastName}
+                          <span className="text-[10px] text-foreground pl-0">
+                            4:02 PM Today
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CornerDownLeft
+                          onClick={() =>
+                            setReplyComment((prevComment) =>
+                              prevComment === comment.uuid
+                                ? null
+                                : comment.uuid,
+                            )
+                          }
+                          className="w-5 h-5"
+                        />
+                        <CommentsActionsDropDown />
+                      </div>
+                    </div>
+                    <p className="text-[15px]">{comment.content}</p>
+
+                    {replyComment === comment.uuid && (
+                      <>
+                        <ReplyCommentForm
+                          parentId={comment.uuid}
+                          noteId={noteId}
+                        />
+
+                        {data?.data
+                          .filter(
+                            (reply) => reply.parent?.uuid === comment.uuid,
+                          )
+                          .map((replyComment) => (
+                            <div
+                              key={replyComment.uuid}
+                              className="ml-1 mt-3 border-l border-gray-300 pl-3 text-sm"
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                                  <div className="rounded-full bg-primary w-6 h-6 text-center text-black p-1">
+                                    {user?.firstName[0].toUpperCase()}
+                                  </div>
+                                  {user?.firstName} {user?.lastName}
+                                </div>
+                                <CommentsActionsDropDown />
+                              </div>
+                              <p className="mr-2">{replyComment.content}</p>
+                            </div>
+                          ))}
+                      </>
+                    )}
+                  </div>
+                ))}
             </div>
           </ScrollArea>
         </TabsContent>
