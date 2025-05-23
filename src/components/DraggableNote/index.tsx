@@ -79,6 +79,10 @@ export const DraggableNote = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success('Your note has been deleted!');
+      if (localStorage.getItem('votedNote') === uuid) {
+        localStorage.removeItem('votedNote');
+        localStorage.setItem('hasVoted', 'false');
+      }
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to delete note.');

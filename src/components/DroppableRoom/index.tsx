@@ -102,7 +102,7 @@ export const DroppableRoom = ({
         };
         createNewNoteMutation.mutateAsync(newNote);
       }
-      setNotes((prev) => [...prev, { uuid, xAxis: x, yAxis: y }]);
+      setNotes((prev) => [...(prev || []), { uuid, xAxis: x, yAxis: y }]);
     },
   });
 
