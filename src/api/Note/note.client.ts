@@ -31,3 +31,9 @@ export const deleteNote = async (noteId: string) =>
     url: `notes/${noteId}`,
     method: 'DELETE',
   });
+
+export const addVoteToNote = async (noteId: NoteItem['uuid']) =>
+  apiRequest({ url: `notes/${noteId}/vote`, method: 'POST' });
+
+export const removeVoteFromNote = async (noteId: NoteItem['uuid']) =>
+  apiRequest({ url: `notes/${noteId}/vote`, method: 'DELETE' });

@@ -8,7 +8,7 @@ interface useNoteDropProps {
   type: DragNoteTypes;
   roomRef: React.MutableRefObject<HTMLDivElement | null>;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
-  onDrop: (uuid: string, x: number, y: number) => void;
+  onDrop: (uuid: NoteItem['uuid'], x: number, y: number) => void;
 }
 
 interface DraggedNoteItem extends Partial<NoteItem> {

@@ -2,10 +2,11 @@ import type { RefObject } from 'react';
 import { useDrag } from 'react-dnd';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { NoteItem } from '@/api/Note/note.types';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 
 interface UseNoteDragProps {
-  uuid?: string;
+  uuid?: NoteItem['uuid'];
   type: DragNoteTypes;
   noteRef: RefObject<HTMLElement>;
   transformRef?: RefObject<ReactZoomPanPinchRef>;
