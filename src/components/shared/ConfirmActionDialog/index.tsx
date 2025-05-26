@@ -15,7 +15,7 @@ interface ConfirmActionDialogProps {
   triggerButtonName: string;
   title?: string;
   message?: string;
-  onClickFunction: () => void;
+  onConfirm: () => void;
   className?: string;
 }
 
@@ -23,7 +23,7 @@ export const ConfirmActionDialog = ({
   triggerButtonName,
   title,
   message,
-  onClickFunction,
+  onConfirm,
   className,
 }: ConfirmActionDialogProps) => {
   return (
@@ -51,7 +51,7 @@ export const ConfirmActionDialog = ({
           <AlertDialogCancel className="bg-white w-[100px] border hover:bg-gray-100">
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction className="w-[100px]" onClick={onClickFunction}>
+          <AlertDialogAction className="w-[100px]" onClick={onConfirm}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

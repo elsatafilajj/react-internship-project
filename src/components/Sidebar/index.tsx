@@ -119,7 +119,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 className="max-w-fit"
                 triggerButtonName="Logout"
                 title="Are you sure you want to logout?"
-                onClickFunction={handleLogout}
+                onConfirm={handleLogout}
               />
             </div>
           </Button>
