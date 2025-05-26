@@ -1,7 +1,11 @@
+import { useMutation } from '@tanstack/react-query';
 import { EllipsisVertical } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { deleteRoom } from '@/api/Room/room.client';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
-import { DeleteRoomDialog } from '@/components/DeleteRoomDialog';
+import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +14,28 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export const RoomActionsDropDown = () => {
+  const { roomId } = useParams<{ roomId: string }>();
+  const navigate = useNavigate();
+
+  const deleteMutation = useMutation({
+    mutationFn: (roomId: string) => deleteRoom(roomId),
+    onSuccess: () => {
+      toast.success('Room deleted successfully!');
+      navigate('/rooms');
+    },
+    onError: () => {
+      toast.error('Room deletion failed.');
+    },
+  });
+
+  const handleDelete = async () => {
+    try {
+      await deleteMutation.mutateAsync(roomId || ' ');
+    } catch (error) {
+      console.error('Deletion failed', error);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -18,7 +44,13 @@ export const RoomActionsDropDown = () => {
       <DropdownMenuContent>
         <CreateEditRoomFormDialog />
         <DropdownMenuItem>Archive</DropdownMenuItem>
-        <DeleteRoomDialog />
+        <ConfirmActionDialog
+          trigger="Delete"
+          title="You are about to delete this room."
+          message="This action cannot be undone. This will permanently delete your
+            room."
+          customFunction={handleDelete}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );
