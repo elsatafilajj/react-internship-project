@@ -1,3 +1,7 @@
+import { useMutation } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+
+import { changePassword } from '@/api/User/user.client';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -8,8 +12,35 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getFormikError } from '@/helpers/getFormikError';
+import { useForm } from '@/hooks/useForm';
+import { ChangePasswordSchema } from '@/schemas/ChangePasswordSchema';
 
 export const ChangePasswordForm = () => {
+  const changePasswordMutation = useMutation({
+    mutationFn: changePassword,
+    onSuccess: () => {
+      toast.success('Password has changed!');
+    },
+  });
+
+  const formik = useForm({
+    schema: ChangePasswordSchema,
+    initialValues: {
+      oldPassword: '',
+      newPassword: '',
+      newPasswordConfirm: '',
+    },
+    onSubmit: async (values, formikHelpers) => {
+      try {
+        await changePasswordMutation.mutateAsync(values);
+        formikHelpers.resetForm();
+      } catch {
+        console.error('Change password failed');
+      }
+    },
+  });
+
   return (
     <Card>
       <CardHeader className="text-center">
@@ -19,31 +50,42 @@ export const ChangePasswordForm = () => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4 mt-4">
-        <Input
-          name="oldPassword"
-          type="password"
-          placeholder="Enter your old password"
-          id="oldPassword"
-        />
-        <Input
-          name="password"
-          type="password"
-          placeholder="Enter your new password"
-          id="password"
-        />
-        <Input
-          name="passwordConfirm"
-          type="password"
-          placeholder="Confirm new password"
-          id="passwordConfirm"
-        />
-      </CardContent>
-      <CardFooter>
-        <Button type="submit" className="mt-8">
-          Save changes
-        </Button>
-      </CardFooter>
+      <form onSubmit={formik.handleSubmit} className="space-y-2">
+        <CardContent className="space-y-4 mt-4">
+          <Input
+            name="oldPassword"
+            type="password"
+            placeholder="Enter your old password"
+            id="oldPassword"
+            value={formik.values.oldPassword}
+            onChange={formik.handleChange}
+            error={getFormikError(formik, 'oldPassword')}
+          />
+          <Input
+            name="newPassword"
+            type="password"
+            placeholder="Enter your new password"
+            id="newPassword"
+            value={formik.values.newPassword}
+            onChange={formik.handleChange}
+            error={getFormikError(formik, 'newPassword')}
+          />
+          <Input
+            name="newPasswordConfirm"
+            type="password"
+            placeholder="Confirm new password"
+            id="newPasswordConfirm"
+            value={formik.values.newPasswordConfirm}
+            onChange={formik.handleChange}
+            error={getFormikError(formik, 'newPasswordConfirm')}
+          />
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" className="mt-8" disabled={formik.isSubmitting}>
+            {formik.isSubmitting ? 'Saving...' : 'Save changes'}
+          </Button>
+        </CardFooter>
+      </form>
     </Card>
   );
 };
