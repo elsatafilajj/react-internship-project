@@ -18,18 +18,16 @@ import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { ChangePasswordSchema } from '@/schemas/ChangePasswordSchema';
 
-interface ChangePasswordFormProps {
-  id: string;
-}
-
-export const ChangePasswordForm = ({ id }: ChangePasswordFormProps) => {
-  const { logout } = useAuthContext();
+export const ChangePasswordForm = () => {
+  const { logout, user } = useAuthContext();
   const queryClient = useQueryClient();
 
   const changePasswordMutation = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.getSingleUser(id) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleUser(user?.id || ''),
+      });
       toast.success('Password has changed!');
       logout();
     },
