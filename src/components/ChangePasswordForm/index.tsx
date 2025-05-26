@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { changePassword } from '@/api/User/user.client';
@@ -12,24 +12,15 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { queryKeys } from '@/constants/queryKeys';
-import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { ChangePasswordSchema } from '@/schemas/ChangePasswordSchema';
 
 export const ChangePasswordForm = () => {
-  const { logout, user } = useAuthContext();
-  const queryClient = useQueryClient();
-
   const changePasswordMutation = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleUser(user?.id || ''),
-      });
       toast.success('Password has changed!');
-      logout();
     },
   });
 
