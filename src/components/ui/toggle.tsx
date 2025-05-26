@@ -10,6 +10,7 @@ const toggleVariants = cva(
     variants: {
       variant: {
         default: 'bg-transparent',
+        ghost: 'bg-transparent hover:bg-transparent focus:bg-transparent',
         outline:
           'border border-2 border-primary bg-transparent shadow-xs hover:bg-primary-foreground hover:text-accent-foreground',
       },
