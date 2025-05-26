@@ -56,11 +56,11 @@ export const ReplyCommentForm = ({
         id="content"
         name="content"
         type="text"
-        placeholder="Reply . . ."
+        placeholder="Reply..."
         value={formikReply.values.content}
         onChange={formikReply.handleChange}
         error={getFormikError(formikReply, 'content')}
-        className="relative w-[230px]"
+        className="relative w-[230px] tracking-wide"
       />
 
       <Button size="sm" type="submit" className="bg-card text-foreground m-0">

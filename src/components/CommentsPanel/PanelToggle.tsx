@@ -1,6 +1,6 @@
 import { MessageSquare } from 'lucide-react';
 
-import { CommentsActivityPanel } from '@/components/CommentsActivityPanel';
+import { CommentsPanel } from '@/components/CommentsPanel';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
@@ -25,7 +25,7 @@ export const PanelToggle = ({ noteId }: PanelToggleProps) => {
         side="right"
         className="w-80 mt-[100px] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
       >
-        <CommentsActivityPanel noteId={noteId} />
+        <CommentsPanel noteId={noteId} />
       </SheetContent>
     </Sheet>
   );

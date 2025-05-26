@@ -1,4 +1,4 @@
-import { PanelToggle } from '@/components/CommentsActivityPanel/PanelToggle';
+import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 interface NoteProps {
