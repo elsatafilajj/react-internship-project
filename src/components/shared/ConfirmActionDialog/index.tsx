@@ -12,18 +12,18 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface ConfirmActionDialogProps {
-  trigger: string;
+  triggerButtonName: string;
   title?: string;
   message?: string;
-  customFunction: () => void;
+  onClickFunction: () => void;
   className?: string;
 }
 
 export const ConfirmActionDialog = ({
-  trigger,
+  triggerButtonName,
   title,
   message,
-  customFunction,
+  onClickFunction,
   className,
 }: ConfirmActionDialogProps) => {
   return (
@@ -34,7 +34,7 @@ export const ConfirmActionDialog = ({
           size="sm"
           className="w-full focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
         >
-          {trigger}
+          {triggerButtonName}
         </Button>
       </AlertDialogTrigger>
 
@@ -51,7 +51,7 @@ export const ConfirmActionDialog = ({
           <AlertDialogCancel className="bg-white w-[100px] border hover:bg-gray-100">
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction className="w-[100px]" onClick={customFunction}>
+          <AlertDialogAction className="w-[100px]" onClick={onClickFunction}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>
