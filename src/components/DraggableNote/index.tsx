@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { Circle, Star, StarOff, X } from 'lucide-react';
+import { Circle, Star, X } from 'lucide-react';
 import { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
