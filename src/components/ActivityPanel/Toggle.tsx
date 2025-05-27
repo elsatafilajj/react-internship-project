@@ -1,6 +1,6 @@
 import { Activity } from 'lucide-react';
 
-import { ActivityPanel } from '@/components/ActivityPanelToggle';
+import { ActivityPanel } from '@/components/ActivityPanel';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
