@@ -1,6 +1,11 @@
+import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
-export const Note = () => {
+interface NoteProps {
+  uuid: string;
+}
+
+export const Note = ({ uuid }: NoteProps) => {
   const { user } = useAuthContext();
 
   return (
@@ -18,6 +23,8 @@ export const Note = () => {
           </span>
         </div>
       </div>
+
+      <PanelToggle noteId={uuid} />
     </div>
   );
 };

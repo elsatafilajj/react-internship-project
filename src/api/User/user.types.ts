@@ -55,9 +55,9 @@ export interface SetPasswordResponse {
 }
 
 export interface ChangePasswordInput {
-  password: string;
-  passwordConfirm: string;
   oldPassword: string;
+  newPassword: string;
+  newPasswordConfirm: string;
 }
 
 export interface RefreshTokenPayload {

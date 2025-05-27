@@ -44,7 +44,7 @@ export const DraggableNote = ({
       onDragEnd={() => setTransformDisabled(false)}
       onMouseUp={() => setTransformDisabled(false)}
     >
-      <Note />
+      <Note uuid={uuid || ''} />
     </div>
   );
 };
