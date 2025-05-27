@@ -57,7 +57,7 @@ export const editProfile = async (data: Partial<User>) => {
 export const changePassword = async (data: ChangePasswordInput) => {
   return apiRequest<ChangePasswordInput, User>({
     method: 'PATCH',
-    url: 'users/change-password',
+    url: 'users/me/password',
     data,
   });
 };

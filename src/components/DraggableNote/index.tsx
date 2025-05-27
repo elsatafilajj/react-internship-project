@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { Circle, MessageSquare, Star, StarOff, X } from 'lucide-react';
+import { Circle, Star, StarOff, X } from 'lucide-react';
 import { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
   updateNote,
 } from '@/api/Note/note.client';
 import { NoteItem, UpdateNoteInput } from '@/api/Note/note.types';
+import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
   PopoverContent,
@@ -226,7 +227,7 @@ export const DraggableNote = ({
           </PopoverTrigger>
 
           <PopoverContent side="top" sideOffset={10}>
-            <div className="bg-popover flex items-center justify-between gap-1 rounded-xs h-fit">
+            <div className="bg-popover flex items-center gap-2.5 rounded-xs h-fit">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
@@ -269,11 +270,11 @@ export const DraggableNote = ({
                 })}
               </div>
 
-              <div className="flex relative flex-col items-center  mr-2">
+              <div className="flex relative flex-col items-center self-end">
                 <Toggle
+                  size="sm"
                   variant="ghost"
-                  size="lg"
-                  className="cursor-pointer"
+                  className="cursor-pointer py-2"
                   onClick={handleVote}
                   disabled={
                     !!hasVoted && localStorage.getItem('votedNote') !== uuid
@@ -281,20 +282,16 @@ export const DraggableNote = ({
                 >
                   {hasVoted === true &&
                   localStorage.getItem('votedNote') === uuid ? (
-                    <StarOff strokeWidth={2.5} />
+                    <Star fill="white" />
                   ) : (
                     <Star strokeWidth={2.5} />
                   )}
                 </Toggle>
-                <p className="text-xs absolute font-semibold -top-1.5 ">
+                <p className="text-xs absolute font-semibold -top-3 ">
                   {totalVotes || totalVotes === 0 ? totalVotes : 15}
                 </p>
               </div>
-              <MessageSquare
-                strokeWidth={2.5}
-                className="self-center hover:cursor-pointer"
-                size={20}
-              />
+              <PanelToggle noteId={uuid} />
             </div>
           </PopoverContent>
         </Popover>
