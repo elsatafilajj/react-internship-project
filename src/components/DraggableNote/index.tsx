@@ -244,7 +244,6 @@ export const DraggableNote = ({
               <div className="flex gap-3 p-3">
                 {colors.map((colorObj, i) => {
                   const colorClass = Object.values(colorObj)[0];
-                  console.log(colorClass);
 
                   return (
                     <Circle
