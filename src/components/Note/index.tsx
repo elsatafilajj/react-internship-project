@@ -1,11 +1,16 @@
+import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
-export const Note = () => {
+interface NoteProps {
+  uuid: string;
+}
+
+export const Note = ({ uuid }: NoteProps) => {
   const { user } = useAuthContext();
 
   return (
     <div className="flex">
-      <div className="m-4 w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">
+      <div className=" w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">
         <div className="flex flex-col justify-between h-full p-2 text-xs">
           <textarea
             placeholder="Type anything..."
@@ -18,6 +23,8 @@ export const Note = () => {
           </span>
         </div>
       </div>
+
+      <PanelToggle noteId={uuid} />
     </div>
   );
 };

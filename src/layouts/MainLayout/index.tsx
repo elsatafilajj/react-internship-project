@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { PanelToggle } from '@/components/CommentsActivityPanel/PanelToggle';
+import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
 import { RouteWrapper } from '@/routes/RouteWrapper';
@@ -11,17 +11,16 @@ export const MainLayout = () => {
 
   return (
     <RouteWrapper>
-      <div className="text-muted-foreground">
+      <div className="w-full">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <div className="w-full">
+        <div className="">
           <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-          <div>
-            <main className="h-screen">
-              <Outlet />
-              <PanelToggle />
-            </main>
-          </div>
+
+          <main className="h-screen">
+            <Outlet />
+            <ActivityPanelToggle />
+          </main>
         </div>
       </div>
     </RouteWrapper>

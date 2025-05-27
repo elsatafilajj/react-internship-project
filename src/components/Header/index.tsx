@@ -1,17 +1,13 @@
-import { ChevronDown, PanelLeft, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
-import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
+import { PanelLeft, User } from 'lucide-react'; 
+import { Link, useParams } from 'react-router-dom';
+
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Logo } from '@/components/shared/Logo';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -19,15 +15,26 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const isUserInRoom = Boolean(roomId);
+
+  const { data } = useGetRoomByIdQuery(roomId || '');
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
-      <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
+      <div className="flex items-center gap-0.5 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <PanelLeft className="h-5 w-5 " />
         </Button>
+
         <Link to="/" className="block">
-          <Logo className="hidden md:block w-[120px] drop-shadow-sm" />
+          <div className="block sm:hidden">
+            <Logo className="drop-shadow-sm h-8" small />
+          </div>
+          <div className="hidden sm:block">
+            <Logo className="drop-shadow-sm w-[120px]" />
+          </div>
         </Link>
       </div>
 
@@ -36,9 +43,9 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           Active Room
         </span>
 
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-start">
+        <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
           <span className="text-base font-semibold text-foreground">
-            Untitled
+            {data?.data.title || 'Untitled'}
           </span>
 
           <div className="flex -space-x-2">
@@ -56,32 +63,23 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+     <div className="flex items-center gap-0.5 sm:gap-3">
+        {isUserInRoom && <RoomActionsDropDown />}
+
         <ShareLinkAlertDialog />
 
         <ThemeChangeToggle />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-secondary border-2 border-foreground text-foreground text-sm font-medium shadow cursor-pointer min-w-0 overflow-hidden">
-              <User />
-              <ChevronDown className="h-4 w-4 text-foreground" />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="flex flex-col items-center p-1.5"
-          >
-            <Link to="/profile">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-            </Link>
-            <DropdownMenu>
-              <DropdownMenuItem>
-                <LogoutAlertDialog />
-              </DropdownMenuItem>
-            </DropdownMenu>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link
+          to="/profile"
+          className="relative group flex items-center gap-1 rounded-4xl p-1  border-2 border-foreground text-foreground text-sm font-medium shadow cursor-pointer"
+        >
+          <User />
+
+          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-transform bg-primary text-black text-xs px-2 py-1 rounded shadow">
+            Profile
+          </span>
+        </Link>
       </div>
     </header>
   );

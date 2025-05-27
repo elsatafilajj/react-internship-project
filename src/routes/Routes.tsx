@@ -30,13 +30,12 @@ export const appRoutes: RouteObject[] = [
         path: '/',
         element: <Navigate to={RouteNames.Room} replace />,
       },
-
-      { path: RouteNames.Room, element: <Room /> },
       {
         path: RouteNames.Profile,
         element: <Profile />,
       },
       { path: RouteNames.Rooms, element: <Rooms /> },
+      { path: RouteNames.Room, element: <Room /> },
     ],
   },
   {
