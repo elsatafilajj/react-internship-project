@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import {
   Home,
   Star,
@@ -6,12 +7,15 @@ import {
   LogOut,
   PanelLeftClose,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
+import { logout as apiLogout } from '@/api/User/user.client';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
-import { LogoutAlertDialog } from '@/components/LogoutAlertDialog';
+import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -19,6 +23,27 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+  const { logout } = useAuthContext();
+
+  const logoutMutation = useMutation({
+    mutationFn: apiLogout,
+    onSuccess: () => {
+      toast.success('Logout successful!');
+      logout();
+    },
+    onError: () => {
+      toast.error('Logout failed');
+    },
+  });
+
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
+
   return (
     <>
       {isOpen && (
@@ -82,16 +107,20 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </Button>
         </nav>
 
-        <div className="mt-auto">
+        <div className="mt-auto flex justify-between">
           <Button
             variant="ghost"
-            className="w-full justify-start font-medium"
+            className=" justify-start font-medium"
             asChild
           >
-            <div>
-              {' '}
+            <div className="w-fit">
               <LogOut className="mr-2 h-4 w-4" />
-              <LogoutAlertDialog />
+              <ConfirmActionDialog
+                className="max-w-fit"
+                triggerButtonName="Logout"
+                title="Are you sure you want to logout?"
+                onConfirm={handleLogout}
+              />
             </div>
           </Button>
         </div>
