@@ -7,6 +7,7 @@ import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
+import { getSocket } from '@/lib/socket';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
@@ -19,7 +20,7 @@ export const DroppableRoom = ({
 }: DroppableRoomProps) => {
   const roomRef = useRef<HTMLDivElement | null>(null);
   const { roomId } = useParams<{ roomId: string }>();
-
+  const socket = getSocket();
   const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
 
@@ -40,6 +41,15 @@ export const DroppableRoom = ({
           note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
         ),
       );
+
+      socket.emit('updateNote', {
+        roomId,
+        noteId: uuid,
+        updates: {
+          xAxis: Math.floor(x),
+          yAxis: Math.floor(y),
+        },
+      });
     },
   });
 
@@ -48,9 +58,35 @@ export const DroppableRoom = ({
     roomRef,
     transformRef,
     onDrop: (uuid, x, y) => {
-      setNotes((prev) => [...prev, { uuid, xAxis: x, yAxis: y }]);
+      socket.emit('createNote', {
+        roomId,
+        xAxis: Math.floor(x),
+        yAxis: Math.floor(y),
+      });
     },
   });
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('newNote', ({ newNote }) => {
+      setNotes((prev) => [...prev, newNote]);
+    });
+
+    socket.on('updatedNote', (data) => {
+      const { uuid, xAxis, yAxis, content } = data.updatedNote;
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.uuid === uuid ? { ...note, xAxis, yAxis, content } : note,
+        ),
+      );
+    });
+
+    return () => {
+      socket.off('newNote');
+      socket.off('updatedNote');
+    };
+  }, []);
 
   moveDropRef(roomRef);
   addDropRef(roomRef);
@@ -67,6 +103,8 @@ export const DroppableRoom = ({
           uuid={note.uuid}
           xAxis={note.xAxis}
           yAxis={note.yAxis}
+          content={note.content}
+          author={note.author}
           setTransformDisabled={setTransformDisabled}
           transformRef={transformRef}
         />
