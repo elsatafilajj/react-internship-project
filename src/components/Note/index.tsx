@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 
 import { Author } from '@/api/Note/note.types';
 import { socketEvents } from '@/constants/socketEvents';
+import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
-import { getSocket } from '@/lib/socket';
 
 interface NoteProps {
   uuid?: string;

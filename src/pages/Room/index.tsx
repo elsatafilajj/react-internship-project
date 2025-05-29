@@ -8,7 +8,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
-import { getSocket } from '@/lib/socket';
+import { getSocket } from '@/helpers/socket';
 
 export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
