@@ -29,7 +29,7 @@ export const DroppableRoom = ({
     type: DragNoteTypes.Note,
     roomRef,
     transformRef,
-    onDrop: (uuid, x, y) => {
+    onDrop: (x, y, uuid) => {
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
           note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
@@ -51,7 +51,7 @@ export const DroppableRoom = ({
     type: DragNoteTypes.NewNote,
     roomRef,
     transformRef,
-    onDrop: (uuid, x, y) => {
+    onDrop: (x, y) => {
       socket.emit(socketEvents.CreateNote, {
         roomId,
         xAxis: Math.floor(x),

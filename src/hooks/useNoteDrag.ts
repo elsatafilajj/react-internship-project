@@ -38,9 +38,9 @@ export const useNoteDrag = ({
 
         return {
           type,
-          uuid: Date.now().toLocaleString(),
           offsetX,
           offsetY,
+          uuid: Date.now().toLocaleString(),
         };
       }
 
@@ -60,7 +60,7 @@ export const useNoteDrag = ({
       const offsetX = (clientOffset.x - rect.left - positionX) / scale;
       const offsetY = (clientOffset.y - rect.top - positionY) / scale;
 
-      return { uuid, xAxis, yAxis, offsetX, offsetY };
+      return { xAxis, yAxis, offsetX, offsetY, uuid };
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
