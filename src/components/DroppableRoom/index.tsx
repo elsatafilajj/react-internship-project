@@ -83,10 +83,6 @@ export const DroppableRoom = ({
       );
     });
 
-    // socket.on('userLeft', (roomId) => {
-    //   console.log('left', roomId);
-    // });
-
     return () => {
       socket.off(socketEvents.NewNote);
       socket.off(socketEvents.UpdatedNote);

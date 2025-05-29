@@ -1,8 +1,8 @@
-
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { NoteItem } from '@/api/Note/note.types';
+import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -36,7 +36,7 @@ export const Note = ({ note }: NoteProps) => {
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
   };
-  
+
   return (
     <div className="flex">
       <div className=" w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">
@@ -55,7 +55,7 @@ export const Note = ({ note }: NoteProps) => {
         </div>
       </div>
 
-      <PanelToggle noteId={uuid} />
+      <PanelToggle noteId={uuid || ''} />
     </div>
   );
 };

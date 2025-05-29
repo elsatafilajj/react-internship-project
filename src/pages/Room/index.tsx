@@ -8,6 +8,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
+import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 
 export const Room = () => {
@@ -19,11 +20,11 @@ export const Room = () => {
   useEffect(() => {
     if (!roomId) return;
 
-    socket.emit('joinRoom', roomId);
+    socket.emit(socketEvents.JoinRoom, roomId);
     toast.success('You joined the room');
 
     return () => {
-      socket.emit('leaveRoom', roomId);
+      socket.emit(socketEvents.LeaveRoom, roomId);
       toast.success('You left the room');
     };
   }, [roomId]);
