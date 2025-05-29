@@ -6,6 +6,7 @@ import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { socketEvents } from '@/constants/socketEvents';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 import { getSocket } from '@/lib/socket';
 
@@ -42,7 +43,7 @@ export const DroppableRoom = ({
         ),
       );
 
-      socket.emit('updateNote', {
+      socket.emit(socketEvents.UpdateNote, {
         roomId,
         noteId: uuid,
         updates: {
@@ -58,7 +59,7 @@ export const DroppableRoom = ({
     roomRef,
     transformRef,
     onDrop: (uuid, x, y) => {
-      socket.emit('createNote', {
+      socket.emit(socketEvents.CreateNote, {
         roomId,
         xAxis: Math.floor(x),
         yAxis: Math.floor(y),
@@ -69,11 +70,12 @@ export const DroppableRoom = ({
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('newNote', ({ newNote }) => {
-      setNotes((prev) => [...prev, newNote]);
+    socket.on(socketEvents.NewNote, ({ newNote }) => {
+      console.log('new note', newNote);
+      setNotes((prev) => [...(prev || []), newNote]);
     });
 
-    socket.on('updatedNote', (data) => {
+    socket.on(socketEvents.UpdatedNote, (data) => {
       const { uuid, xAxis, yAxis, content } = data.updatedNote;
       setNotes((prev) =>
         prev.map((note) =>
@@ -83,8 +85,8 @@ export const DroppableRoom = ({
     });
 
     return () => {
-      socket.off('newNote');
-      socket.off('updatedNote');
+      socket.off(socketEvents.NewNote);
+      socket.off(socketEvents.UpdatedNote);
     };
   }, []);
 
@@ -99,12 +101,7 @@ export const DroppableRoom = ({
     >
       {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote
-          key={note.uuid}
-          uuid={note.uuid}
-          xAxis={note.xAxis}
-          yAxis={note.yAxis}
-          content={note.content}
-          author={note.author}
+          note={note}
           setTransformDisabled={setTransformDisabled}
           transformRef={transformRef}
         />

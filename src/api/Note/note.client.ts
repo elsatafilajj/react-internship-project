@@ -8,8 +8,9 @@ import { DeleteResponse } from '@/types/DeleteResponse';
 
 export const getAllNotesFromRoom = async (roomId: string) =>
   apiRequest<undefined, NoteItem[]>({
-    url: `notes?roomId=${roomId}`,
+    url: 'notes',
     method: 'GET',
+    params: { roomId },
   });
 
 export const createNewNote = async (input: CreateNoteInput) =>
