@@ -1,8 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import { useParams } from 'react-router-dom';
-
-import { deleteRoom } from '@/api/Room/room.client';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,54 +11,47 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
-export const DeleteRoomDialog = () => {
-  const { roomId } = useParams<{ roomId: string }>();
+interface ConfirmActionDialogProps {
+  triggerButtonName: string;
+  title?: string;
+  message?: string;
+  onConfirm: () => void;
+  className?: string;
+}
 
-  const deleteMutation = useMutation({
-    mutationFn: (roomId: string) => deleteRoom(roomId),
-    onSuccess: () => {
-      toast.success('Room deleted successfully!');
-    },
-    onError: () => {
-      toast.error('Room deletion failed.');
-    },
-  });
-
-  const handleDelete = async () => {
-    try {
-      await deleteMutation.mutateAsync(roomId || ' ');
-    } catch (error) {
-      console.error('Deletion failed', error);
-    }
-  };
-
+export const ConfirmActionDialog = ({
+  triggerButtonName,
+  title,
+  message,
+  onConfirm,
+  className,
+}: ConfirmActionDialogProps) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
+      <AlertDialogTrigger asChild className={className}>
         <Button
           variant="ghost"
           size="sm"
           className="w-full focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
         >
-          Delete
+          {triggerButtonName}
         </Button>
       </AlertDialogTrigger>
 
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            You are about to delete this room.
+            {title || 'Are you sure you want to delete this?'}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            room.
+            {message || 'This action cannot be undone.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="bg-white w-[100px] border hover:bg-gray-100">
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction className="w-[100px]" onClick={handleDelete}>
+          <AlertDialogAction className="w-[100px]" onClick={onConfirm}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>
