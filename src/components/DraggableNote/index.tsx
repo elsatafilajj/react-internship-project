@@ -17,7 +17,7 @@ export const DraggableNote = ({
   setTransformDisabled,
   transformRef,
 }: NoteProps) => {
-  const { uuid, xAxis, yAxis, content, author } = note;
+  const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
 
   const [{ isDragging }, drag] = useNoteDrag({
@@ -44,7 +44,7 @@ export const DraggableNote = ({
       onDragEnd={() => setTransformDisabled(false)}
       onMouseUp={() => setTransformDisabled(false)}
     >
-      <Note uuid={uuid} content={content} author={author} />
+      <Note note={note} />
     </div>
   );
 };

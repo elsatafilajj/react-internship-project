@@ -1,21 +1,19 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Author } from '@/api/Note/note.types';
+import { NoteItem } from '@/api/Note/note.types';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
 
 interface NoteProps {
-  uuid?: string;
-  content?: string;
-  author?: Author;
+  note: Partial<NoteItem>;
 }
-
-export const Note = ({ uuid, content, author }: NoteProps) => {
+export const Note = ({ note }: NoteProps) => {
   const socket = getSocket();
   const { roomId } = useParams<{ roomId: string }>();
   const [noteContent, setNoteContent] = useState('');
+  const { uuid, content, author } = note;
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
 

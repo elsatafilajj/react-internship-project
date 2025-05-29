@@ -16,11 +16,17 @@ export const Room = () => {
   const socket = getSocket();
   const roomId = useParams<{ roomId: string }>();
 
-  console.log(roomId);
   useEffect(() => {
+    if (!roomId) return;
+
     socket.emit('joinRoom', roomId);
-    toast.success('User joined the room');
-  }, []);
+    toast.success('You joined the room');
+
+    return () => {
+      socket.emit('leaveRoom', roomId);
+      toast.success('You left the room');
+    };
+  }, [roomId]);
 
   return (
     <DndProvider backend={HTML5Backend}>
