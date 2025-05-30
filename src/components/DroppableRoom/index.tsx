@@ -20,6 +20,7 @@ export const DroppableRoom = ({
   setTransformDisabled,
 }: DroppableRoomProps) => {
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
+
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const roomRef = useRef<HTMLDivElement | null>(null);

@@ -1,20 +1,20 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { SendHorizontal, CornerDownLeft } from 'lucide-react';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { createNewComment } from '@/api/Comments/comments.client';
 import { useGetAllCommentsQuery } from '@/api/Comments/comments.queries';
+import { NoteCommentResponse } from '@/api/Comments/comments.types';
 import { CommentsActionsDropDown } from '@/components/CommentsActionDropDown';
 import { ReplyCommentForm } from '@/components/ReplyCommentForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { queryKeys } from '@/constants/queryKeys';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getFormattedDate } from '@/helpers/getFormattedDate';
 import { getFormikError } from '@/helpers/getFormikError';
+import { getSocket } from '@/helpers/socket';
 import { useForm } from '@/hooks/useForm';
 import { CommentSchema } from '@/schemas/CommentSchema';
 
@@ -23,23 +23,13 @@ interface CommentsPanelProps {
 }
 
 export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
+  const [comments, setComments] = useState<NoteCommentResponse[]>([]);
   const queryClient = useQueryClient();
   const { user } = useAuthContext();
   const [replyComment, setReplyComment] = useState<string | null>(null);
-
-  const { data } = useGetAllCommentsQuery(noteId);
-
-  const commentsMutation = useMutation({
-    mutationFn: createNewComment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getCommentsByNoteId(noteId),
-      });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const socket = getSocket();
+  const roomId = useParams<{ roomId: string }>();
+  const { data, isFetched } = useGetAllCommentsQuery(noteId);
 
   const formik = useForm({
     schema: CommentSchema,
@@ -50,7 +40,13 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        await commentsMutation.mutateAsync(values);
+        socket.emit('addComment', {
+          roomId: roomId.roomId,
+          payload: values,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getCommentsByNoteId(noteId),
+        });
         formikHelpers.resetForm();
       } catch {
         console.error('comment creation failed');
@@ -58,116 +54,145 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     },
   });
 
-  return (
-    <aside className="w-full bg-card h-screen text-card-revert flex flex-col">
-      <Tabs defaultValue="comments" className="flex flex-col flex-1 mt-7">
-        <TabsContent value="comments" className="flex-1">
-          <ScrollArea className="h-full p-4 space-y-4">
-            <div className="space-y-4">
-              <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
-                <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                  <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                    {user?.firstName[0].toUpperCase()}
-                  </div>
-                  {user?.firstName} {user?.lastName}
-                </div>
-                <form onSubmit={formik.handleSubmit} className="flex">
-                  <Input
-                    id="content"
-                    name="content"
-                    type="text"
-                    placeholder="comment here..."
-                    value={formik.values.content}
-                    onChange={formik.handleChange}
-                    error={getFormikError(formik, 'content')}
-                    className="relative w-[230px] tracking-wide"
-                  />
+  useEffect(() => {
+    if (isFetched && data) {
+      setComments(data.data);
+    }
+  }, [data, isFetched]);
 
-                  <Button
-                    size="sm"
-                    type="submit"
-                    disabled={formik.isSubmitting}
-                    className="bg-card text-foreground "
-                  >
-                    <SendHorizontal type="submit" />
-                  </Button>
-                </form>
+  useEffect(() => {
+    socket.on('newComment', (newComment) => {
+      console.log('Received new comment:', newComment);
+      if (noteId === newComment.note.uuid) {
+        setComments((prev) => [...(prev || []), newComment]);
+      }
+    });
+
+    return () => {
+      socket.off('newComment');
+    };
+  }, []);
+
+  return (
+    <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[90vh] rounded-md overflow-hidden shadow-md border">
+      <ScrollArea className="flex-1 p-4 space-y-4 overflow-y-auto">
+        <div className="space-y-4">
+          <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
+            <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+              <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
+                {user?.firstName[0].toUpperCase()}
               </div>
-              {data?.data
-                .filter((comment) => !comment.parent)
-                .map((comment) => (
-                  <div
-                    key={comment.uuid}
-                    className="border rounded-md p-3 shadow-sm hover:shadow-md transition"
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                          {user?.firstName[0].toUpperCase()}
+              {user?.firstName} {user?.lastName}
+            </div>
+            <form
+              onSubmit={formik.handleSubmit}
+              className="flex items-center gap-2 justify-between"
+            >
+              <Input
+                id="content"
+                name="content"
+                type="text"
+                placeholder="Write a comment..."
+                value={formik.values.content}
+                onChange={formik.handleChange}
+                error={getFormikError(formik, 'content')}
+                className="flex-1"
+              />
+              <Button
+                type="submit"
+                disabled={formik.isSubmitting}
+                size="sm"
+                className="bg-primary text-black"
+              >
+                <SendHorizontal />
+              </Button>
+            </form>
+          </div>
+
+          {comments
+            .filter((comment) => !comment.parent)
+            .map((comment) => (
+              <div
+                key={comment.uuid}
+                className="border rounded-md p-3 shadow-sm hover:shadow-md transition space-y-2"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                    <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
+                      {comment.user.firstName[0].toUpperCase()}
+                    </div>
+                    <div className="flex flex-col">
+                      <span>
+                        {comment.user.firstName} {comment.user.lastName}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {getFormattedDate(new Date(comment.createdAt), {
+                          day: '2-digit',
+                          month: 'short',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true,
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CornerDownLeft
+                      onClick={() =>
+                        setReplyComment((prev) =>
+                          prev === comment.uuid ? null : comment.uuid,
+                        )
+                      }
+                      className="w-5 h-5 cursor-pointer"
+                    />
+                    <CommentsActionsDropDown />
+                  </div>
+                </div>
+
+                <p className="text-[15px] max-w-[250px] break-words whitespace-pre-wrap">
+                  {comment.content}
+                </p>
+
+                {replyComment === comment.uuid && (
+                  <ReplyCommentForm parentId={comment.uuid} noteId={noteId} />
+                )}
+
+                {comments
+                  .filter((reply) => reply.parent?.uuid === comment.uuid)
+                  .map((reply) => (
+                    <div
+                      key={reply.uuid}
+                      className="ml-4 mt-3 border-l border-gray-300 pl-3 text-sm space-y-1"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                          <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
+                            {reply.user.firstName[0].toUpperCase()}
+                          </div>
+                          <div className="flex flex-col">
+                            <span>
+                              {reply.user.firstName} {reply.user.lastName}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">
+                              {getFormattedDate(new Date(reply.createdAt), {
+                                day: '2-digit',
+                                month: 'short',
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                hour12: true,
+                              })}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-col mt-1">
-                          {user?.firstName} {user?.lastName}
-                          <span className="text-[10px] text-foreground pl-0">
-                            {getFormattedDate(new Date(comment.createdAt), {
-                              hour: 'numeric',
-                              minute: '2-digit',
-                              hour12: true,
-                            })}{' '}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CornerDownLeft
-                          onClick={() =>
-                            setReplyComment((prevComment) =>
-                              prevComment === comment.uuid
-                                ? null
-                                : comment.uuid,
-                            )
-                          }
-                          className="w-5 h-5"
-                        />
                         <CommentsActionsDropDown />
                       </div>
+                      <p>{reply.content}</p>
                     </div>
-                    <p className="text-[15px]">{comment.content}</p>
-
-                    {replyComment === comment.uuid && (
-                      <>
-                        <ReplyCommentForm
-                          parentId={comment.uuid}
-                          noteId={noteId}
-                        />
-
-                        {data?.data
-                          .filter(
-                            (reply) => reply.parent?.uuid === comment.uuid,
-                          )
-                          .map((reply) => (
-                            <div
-                              key={reply.uuid}
-                              className="ml-1 mt-3 border-l border-gray-300 pl-3 text-sm"
-                            >
-                              <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                                  <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                                    {user?.firstName[0].toUpperCase()}
-                                  </div>
-                                  {user?.firstName} {user?.lastName}
-                                </div>
-                                <CommentsActionsDropDown />
-                              </div>
-                              <p className="mr-2">{reply.content}</p>
-                            </div>
-                          ))}
-                      </>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </ScrollArea>
-        </TabsContent>
-      </Tabs>
+                  ))}
+              </div>
+            ))}
+        </div>
+      </ScrollArea>
     </aside>
   );
 };

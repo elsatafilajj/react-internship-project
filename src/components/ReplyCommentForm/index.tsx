@@ -1,12 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { SendHorizontal } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
 
-import { createNewComment } from '@/api/Comments/comments.client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { queryKeys } from '@/constants/queryKeys';
 import { getFormikError } from '@/helpers/getFormikError';
+import { getSocket } from '@/helpers/socket';
 import { useForm } from '@/hooks/useForm';
 import { CommentSchema } from '@/schemas/CommentSchema';
 
@@ -20,18 +20,8 @@ export const ReplyCommentForm = ({
   noteId,
 }: ReplyCommentFormProps) => {
   const queryClient = useQueryClient();
-
-  const commentsMutation = useMutation({
-    mutationFn: createNewComment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getCommentsByNoteId(noteId),
-      });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const socket = getSocket();
+  const roomId = useParams<{ roomId: string }>();
 
   const formikReply = useForm({
     schema: CommentSchema,
@@ -42,7 +32,10 @@ export const ReplyCommentForm = ({
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        await commentsMutation.mutateAsync(values);
+        socket.emit('addComment', { roomId: roomId.roomId, payload: values });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getCommentsByNoteId(noteId),
+        });
         formikHelpers.resetForm();
       } catch {
         console.error('comment creation failed');
