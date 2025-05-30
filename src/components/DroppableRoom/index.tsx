@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
@@ -6,6 +6,8 @@ import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { socketEvents } from '@/constants/socketEvents';
+import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 
 interface DroppableRoomProps {
@@ -17,29 +19,31 @@ export const DroppableRoom = ({
   transformRef,
   setTransformDisabled,
 }: DroppableRoomProps) => {
-  const roomRef = useRef<HTMLDivElement | null>(null);
-  const { roomId } = useParams<{ roomId: string }>();
-
-  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
-
-  useEffect(() => {
-    if (isFetched && data) {
-      setNotes(data.data);
-    }
-  }, [data, isFetched]);
+  const { roomId } = useParams<{ roomId: string }>();
+  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
+  const roomRef = useRef<HTMLDivElement | null>(null);
+  const socket = useMemo(() => getSocket(), []);
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
     roomRef,
-
     transformRef,
-    onDrop: (uuid, x, y) => {
+    onDrop: (x, y, uuid) => {
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
           note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
         ),
       );
+
+      socket.emit(socketEvents.UpdateNote, {
+        roomId,
+        noteId: uuid,
+        updates: {
+          xAxis: Math.floor(x),
+          yAxis: Math.floor(y),
+        },
+      });
     },
   });
 
@@ -47,10 +51,43 @@ export const DroppableRoom = ({
     type: DragNoteTypes.NewNote,
     roomRef,
     transformRef,
-    onDrop: (uuid, x, y) => {
-      setNotes((prev) => [...prev, { uuid, xAxis: x, yAxis: y }]);
+    onDrop: (x, y) => {
+      socket.emit(socketEvents.CreateNote, {
+        roomId,
+        xAxis: Math.floor(x),
+        yAxis: Math.floor(y),
+      });
     },
   });
+
+  useEffect(() => {
+    if (isFetched && data) {
+      setNotes(data.data);
+    }
+  }, [data, isFetched]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on(socketEvents.NewNote, ({ newNote }) => {
+      console.log('new note', newNote);
+      setNotes((prev) => [...(prev || []), newNote]);
+    });
+
+    socket.on(socketEvents.UpdatedNote, (data) => {
+      const { uuid, xAxis, yAxis, content } = data.updatedNote;
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.uuid === uuid ? { ...note, xAxis, yAxis, content } : note,
+        ),
+      );
+    });
+
+    return () => {
+      socket.off(socketEvents.NewNote);
+      socket.off(socketEvents.UpdatedNote);
+    };
+  }, []);
 
   moveDropRef(roomRef);
   addDropRef(roomRef);
@@ -64,9 +101,7 @@ export const DroppableRoom = ({
       {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote
           key={note.uuid}
-          uuid={note.uuid}
-          xAxis={note.xAxis}
-          yAxis={note.yAxis}
+          note={note}
           setTransformDisabled={setTransformDisabled}
           transformRef={transformRef}
         />
