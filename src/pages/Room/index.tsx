@@ -1,15 +1,33 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
+import { socketEvents } from '@/constants/socketEvents';
+import { getSocket } from '@/helpers/socket';
 
 export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
+  const socket = getSocket();
+  const roomId = useParams<{ roomId: string }>();
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    socket.emit(socketEvents.JoinRoom, roomId);
+    toast.success('You joined the room');
+
+    return () => {
+      socket.emit(socketEvents.LeaveRoom, roomId);
+      toast.success('You left the room');
+    };
+  }, [roomId]);
 
   return (
     <DndProvider backend={HTML5Backend}>

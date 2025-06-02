@@ -1,20 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { useEffect, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
-import { createNewNote, updateNote } from '@/api/Note/note.client';
-import {
-  CreateNoteInput,
-  NoteItem,
-  UpdateNoteInput,
-} from '@/api/Note/note.types';
+import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
-import { DraggableNote, ErrorResponseData } from '@/components/DraggableNote';
+import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
-import { queryKeys } from '@/constants/queryKeys';
+import { socketEvents } from '@/constants/socketEvents';
+import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 
 interface DroppableRoomProps {
@@ -26,71 +19,39 @@ export const DroppableRoom = ({
   transformRef,
   setTransformDisabled,
 }: DroppableRoomProps) => {
-  const queryClient = useQueryClient();
-
   const roomRef = useRef<HTMLDivElement | null>(null);
+
+  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
   const { roomId } = useParams<{ roomId: string }>();
 
-  const { data, isSuccess } = useGetAllNotesFromRoomQuery(roomId || '');
-  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
+  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
+  const socket = useMemo(() => getSocket(), []);
 
   useEffect(() => {
-    if (isSuccess && data) {
+    if (isFetched && data) {
       setNotes(data.data);
     }
-  }, [data, isSuccess]);
-
-  const updateNoteMutation = useMutation({
-    mutationFn: ({
-      uuid,
-      data,
-    }: {
-      uuid: NoteItem['uuid'];
-      data: UpdateNoteInput;
-    }) => updateNote(uuid, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
-      });
-    },
-    onError: (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      toast.error(responseData.message || 'Failed to update note');
-    },
-  });
-
-  const createNewNoteMutation = useMutation({
-    mutationFn: (data: CreateNoteInput) => createNewNote(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
-      });
-    },
-    onError: (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      toast.error(responseData.message || 'Failed to create new note');
-    },
-  });
+  }, [data, isFetched]);
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
     roomRef,
     transformRef,
     onDrop: (x, y, uuid) => {
-      const updatedNote = {
-        xAxis: Number(Math.floor(x)),
-        yAxis: Number(Math.floor(y)),
-      };
-
-      if (!uuid) return;
-
-      updateNoteMutation.mutateAsync({ uuid, data: updatedNote });
-
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
           note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
         ),
       );
+
+      socket.emit(socketEvents.UpdateNote, {
+        roomId,
+        noteId: uuid,
+        updates: {
+          xAxis: Math.floor(x),
+          yAxis: Math.floor(y),
+        },
+      });
     },
   });
 
@@ -99,18 +60,42 @@ export const DroppableRoom = ({
     roomRef,
     transformRef,
     onDrop: (x, y) => {
-      if (roomId) {
-        const newNote = {
-          roomId,
-          xAxis: Number(Math.floor(x)),
-          yAxis: Number(Math.floor(y)),
-        };
-        createNewNoteMutation.mutateAsync(newNote);
-      }
-
-      setNotes((prevNotes) => [...(prevNotes || []), { xAxis: x, yAxis: y }]);
+      socket.emit(socketEvents.CreateNote, {
+        roomId,
+        xAxis: Math.floor(x),
+        yAxis: Math.floor(y),
+      });
     },
   });
+
+  useEffect(() => {
+    if (isFetched && data) {
+      setNotes(data.data);
+    }
+  }, [data, isFetched]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on(socketEvents.NewNote, ({ newNote }) => {
+      console.log('new note', newNote);
+      setNotes((prev) => [...(prev || []), newNote]);
+    });
+
+    socket.on(socketEvents.UpdatedNote, (data) => {
+      const { uuid, xAxis, yAxis, content } = data.updatedNote;
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.uuid === uuid ? { ...note, xAxis, yAxis, content } : note,
+        ),
+      );
+    });
+
+    return () => {
+      socket.off(socketEvents.NewNote);
+      socket.off(socketEvents.UpdatedNote);
+    };
+  }, []);
 
   moveDropRef(roomRef);
   addDropRef(roomRef);
@@ -124,14 +109,7 @@ export const DroppableRoom = ({
       {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote
           key={note.uuid}
-          uuid={note.uuid}
-          content={note.content}
-          xAxis={note.xAxis}
-          yAxis={note.yAxis}
-          authorName={note.author?.firstName}
-          totalVotes={note.totalVotes}
-          color={note.color}
-          noteVotes={note.noteVotes}
+          note={note}
           setTransformDisabled={setTransformDisabled}
           transformRef={transformRef}
         />
