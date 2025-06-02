@@ -2,6 +2,14 @@ import { Room } from '@/api/Room/room.types';
 import { User } from '@/api/User/user.types';
 import { RoomType } from '@/api/Users/users.types';
 
+enum Color {
+  green = 'note-background-green',
+  yellow = 'note-background-yellow',
+  pink = 'note-background-pink',
+  blue = 'note-background-blue',
+  red = 'note-background-red',
+}
+
 export interface NoteItem {
   uuid: string;
   createdAt: string;
@@ -11,8 +19,10 @@ export interface NoteItem {
   author: User;
   content: string;
   totalVotes: number;
+  color: Color;
   xAxis: number;
   yAxis: number;
+  noteVotes: { user: User }[];
 }
 
 export interface CreateNoteInput {
@@ -24,6 +34,7 @@ export interface CreateNoteInput {
 
 export interface UpdateNoteInput {
   content?: string;
+  color?: Color;
   xAxis?: number;
   yAxis?: number;
 }

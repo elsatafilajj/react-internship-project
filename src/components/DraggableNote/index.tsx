@@ -1,11 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { Circle, Star, X } from 'lucide-react';
-import { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
-import { queryClient } from '@/App';
 import {
   addVoteToNote,
   deleteNote,
@@ -29,13 +29,25 @@ import {
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
-import { useDebounce } from '@/hooks/useDebounce';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface NoteProps extends Partial<NoteItem> {
+  authorName: string | undefined;
   setTransformDisabled: (b: boolean) => void;
   transformRef?: RefObject<ReactZoomPanPinchRef>;
 }
+
+export type ErrorResponseData = {
+  statusCode: number;
+  message: string;
+  error: string;
+};
+
+export type VoteResponseData = {
+  success: boolean;
+  message: string;
+  voteSwitched: string;
+};
 
 const colors = [
   { green: 'note-background-green' },
@@ -49,10 +61,16 @@ export const DraggableNote = ({
   uuid,
   xAxis,
   yAxis,
+  authorName,
   totalVotes,
+  color,
+  content,
+  noteVotes,
   setTransformDisabled,
   transformRef,
 }: NoteProps) => {
+  const queryClient = useQueryClient();
+
   const noteRef = useRef<HTMLDivElement | null>(null);
 
   const [{ isDragging }, drag] = useNoteDrag({
@@ -66,32 +84,27 @@ export const DraggableNote = ({
   drag(noteRef);
 
   const { roomId } = useParams<{ roomId: string }>();
-  const { user } = useAuthContext();
-
-  const [hasVoted, setHasVoted] = useState<boolean | null>(null);
-  const [content, setContent] = useState('');
-  const [noteFillColor, setNoteFillColor] = useState('note-background-pink');
-
-  useEffect(() => {
-    const votedNote = localStorage.getItem('votedNote');
-    setHasVoted(votedNote === uuid);
-  }, [uuid]);
 
   const queryKey = queryKeys.getNotesByRoomId(roomId || '');
 
+  const { user } = useAuthContext();
+
   const updateNoteMutation = useMutation({
     mutationFn: ({
-      noteId,
+      uuid,
       data,
     }: {
-      noteId: NoteItem['uuid'];
+      uuid: NoteItem['uuid'];
       data: UpdateNoteInput;
-    }) => updateNote(noteId, data),
+    }) => updateNote(uuid, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
     },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to update note.');
+    onError: (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      toast.error(responseData.message || 'Failed to update note.');
     },
   });
 
@@ -100,26 +113,36 @@ export const DraggableNote = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success('Your note has been deleted!');
-      if (localStorage.getItem('votedNote') === uuid) {
-        localStorage.removeItem('votedNote');
-        localStorage.setItem('hasVoted', 'false');
-      }
     },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to delete note.');
+    onError: (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      toast.error(responseData.message || 'Failed to delete note.');
     },
   });
 
+  const isUserVoter = noteVotes?.find((item) => item.user.uuid === user?.uuid);
+
+  const [hasVoted, setHasVoted] = useState<boolean | null>(
+    !!isUserVoter || null,
+  );
+
   const addVoteMutation = useMutation({
     mutationFn: (uuid: NoteItem['uuid']) => addVoteToNote(uuid),
-    onSuccess: () => {
+    onSuccess: async (response) => {
       queryClient.invalidateQueries({
         queryKey,
       });
-      toast.success('Your vote has been registered!');
+      const voteResponse = (await response?.data) as VoteResponseData;
+      if (voteResponse.voteSwitched) {
+        toast.success('Your vote has been switched!');
+      } else {
+        toast.success('Your vote has been registered!');
+      }
+      setHasVoted(true);
     },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to register your vote.');
+    onError: (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      toast.error(responseData.message || 'Failed to register your vote.');
     },
   });
 
@@ -130,50 +153,20 @@ export const DraggableNote = ({
         queryKey,
       });
       toast.success('Your vote has been removed!');
+      setHasVoted(false);
     },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to remove vote.');
+    onError: (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      toast.error(responseData.message || 'Failed to remove vote.');
     },
   });
 
-  const debouncedContent: string = useDebounce(content, 3000);
-
-  useEffect(() => {
-    if (uuid) {
-      const updatedNote = { content: debouncedContent };
-      if (debouncedContent != content) {
-        updateNoteMutation.mutateAsync({
-          noteId: uuid,
-          data: updatedNote,
-        });
-      }
-    }
-  }, [debouncedContent, uuid]);
-
-  const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(event.target.value);
-  };
-
-  const handleVote = () => {
-    const votedNote = localStorage.getItem('votedNote');
-
-    if (votedNote && votedNote !== uuid) {
-      toast.error('You have already voted on another note.');
-      return;
-    }
-
-    if (votedNote === uuid) {
+  const handleVote = async () => {
+    if (!uuid) return;
+    if (hasVoted && !!isUserVoter) {
       removeVoteMutation.mutateAsync(uuid);
-
-      localStorage.removeItem('votedNote');
-      localStorage.setItem('hasVoted', 'false');
-      setHasVoted(false);
     } else if (uuid) {
       addVoteMutation.mutateAsync(uuid);
-
-      localStorage.setItem('votedNote', uuid);
-      localStorage.setItem('hasVoted', 'true');
-      setHasVoted(true);
     }
   };
 
@@ -196,30 +189,29 @@ export const DraggableNote = ({
             <div className="flex relative">
               <div
                 className={`w-2xs h-70 ${
-                  noteFillColor === 'note-background-green'
+                  color === colors[0].green
                     ? 'bg-note-background-green'
-                    : noteFillColor === 'note-background-yellow'
+                    : color === colors[1].yellow
                       ? 'bg-note-background-yellow'
-                      : noteFillColor === 'note-background-pink'
+                      : color === colors[2].pink
                         ? 'bg-note-background-pink'
-                        : noteFillColor === 'note-background-blue'
+                        : color === colors[3].blue
                           ? 'bg-note-background-blue'
-                          : noteFillColor === 'note-background-red'
+                          : color === colors[4].red
                             ? 'bg-note-background-red'
-                            : 'bg-note-background-pink'
+                            : 'bg-note-background-green'
                 } shadow-sm overflow-hidden rounded-xs}`}
               >
                 <div className="flex flex-col justify-between h-full p-2 text-xs">
                   <textarea
-                    value={content}
-                    onChange={handleNoteContentChange}
+                    defaultValue={content}
                     placeholder="Type in your idea..."
-                    className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
+                    className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-lg text-muted-foreground brightness-25"
                     aria-label="Note input"
                     autoFocus
                   />
                   <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
-                    {user && user.firstName}
+                    {authorName || 'Unknown'}
                   </span>
                 </div>
               </div>
@@ -252,19 +244,24 @@ export const DraggableNote = ({
                       key={i}
                       size={17}
                       className={`text-foreground ${
-                        colorClass === 'note-background-green'
+                        colorClass === colors[0].green
                           ? 'fill-note-background-green'
-                          : colorClass === 'note-background-yellow'
+                          : colorClass === colors[1].yellow
                             ? 'fill-note-background-yellow'
-                            : colorClass === 'note-background-pink'
+                            : colorClass === colors[2].pink
                               ? 'fill-note-background-pink'
-                              : colorClass === 'note-background-blue'
+                              : colorClass === colors[3].blue
                                 ? 'fill-note-background-blue'
-                                : colorClass === 'note-background-red'
+                                : colorClass === colors[4].red
                                   ? 'fill-note-background-red'
-                                  : ''
+                                  : 'fill-note-background-green'
                       } cursor-pointer`}
-                      onClick={() => setNoteFillColor(colorClass)}
+                      onClick={() =>
+                        updateNoteMutation.mutateAsync({
+                          uuid,
+                          data: { color: colorClass },
+                        })
+                      }
                     />
                   );
                 })}
@@ -276,19 +273,15 @@ export const DraggableNote = ({
                   variant="ghost"
                   className="cursor-pointer py-2"
                   onClick={handleVote}
-                  disabled={
-                    !!hasVoted && localStorage.getItem('votedNote') !== uuid
-                  }
                 >
-                  {hasVoted === true &&
-                  localStorage.getItem('votedNote') === uuid ? (
+                  {isUserVoter ? (
                     <Star fill="white" />
                   ) : (
                     <Star strokeWidth={2.5} />
                   )}
                 </Toggle>
                 <p className="text-xs absolute font-semibold -top-3 ">
-                  {totalVotes || totalVotes === 0 ? totalVotes : 15}
+                  {totalVotes || totalVotes === 0 ? totalVotes : 0}
                 </p>
               </div>
               <PanelToggle noteId={uuid} />

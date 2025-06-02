@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
-import { queryClient } from '@/App';
 import { createNewNote, updateNote } from '@/api/Note/note.client';
 import {
   CreateNoteInput,
@@ -12,7 +12,7 @@ import {
   UpdateNoteInput,
 } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
-import { DraggableNote } from '@/components/DraggableNote';
+import { DraggableNote, ErrorResponseData } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
@@ -26,6 +26,8 @@ export const DroppableRoom = ({
   transformRef,
   setTransformDisabled,
 }: DroppableRoomProps) => {
+  const queryClient = useQueryClient();
+
   const roomRef = useRef<HTMLDivElement | null>(null);
   const { roomId } = useParams<{ roomId: string }>();
 
@@ -51,8 +53,9 @@ export const DroppableRoom = ({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      toast.error(responseData.message || 'Failed to update note');
     },
   });
 
@@ -63,8 +66,9 @@ export const DroppableRoom = ({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      toast.error(responseData.message || 'Failed to create new note');
     },
   });
 
@@ -75,8 +79,8 @@ export const DroppableRoom = ({
 
     onDrop: (uuid, x, y) => {
       const updatedNote = {
-        xAxis: Number(x.toFixed()),
-        yAxis: Number(y.toFixed()),
+        xAxis: Number(Math.floor(x)),
+        yAxis: Number(Math.floor(y)),
       };
 
       updateNoteMutation.mutateAsync({ uuid, data: updatedNote });
@@ -97,8 +101,8 @@ export const DroppableRoom = ({
       if (roomId) {
         const newNote = {
           roomId,
-          xAxis: Number(x.toFixed()),
-          yAxis: Number(y.toFixed()),
+          xAxis: Number(Math.floor(x)),
+          yAxis: Number(Math.floor(y)),
         };
         createNewNoteMutation.mutateAsync(newNote);
       }
@@ -122,9 +126,13 @@ export const DroppableRoom = ({
         <DraggableNote
           key={note.uuid}
           uuid={note.uuid}
+          content={note.content}
           xAxis={note.xAxis}
           yAxis={note.yAxis}
+          authorName={note.author?.firstName}
           totalVotes={note.totalVotes}
+          color={note.color}
+          noteVotes={note.noteVotes}
           setTransformDisabled={setTransformDisabled}
           transformRef={transformRef}
         />

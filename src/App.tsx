@@ -8,9 +8,9 @@ import { router } from '@/routes/Routes';
 
 import ThemeContextProvider from './context/ThemeContext/ThemeContextProvider';
 
-export const queryClient = new QueryClient();
-
 function App() {
+  const queryClient = new QueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeContextProvider>

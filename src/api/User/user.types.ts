@@ -5,21 +5,13 @@ export interface LoginResponse {
 }
 
 export interface User {
-  id: string;
-  createdDate: Date;
-  updatedDate: Date;
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
   email: string;
-  username: string;
   firstName: string;
   lastName: string;
-  employeStatus: string;
-  department: string;
-  invitedOn: Date;
-  firstTimeInvitedOn: Date;
-  active: boolean;
-  invitationAcceptedOn: Date;
-  role: UserRole;
-  receiveNotifications: boolean;
 }
 
 export enum UserRole {
