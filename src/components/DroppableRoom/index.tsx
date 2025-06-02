@@ -76,12 +76,13 @@ export const DroppableRoom = ({
     type: DragNoteTypes.Note,
     roomRef,
     transformRef,
-
-    onDrop: (uuid, x, y) => {
+    onDrop: (x, y, uuid) => {
       const updatedNote = {
         xAxis: Number(Math.floor(x)),
         yAxis: Number(Math.floor(y)),
       };
+
+      if (!uuid) return;
 
       updateNoteMutation.mutateAsync({ uuid, data: updatedNote });
 
@@ -97,7 +98,7 @@ export const DroppableRoom = ({
     type: DragNoteTypes.NewNote,
     roomRef,
     transformRef,
-    onDrop: (uuid, x, y) => {
+    onDrop: (x, y) => {
       if (roomId) {
         const newNote = {
           roomId,
@@ -106,10 +107,8 @@ export const DroppableRoom = ({
         };
         createNewNoteMutation.mutateAsync(newNote);
       }
-      setNotes((prevNotes) => [
-        ...(prevNotes || []),
-        { uuid, xAxis: x, yAxis: y },
-      ]);
+
+      setNotes((prevNotes) => [...(prevNotes || []), { xAxis: x, yAxis: y }]);
     },
   });
 
