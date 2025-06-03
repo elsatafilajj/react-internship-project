@@ -5,4 +5,8 @@ export enum socketEvents {
   UpdateNote = 'updateNote',
   NewNote = 'newNote',
   UpdatedNote = 'updatedNote',
+  AddComment = 'addComment',
+  NewComment = 'newComment',
+  UpdatedComment = 'updatedComment',
+  DeletedComment = 'deletedComment',
 }

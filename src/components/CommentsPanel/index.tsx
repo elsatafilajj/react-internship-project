@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { queryKeys } from '@/constants/queryKeys';
+import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getFormattedDate } from '@/helpers/getFormattedDate';
 import { getFormikError } from '@/helpers/getFormikError';
@@ -24,6 +25,8 @@ interface CommentsPanelProps {
 
 export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   const [comments, setComments] = useState<NoteCommentResponse[]>([]);
+  const [editingComment, setEditingComment] =
+    useState<NoteCommentResponse | null>(null);
   const queryClient = useQueryClient();
   const { user } = useAuthContext();
   const [replyComment, setReplyComment] = useState<string | null>(null);
@@ -31,16 +34,16 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   const roomId = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllCommentsQuery(noteId);
 
-  const formik = useForm({
+  const createFormik = useForm({
     schema: CommentSchema,
     initialValues: {
-      noteId: noteId,
+      noteId,
       content: '',
       parent: null,
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        socket.emit('addComment', {
+        socket.emit(socketEvents.AddComment, {
           roomId: roomId.roomId,
           payload: values,
         });
@@ -49,7 +52,33 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
         });
         formikHelpers.resetForm();
       } catch {
-        console.error('comment creation failed');
+        console.error('Failed to create comment');
+      }
+    },
+  });
+
+  const editFormik = useForm({
+    schema: CommentSchema,
+    initialValues: {
+      noteId,
+      content: '',
+    },
+    onSubmit: async (values, formikHelpers) => {
+      if (!editingComment) return;
+
+      try {
+        socket.emit('editComment', {
+          roomId: roomId.roomId,
+          commentId: editingComment.uuid,
+          payload: values,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getCommentsByNoteId(noteId),
+        });
+        formikHelpers.resetForm();
+        setEditingComment(null);
+      } catch (error) {
+        console.error('Failed to edit comment', error);
       }
     },
   });
@@ -61,17 +90,42 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   }, [data, isFetched]);
 
   useEffect(() => {
-    socket.on('newComment', (newComment) => {
+    socket.on(socketEvents.NewComment, (newComment) => {
       console.log('Received new comment:', newComment);
       if (noteId === newComment.note.uuid) {
         setComments((prev) => [...(prev || []), newComment]);
       }
     });
 
+    socket.on(socketEvents.UpdatedComment, (newComment) => {
+      if (noteId === newComment.noteId) {
+        setComments((prev) =>
+          prev.map((comment) =>
+            comment.uuid === newComment.uuid
+              ? { ...comment, content: newComment.content }
+              : comment,
+          ),
+        );
+      }
+    });
+
+    socket.on(socketEvents.DeletedComment, (deletedComment) =>
+      setComments((prev) =>
+        prev.filter((comment) => comment.uuid !== deletedComment.resourceId),
+      ),
+    );
+
     return () => {
-      socket.off('newComment');
+      socket.off(socketEvents.NewComment);
+      socket.off(socketEvents.UpdatedComment);
+      socket.off(socketEvents.DeletedComment);
     };
   }, []);
+
+  const startEditing = (comment: NoteCommentResponse) => {
+    setEditingComment(comment);
+    editFormik.setFieldValue('content', comment.content);
+  };
 
   return (
     <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[90vh] rounded-md overflow-hidden shadow-md border">
@@ -84,29 +138,63 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
               </div>
               {user?.firstName} {user?.lastName}
             </div>
-            <form
-              onSubmit={formik.handleSubmit}
-              className="flex items-center gap-2 justify-between"
-            >
-              <Input
-                id="content"
-                name="content"
-                type="text"
-                placeholder="Write a comment..."
-                value={formik.values.content}
-                onChange={formik.handleChange}
-                error={getFormikError(formik, 'content')}
-                className="flex-1"
-              />
-              <Button
-                type="submit"
-                disabled={formik.isSubmitting}
-                size="sm"
-                className="bg-primary text-black"
+            {editingComment ? (
+              <form
+                onSubmit={editFormik.handleSubmit}
+                className="flex items-center gap-2"
               >
-                <SendHorizontal />
-              </Button>
-            </form>
+                <Input
+                  id="content"
+                  name="content"
+                  type="text"
+                  placeholder="edit a comment..."
+                  value={editFormik.values.content}
+                  onChange={editFormik.handleChange}
+                  error={getFormikError(editFormik, 'content')}
+                  className="flex-1"
+                />
+                <Button
+                  type="submit"
+                  disabled={createFormik.isSubmitting}
+                  size="sm"
+                  className="bg-primary text-black"
+                >
+                  <SendHorizontal />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => setEditingComment(null)}
+                >
+                  Cancel
+                </Button>
+              </form>
+            ) : (
+              <form
+                onSubmit={createFormik.handleSubmit}
+                className="flex items-center gap-2"
+              >
+                <Input
+                  id="content"
+                  name="content"
+                  type="text"
+                  placeholder="Write a comment..."
+                  value={createFormik.values.content}
+                  onChange={createFormik.handleChange}
+                  error={getFormikError(createFormik, 'content')}
+                  className="flex-1"
+                />
+                <Button
+                  type="submit"
+                  disabled={createFormik.isSubmitting}
+                  size="sm"
+                  className="bg-primary text-black"
+                >
+                  <SendHorizontal />
+                </Button>
+              </form>
+            )}
           </div>
 
           {comments
@@ -145,7 +233,12 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                       }
                       className="w-5 h-5 cursor-pointer"
                     />
-                    <CommentsActionsDropDown />
+                    <CommentsActionsDropDown
+                      roomId={roomId.roomId}
+                      noteId={noteId}
+                      commentId={comment.uuid}
+                      onEdit={() => startEditing(comment)}
+                    />
                   </div>
                 </div>
 
@@ -184,7 +277,12 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                             </span>
                           </div>
                         </div>
-                        <CommentsActionsDropDown />
+                        <CommentsActionsDropDown
+                          roomId={roomId.roomId}
+                          noteId={noteId}
+                          commentId={comment.uuid}
+                          onEdit={() => startEditing(reply)}
+                        />
                       </div>
                       <p>{reply.content}</p>
                     </div>
