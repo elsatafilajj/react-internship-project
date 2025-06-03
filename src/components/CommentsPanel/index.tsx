@@ -31,7 +31,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   const { user } = useAuthContext();
   const [replyComment, setReplyComment] = useState<string | null>(null);
   const socket = getSocket();
-  const roomId = useParams<{ roomId: string }>();
+  const params = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllCommentsQuery(noteId);
 
   const createFormik = useForm({
@@ -44,7 +44,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     onSubmit: async (values, formikHelpers) => {
       try {
         socket.emit(socketEvents.AddComment, {
-          roomId: roomId.roomId,
+          roomId: params.roomId,
           payload: values,
         });
         queryClient.invalidateQueries({
@@ -67,8 +67,8 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
       if (!editingComment) return;
 
       try {
-        socket.emit('editComment', {
-          roomId: roomId.roomId,
+        socket.emit(socketEvents.EditComment, {
+          roomId: params.roomId,
           commentId: editingComment.uuid,
           payload: values,
         });
@@ -234,7 +234,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                       className="w-5 h-5 cursor-pointer"
                     />
                     <CommentsActionsDropDown
-                      roomId={roomId.roomId}
+                      roomId={params.roomId}
                       noteId={noteId}
                       commentId={comment.uuid}
                       onEdit={() => startEditing(comment)}
@@ -278,7 +278,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                           </div>
                         </div>
                         <CommentsActionsDropDown
-                          roomId={roomId.roomId}
+                          roomId={params.roomId}
                           noteId={noteId}
                           commentId={comment.uuid}
                           onEdit={() => startEditing(reply)}

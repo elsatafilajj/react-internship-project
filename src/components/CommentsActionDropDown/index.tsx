@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { queryKeys } from '@/constants/queryKeys';
+import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 
 interface Props {
@@ -28,7 +29,7 @@ export const CommentsActionsDropDown = ({
   const queryClient = useQueryClient();
 
   const handleDelete = () => {
-    socket.emit('deleteComment', { roomId, commentId });
+    socket.emit(socketEvents.DeletedComment, { roomId, commentId });
     queryClient.invalidateQueries({
       queryKey: queryKeys.getCommentsByNoteId(noteId),
     });
