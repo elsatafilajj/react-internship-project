@@ -1,3 +1,4 @@
+import { DialogClose } from '@radix-ui/react-dialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -112,19 +113,21 @@ export const CreateEditRoomFormDialog = () => {
               error={getFormikError(formik, 'title')}
             />
             <DialogFooter>
-              <Button
-                type="submit"
-                className="w-[150px]"
-                disabled={formik.isSubmitting}
-              >
-                {formik.isSubmitting
-                  ? isEditMode
-                    ? 'Saving...'
-                    : 'Creating...'
-                  : isEditMode
-                    ? 'Save changes'
-                    : 'Create room'}
-              </Button>
+              <DialogClose>
+                <Button
+                  type="submit"
+                  className="w-[150px]"
+                  disabled={formik.isSubmitting}
+                >
+                  {formik.isSubmitting
+                    ? isEditMode
+                      ? 'Saving...'
+                      : 'Creating...'
+                    : isEditMode
+                      ? 'Save changes'
+                      : 'Create room'}
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </form>
         </DialogHeader>

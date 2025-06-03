@@ -1,5 +1,4 @@
-
-import { PanelLeft, User } from 'lucide-react'; 
+import { PanelLeft, User } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
@@ -38,35 +37,37 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </Link>
       </div>
 
-      <div className="hidden sm:flex flex-col items-center text-center ">
-        <span className="text-xs text-muted-foreground tracking-wide mb-1">
-          Active Room
-        </span>
-
-        <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
-          <span className="text-base font-semibold text-foreground">
-            {data?.data.title || 'Untitled'}
+      {isUserInRoom && (
+        <div className="hidden sm:flex flex-col items-center text-center ">
+          <span className="text-xs text-muted-foreground tracking-wide mb-1">
+            Active Room
           </span>
 
-          <div className="flex -space-x-2">
-            {participants.map((user, i) => (
-              <div
-                key={i}
-                className="h-8 w-8 rounded-full bg-secondary text-sm font-medium border-2 border-foreground flex items-center justify-center shadow"
-              >
-                <p className="text-accent-foreground">
-                  {user.name.charAt(0).toUpperCase()}
-                </p>
-              </div>
-            ))}
+          <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
+            <span className="text-base font-semibold text-foreground">
+              {data?.data.title || 'Untitled'}
+            </span>
+
+            <div className="flex -space-x-2">
+              {participants.map((user, i) => (
+                <div
+                  key={i}
+                  className="h-8 w-8 rounded-full bg-secondary text-sm font-medium border-2 border-foreground flex items-center justify-center shadow"
+                >
+                  <p className="text-accent-foreground">
+                    {user.name.charAt(0).toUpperCase()}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-     <div className="flex items-center gap-0.5 sm:gap-3">
+      <div className="flex items-center gap-0.5 sm:gap-3">
         {isUserInRoom && <RoomActionsDropDown />}
 
-        <ShareLinkAlertDialog />
+        {isUserInRoom && <ShareLinkAlertDialog />}
 
         <ThemeChangeToggle />
 
