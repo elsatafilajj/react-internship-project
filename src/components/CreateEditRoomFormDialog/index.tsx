@@ -122,7 +122,7 @@ export const CreateEditRoomFormDialog = () => {
             <DialogFooter>
               <Button
                 type="submit"
-                className="w-[150px]"
+                className="w-[150px] cursor-pointer"
                 disabled={formik.isSubmitting}
               >
                 {formik.isSubmitting
