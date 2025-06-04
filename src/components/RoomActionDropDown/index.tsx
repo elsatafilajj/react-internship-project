@@ -45,7 +45,7 @@ export const RoomActionsDropDown = () => {
         <CreateEditRoomFormDialog />
         <DropdownMenuItem>Archive</DropdownMenuItem>
         <ConfirmActionDialog
-          triggerButtonName="Delete"
+          triggerButton="Delete"
           title="You are about to delete this room."
           message="This action cannot be undone. This will permanently delete your
             room."
