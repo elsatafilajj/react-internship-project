@@ -1,4 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -10,9 +12,12 @@ import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { LoginSchema } from '@/schemas/LoginSchema';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const LoginForm = () => {
   const { setAuthState } = useAuthContext();
+
+  const [backEndError, setBackendError] = useState('');
 
   const loginMutation = useMutation({
     mutationFn: login,
@@ -24,8 +29,10 @@ export const LoginForm = () => {
         refreshToken: data.data.refreshToken,
       });
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: async (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      setBackendError(responseData.message);
+      toast.error(backEndError || 'Login failed');
     },
   });
 
@@ -73,6 +80,19 @@ export const LoginForm = () => {
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
         />
+
+        {backEndError && typeof backEndError === 'string' && (
+          <p className="text-sm text-destructive">{backEndError}</p>
+        )}
+
+        {backEndError && Array.isArray(backEndError) && (
+          <div className="flex flex-col gap-1">
+            {backEndError.map((messageItem) => (
+              <p className="text-sm text-destructive ">{messageItem}</p>
+            ))}
+          </div>
+        )}
+
         <div className="flex text-sm flex-col space-y-5 items-center justify-between">
           <Link
             to={RouteNames.ForgotPassword}

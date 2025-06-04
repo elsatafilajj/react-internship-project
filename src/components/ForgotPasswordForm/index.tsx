@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { CircleCheck } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -12,10 +13,12 @@ import { RouteNames } from '@/constants/routeNames';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { ForgotPasswordSchema } from '@/schemas/ForgotPasswordSchema';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const ForgotPasswordForm = () => {
   const navigate = useNavigate();
   const [messageSent, setMessageSent] = useState(false);
+  const [backEndError, setBackendError] = useState('');
 
   const forgotPasswordMutation = useMutation({
     mutationFn: forgotPassword,
@@ -25,8 +28,10 @@ export const ForgotPasswordForm = () => {
         navigate(RouteNames.Login);
       }, 10000);
     },
-    onError(error) {
-      toast.error(error.message);
+    onError: async (error: AxiosError) => {
+      const responseData = error.response?.data as ErrorResponseData;
+      setBackendError(responseData.message);
+      toast.error(backEndError || 'Sending email failed');
     },
   });
 
@@ -37,7 +42,6 @@ export const ForgotPasswordForm = () => {
     },
     onSubmit: async (values, formikHelpers) => {
       await forgotPasswordMutation.mutateAsync(values);
-
       formikHelpers.resetForm();
     },
   });
