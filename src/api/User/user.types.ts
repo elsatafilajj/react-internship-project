@@ -12,11 +12,12 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  role?: UserRole;
 }
 
 export enum UserRole {
-  Admin = 'Admin',
-  Company = 'Company',
+  Host = 'host',
+  Participant = 'participant',
 }
 
 export interface LoginRegisterResponse {

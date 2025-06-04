@@ -15,8 +15,9 @@ interface RouteWrapperProps {
 export const RouteWrapper = ({
   children,
   isAuthenticationPage = false,
+  allowedRoles,
 }: RouteWrapperProps) => {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isAuthenticated, isLoading, user } = useAuthContext();
 
   if (isLoading) {
     return (
@@ -32,6 +33,10 @@ export const RouteWrapper = ({
 
   if (!isAuthenticated && !isAuthenticationPage) {
     return <Navigate to={RouteNames.Login} replace />;
+  }
+
+  if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;

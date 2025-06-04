@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface ConfirmActionDialogProps {
-  triggerButtonName: string;
+  triggerButton: string | JSX.Element;
   title?: string;
   message?: string;
   onConfirm: () => void;
@@ -20,7 +20,7 @@ interface ConfirmActionDialogProps {
 }
 
 export const ConfirmActionDialog = ({
-  triggerButtonName,
+  triggerButton,
   title,
   message,
   onConfirm,
@@ -34,7 +34,7 @@ export const ConfirmActionDialog = ({
           size="sm"
           className="w-full focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
         >
-          {triggerButtonName}
+          {triggerButton}
         </Button>
       </AlertDialogTrigger>
 

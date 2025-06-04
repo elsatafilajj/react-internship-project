@@ -104,7 +104,7 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-[5000px] h-[5000px] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
+      className="w-[5000px] h-[2813px] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
       {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote

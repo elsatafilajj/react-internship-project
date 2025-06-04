@@ -41,28 +41,43 @@ export type ErrorResponseData = {
   error: string;
 };
 
-export type VoteResponseData = {
-  success: boolean;
-  message: string;
-  voteSwitched: string;
-};
+const fillColors = [
+  'note-background-green',
+  'note-background-yellow',
+  'note-background-pink',
+  'note-background-blue',
+  'note-background-red',
+] as const;
 
-const colors = [
-  { green: 'note-background-green' },
-  { yellow: 'note-background-yellow' },
-  { pink: 'note-background-pink' },
-  { blue: 'note-background-blue' },
-  { red: 'note-background-red' },
-];
+const noteColorClassMap = {
+  'note-background-green': `bg-note-background-green`,
+  'note-background-yellow': `bg-note-background-yellow`,
+  'note-background-pink': `bg-note-background-pink`,
+  'note-background-blue': `bg-note-background-blue`,
+  'note-background-red': `bg-note-background-red`,
+} as const;
 
 export const Note = ({ note }: NoteProps) => {
   const socket = getSocket();
   const { roomId } = useParams<{ roomId: string }>();
-  const [noteContent, setNoteContent] = useState('');
+
   const { uuid, content, author } = note;
-  const { user } = useAuthContext();
+  const [noteContent, setNoteContent] = useState('');
+
+  const [localNoteColor, setLocalNoteColor] = useState<string>(
+    note.color || 'note-background-green',
+  );
+
   const queryClient = useQueryClient();
   const queryKey = queryKeys.getNotesByRoomId(roomId || '');
+
+  const { user } = useAuthContext();
+  const isUserVoter = note.noteVotes?.find(
+    (item) => item.user.uuid === user?.uuid,
+  );
+  const [hasVoted, setHasVoted] = useState<boolean | null>(
+    !!isUserVoter || null,
+  );
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
@@ -82,6 +97,15 @@ export const Note = ({ note }: NoteProps) => {
 
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
+  };
+
+  const handleNoteColorChange = (noteColor: string) => {
+    setLocalNoteColor(noteColor);
+    if (!uuid) return;
+    updateNoteMutation.mutateAsync({
+      uuid,
+      data: { color: noteColor },
+    });
   };
 
   const deleteMutation = useMutation({
@@ -115,21 +139,13 @@ export const Note = ({ note }: NoteProps) => {
     },
   });
 
-  const isUserVoter = note.noteVotes?.find(
-    (item) => item.user.uuid === user?.uuid,
-  );
-
-  const [hasVoted, setHasVoted] = useState<boolean | null>(
-    !!isUserVoter || null,
-  );
-
   const addVoteMutation = useMutation({
     mutationFn: (uuid: NoteItem['uuid']) => addVoteToNote(uuid),
-    onSuccess: async (response) => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({
         queryKey,
       });
-      const voteResponse = (await response?.data) as VoteResponseData;
+      const voteResponse = response?.data;
       if (voteResponse.voteSwitched) {
         toast.success('Your vote has been switched!');
       } else {
@@ -174,19 +190,7 @@ export const Note = ({ note }: NoteProps) => {
           <PopoverTrigger>
             <div className="flex relative">
               <div
-                className={`w-2xs h-70 ${
-                  note.color === colors[0].green
-                    ? 'bg-note-background-green'
-                    : note.color === colors[1].yellow
-                      ? 'bg-note-background-yellow'
-                      : note.color === colors[2].pink
-                        ? 'bg-note-background-pink'
-                        : note.color === colors[3].blue
-                          ? 'bg-note-background-blue'
-                          : note.color === colors[4].red
-                            ? 'bg-note-background-red'
-                            : 'bg-note-background-green'
-                } shadow-sm overflow-hidden rounded-xs}`}
+                className={`w-2xs h-70 ${noteColorClassMap[localNoteColor as keyof typeof noteColorClassMap]} shadow-sm overflow-hidden rounded-xs}`}
               >
                 <div className="flex flex-col justify-between h-full p-2 text-xs">
                   <textarea
@@ -206,7 +210,7 @@ export const Note = ({ note }: NoteProps) => {
           </PopoverTrigger>
 
           <PopoverContent side="top" sideOffset={10}>
-            <div className="bg-popover flex items-center gap-2.5 h-fit">
+            <div className="bg-popover flex items-center justify-around h-fit">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
@@ -222,55 +226,48 @@ export const Note = ({ note }: NoteProps) => {
               </TooltipProvider>
 
               <div className="flex gap-3 p-3">
-                {colors.map((colorObj, i) => {
-                  const colorClass = Object.values(colorObj)[0];
-
+                {fillColors.map((noteColor, i) => {
                   return (
                     <Circle
-                      strokeWidth={2.5}
                       key={i}
-                      size={17}
-                      className={`text-foreground ${
-                        colorClass === colors[0].green
-                          ? 'fill-note-background-green'
-                          : colorClass === colors[1].yellow
-                            ? 'fill-note-background-yellow'
-                            : colorClass === colors[2].pink
-                              ? 'fill-note-background-pink'
-                              : colorClass === colors[3].blue
-                                ? 'fill-note-background-blue'
-                                : colorClass === colors[4].red
-                                  ? 'fill-note-background-red'
-                                  : 'fill-note-background-green'
-                      } cursor-pointer`}
-                      onClick={() =>
-                        updateNoteMutation.mutateAsync({
-                          uuid,
-                          data: { color: colorClass },
-                        })
-                      }
+                      style={{
+                        fill: `var(--${noteColor})`,
+                      }}
+                      className={`w-4 h-4 cursor-pointer brightness- ${
+                        localNoteColor === noteColor
+                          ? 'ring-2 ring-primary rounded-full'
+                          : ''
+                      }`}
+                      strokeWidth={2.5}
+                      onClick={() => handleNoteColorChange(noteColor)}
                     />
                   );
                 })}
               </div>
-
-              <div className="flex relative flex-col items-center self-end">
-                <Toggle
-                  size="sm"
-                  variant="ghost"
-                  className="cursor-pointer py-2"
-                  onClick={handleVote}
-                >
-                  {isUserVoter ? (
-                    <Star fill="white" />
-                  ) : (
-                    <Star strokeWidth={2.5} />
-                  )}
-                </Toggle>
-                <p className="text-xs absolute font-semibold -top-3 ">
-                  {note.totalVotes || 0}
-                </p>
-              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="flex flex-col mr-1.5">
+                      <Toggle
+                        size="sm"
+                        variant="ghost"
+                        className="cursor-pointer py-2"
+                        onClick={handleVote}
+                      >
+                        {isUserVoter ? (
+                          <Star className="fill-foreground" />
+                        ) : (
+                          <Star strokeWidth={2.5} />
+                        )}
+                      </Toggle>
+                      <p className="text-xs font-semibold">
+                        {note.totalVotes || 0}
+                      </p>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Vote / Unvote</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <PanelToggle noteId={uuid} />
             </div>
           </PopoverContent>
