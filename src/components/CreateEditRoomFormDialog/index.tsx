@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import { PackagePlus } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -86,16 +86,16 @@ export const CreateEditRoomFormDialog = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
+            className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide cursor-pointer"
           >
             Edit
           </Button>
         ) : (
           <Button
-            className="justify-start w-[150px]"
+            className="justify-center w-full cursor-pointer"
             onClick={() => setOpen(true)}
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <PackagePlus className="h-4 w-4" />
             New Room
           </Button>
         )}
@@ -107,7 +107,7 @@ export const CreateEditRoomFormDialog = () => {
           <DialogDescription>
             {isEditMode
               ? "Make changes to your room here. Click save when you're done"
-              : 'Create your new room in one-click'}
+              : 'Enter new name for your room'}
           </DialogDescription>
           <form className="space-y-4" onSubmit={formik.handleSubmit}>
             <Input

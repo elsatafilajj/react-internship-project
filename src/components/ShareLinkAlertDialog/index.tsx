@@ -17,7 +17,7 @@ export const ShareLinkAlertDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]">
+        <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px] cursor-pointer">
           <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
           <span className="hidden md:block">Share</span>
         </Button>

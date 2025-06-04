@@ -58,7 +58,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               <div ref={stickyNoteRef}>
                 <Button
                   size="icon"
-                  className="transition hover:text-foreground"
+                  className="transition hover:text-foreground cursor-pointer"
                 >
                   <StickerIcon />
                 </Button>
@@ -74,7 +74,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                 <Button
                   size="icon"
                   onClick={() => tool.function()}
-                  className="transition hover:text-foreground"
+                  className="transition hover:text-foreground cursor-pointer"
                 >
                   <tool.icon />
                 </Button>

@@ -23,7 +23,12 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
       <div className="flex items-center gap-0.5 sm:gap-4">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleSidebar}
+          className="cursor-pointer"
+        >
           <PanelLeft className="h-5 w-5 " />
         </Button>
 

@@ -48,7 +48,7 @@ export const Rooms = () => {
             <ClipboardCheck className="w-6 h-6" />
             Active Rooms
           </h2>
-          <div className="  animate-fade-in-up p-5">
+          <div className="animate-fade-in-up p-5">
             <CreateEditRoomFormDialog />
           </div>
         </div>

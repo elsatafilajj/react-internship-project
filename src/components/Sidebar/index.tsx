@@ -55,11 +55,14 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <button onClick={onClose} className="absolute top-3 right-3">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 cursor-pointer"
+        >
           <PanelLeftClose className="h-4 w-4" />
         </button>
 
-        <nav className="space-y-2 flex-1 mt-4">
+        <nav className="space-y-2 flex1 mt-4">
           <Button
             variant="ghost"
             className="w-full justify-start font-medium"
@@ -107,16 +110,16 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </Button>
         </nav>
 
-        <div className="mt-auto flex justify-between">
+        <div className="mt-auto flex justify-between cursor-pointer">
           <Button
             variant="ghost"
-            className=" justify-start font-medium"
+            className="justify-start font-medium cursor-pointer"
             asChild
           >
             <div className="w-fit">
               <LogOut className="mr-2 h-4 w-4" />
               <ConfirmActionDialog
-                className="max-w-fit"
+                className="max-w-fit cursor-pointer"
                 triggerButtonName="Logout"
                 title="Are you sure you want to logout?"
                 onConfirm={handleLogout}

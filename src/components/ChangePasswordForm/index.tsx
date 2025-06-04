@@ -84,7 +84,11 @@ export const ChangePasswordForm = () => {
           />
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="mt-8" disabled={formik.isSubmitting}>
+          <Button
+            type="submit"
+            className="mt-8 cursor-pointer"
+            disabled={formik.isSubmitting}
+          >
             {formik.isSubmitting ? 'Saving...' : 'Save changes'}
           </Button>
         </CardFooter>
