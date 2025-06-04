@@ -21,7 +21,7 @@ export const ReplyCommentForm = ({
 }: ReplyCommentFormProps) => {
   const queryClient = useQueryClient();
   const socket = getSocket();
-  const roomId = useParams<{ roomId: string }>();
+  const params = useParams<{ roomId: string }>();
 
   const formikReply = useForm({
     schema: CommentSchema,
@@ -32,7 +32,7 @@ export const ReplyCommentForm = ({
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        socket.emit('addComment', { roomId: roomId.roomId, payload: values });
+        socket.emit('addComment', { roomId: params.roomId, payload: values });
         queryClient.invalidateQueries({
           queryKey: queryKeys.getCommentsByNoteId(noteId),
         });
