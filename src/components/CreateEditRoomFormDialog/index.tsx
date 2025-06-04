@@ -1,6 +1,6 @@
-import { DialogClose } from '@radix-ui/react-dialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
@@ -24,6 +24,7 @@ import { useForm } from '@/hooks/useForm';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
 
 export const CreateEditRoomFormDialog = () => {
+  const [open, setOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
   const queryClient = useQueryClient();
   const { data: room } = useGetRoomByIdQuery(roomId || '');
@@ -64,8 +65,10 @@ export const CreateEditRoomFormDialog = () => {
             roomId,
             data: { title: values.title },
           });
+          setOpen(false);
         } else {
           await createRoomMutation.mutateAsync(values);
+          setOpen(false);
         }
 
         formikHelpers.resetForm();
@@ -77,7 +80,7 @@ export const CreateEditRoomFormDialog = () => {
   });
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full" asChild>
         {isEditMode ? (
           <Button
@@ -88,7 +91,10 @@ export const CreateEditRoomFormDialog = () => {
             Edit
           </Button>
         ) : (
-          <Button className="justify-start w-[150px]">
+          <Button
+            className="justify-start w-[150px]"
+            onClick={() => setOpen(true)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             New Room
           </Button>
@@ -112,22 +118,21 @@ export const CreateEditRoomFormDialog = () => {
               onChange={formik.handleChange}
               error={getFormikError(formik, 'title')}
             />
+
             <DialogFooter>
-              <DialogClose>
-                <Button
-                  type="submit"
-                  className="w-[150px]"
-                  disabled={formik.isSubmitting}
-                >
-                  {formik.isSubmitting
-                    ? isEditMode
-                      ? 'Saving...'
-                      : 'Creating...'
-                    : isEditMode
-                      ? 'Save changes'
-                      : 'Create room'}
-                </Button>
-              </DialogClose>
+              <Button
+                type="submit"
+                className="w-[150px]"
+                disabled={formik.isSubmitting}
+              >
+                {formik.isSubmitting
+                  ? isEditMode
+                    ? 'Saving...'
+                    : 'Creating...'
+                  : isEditMode
+                    ? 'Save changes'
+                    : 'Create room'}
+              </Button>
             </DialogFooter>
           </form>
         </DialogHeader>

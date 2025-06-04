@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const Profile = () => {
   return (
-    <div className="bg-gradient-to-b from-card to-background flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen  lg:py-0">
+    <div className="bg-gradient-to-b from-background to-secondary flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen  lg:py-0">
       <Tabs defaultValue="account" className="max-w-[400px] w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="account">Account</TabsTrigger>

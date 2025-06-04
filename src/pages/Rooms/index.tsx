@@ -28,18 +28,12 @@ export const Rooms = () => {
   const hasRooms = rooms?.data.length;
 
   return (
-    <div className="min-h-screen  flex flex-col items-center justify-center bg-gradient-to-b from-card to-background px-6 py-12 text-gray-800">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary px-6 py-12 text-gray-800">
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 flex items-center justify-center gap-3 animate-fade-in-down">
           <Sparkles className="text-primary animate-bounce" size={32} />
           Welcome{' '}
-          <span className="text-primary">
-            {user?.firstName
-              ? user?.firstName.charAt(0).toUpperCase() +
-                user?.firstName.slice(1, user?.firstName.length)
-              : ''}
-            !
-          </span>
+          <span className="text-primary capitalize">{user?.firstName}!</span>
         </h1>
         <p className="text-md md:text-lg text-muted-foreground leading-relaxed animate-fade-in">
           Dive into collaborative rooms where creativity meets action. Create
