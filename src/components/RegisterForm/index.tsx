@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -8,14 +7,13 @@ import { register } from '@/api/User/user.client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
+import { capitalize } from '@/helpers/capitalize';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { RegisterSchema } from '@/schemas/RegisterSchema';
 import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const RegisterForm = () => {
-  const [backEndError, setBackendError] = useState('');
-
   const navigate = useNavigate();
 
   const registerMutation = useMutation({
@@ -23,22 +21,6 @@ export const RegisterForm = () => {
     onSuccess: () => {
       toast.success('Registered successfully!');
       navigate('/login');
-    },
-    onError: async (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      setBackendError(responseData.message);
-      if (Array.isArray(backEndError)) {
-        toast.error(
-          backEndError[0][0].toUpperCase() + backEndError[0].slice(1) ||
-            'Signup failed',
-        );
-      }
-      if (typeof backEndError === 'string') {
-        toast.error(
-          backEndError[0].toUpperCase() + backEndError.slice(1) ||
-            'Signup failed',
-        );
-      }
     },
   });
 
@@ -55,8 +37,21 @@ export const RegisterForm = () => {
       try {
         await registerMutation.mutateAsync(values);
         formikHelpers.resetForm();
-      } catch {
-        console.error('Register failed! ');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const errorMessage = error.response?.data.message as AxiosError<
+            ErrorResponseData['message']
+          >;
+
+          let capitalizedError;
+          if (Array.isArray(errorMessage)) {
+            capitalizedError = capitalize(errorMessage[0]);
+          } else {
+            capitalizedError = capitalize(errorMessage.toString());
+          }
+
+          formikHelpers.setFieldError('passwordConfirm', capitalizedError);
+        }
       }
     },
   });
@@ -114,20 +109,6 @@ export const RegisterForm = () => {
           onChange={formik.handleChange}
           error={getFormikError(formik, 'passwordConfirm')}
         />
-
-        {backEndError && typeof backEndError === 'string' && (
-          <p className="text-sm text-destructive">{backEndError}</p>
-        )}
-
-        {backEndError && Array.isArray(backEndError) && (
-          <div className="flex flex-col gap-1">
-            {backEndError.map((messageItem) => (
-              <p className="text-sm text-destructive ">
-                {messageItem[0].toUpperCase() + messageItem.slice(1)}
-              </p>
-            ))}
-          </div>
-        )}
 
         <div className="flex text-xs  flex-col space-y-5 items-center justify-between">
           <div className="text-sm text-foreground text-center">

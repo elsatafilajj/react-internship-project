@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { capitalize } from '@/helpers/capitalize';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { LoginSchema } from '@/schemas/LoginSchema';
@@ -16,8 +16,6 @@ import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const LoginForm = () => {
   const { setAuthState } = useAuthContext();
-
-  const [backEndError, setBackendError] = useState('');
 
   const loginMutation = useMutation({
     mutationFn: login,
@@ -28,11 +26,6 @@ export const LoginForm = () => {
         accessToken: data.data.accessToken,
         refreshToken: data.data.refreshToken,
       });
-    },
-    onError: async (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      setBackendError(responseData.message);
-      toast.error(backEndError || 'Login failed');
     },
   });
 
@@ -46,8 +39,21 @@ export const LoginForm = () => {
       try {
         await loginMutation.mutateAsync(values);
         formikHelpers.resetForm();
-      } catch {
-        console.error('Login failed');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const errorMessage = error.response?.data.message as AxiosError<
+            ErrorResponseData['message']
+          >;
+
+          let capitalizedError;
+          if (Array.isArray(errorMessage)) {
+            capitalizedError = capitalize(errorMessage[0]);
+          } else {
+            capitalizedError = capitalize(errorMessage.toLocaleString());
+          }
+
+          formikHelpers.setFieldError('password', capitalizedError);
+        }
       }
     },
   });
@@ -80,18 +86,6 @@ export const LoginForm = () => {
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
         />
-
-        {backEndError && typeof backEndError === 'string' && (
-          <p className="text-sm text-destructive">{backEndError}</p>
-        )}
-
-        {backEndError && Array.isArray(backEndError) && (
-          <div className="flex flex-col gap-1">
-            {backEndError.map((messageItem) => (
-              <p className="text-sm text-destructive ">{messageItem}</p>
-            ))}
-          </div>
-        )}
 
         <div className="flex text-sm flex-col space-y-5 items-center justify-between">
           <Link
