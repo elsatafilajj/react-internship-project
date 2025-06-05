@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import toast from 'react-hot-toast';
@@ -14,7 +14,7 @@ import { getSocket } from '@/helpers/socket';
 export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
   const roomId = useParams<{ roomId: string }>();
 
   useEffect(() => {

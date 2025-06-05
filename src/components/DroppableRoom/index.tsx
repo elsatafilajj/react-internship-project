@@ -69,13 +69,13 @@ export const DroppableRoom = ({
   useEffect(() => {
     if (!socket) return;
 
-    socket.on(socketEvents.NewNote, ({ newNote }) => {
+    socket.on(socketEvents.NewNote, (newNote) => {
       console.log('new note', newNote);
       setNotes((prev) => [...(prev || []), newNote]);
     });
 
     socket.on(socketEvents.UpdatedNote, (data) => {
-      const { uuid, xAxis, yAxis, content } = data.updatedNote;
+      const { uuid, xAxis, yAxis, content } = data;
       setNotes((prev) =>
         prev.map((note) =>
           note.uuid === uuid ? { ...note, xAxis, yAxis, content } : note,

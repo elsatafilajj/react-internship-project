@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { NoteItem } from '@/api/Note/note.types';
@@ -16,6 +16,7 @@ export const Note = ({ note }: NoteProps) => {
   const { roomId } = useParams<{ roomId: string }>();
   const [noteContent, setNoteContent] = useState('');
   const { uuid, content, author } = note;
+  const hasUserInteracted = useRef(false);
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
@@ -26,14 +27,17 @@ export const Note = ({ note }: NoteProps) => {
   }, [content]);
 
   useEffect(() => {
-    socket.emit(socketEvents.UpdateNote, {
-      roomId,
-      noteId: uuid,
-      updates: { content: debouncedContent },
-    });
-  }, [debouncedContent]);
+    if (hasUserInteracted.current && debouncedContent !== content) {
+      socket.emit(socketEvents.UpdateNote, {
+        roomId,
+        noteId: uuid,
+        updates: { content: debouncedContent },
+      });
+    }
+  }, [debouncedContent, content, roomId, uuid]);
 
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    hasUserInteracted.current = true;
     setNoteContent(event.target.value);
   };
 
