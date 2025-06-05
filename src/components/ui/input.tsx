@@ -56,7 +56,7 @@ export function Input(
           onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
           data-slot="input"
           className={cn(
-            'bg-transparent text-wrap border-b border-muted-foreground/45 text-foreground placeholder:text-muted-foreground/50 text-sm rounded-lg focus:ring-0 focus:border-primary w-full p-2.5  shadow-xs outline-none transition-[color,box-shadow] active:bg-transparent'
+            'bg-transparent text-wrap border-b border-muted-foreground/45 text-foreground placeholder:text-muted-foreground/50 text-sm rounded-lg focus:ring-0 focus:border-primary w-full p-2.5  shadow-xs outline-none transition-[color,box-shadow] active:bg-transparent',
             className,
           )}
           {...(rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
