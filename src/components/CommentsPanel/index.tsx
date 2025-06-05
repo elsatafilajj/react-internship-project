@@ -280,7 +280,8 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                         <CommentsActionsDropDown
                           roomId={roomId}
                           noteId={noteId}
-                          commentId={comment.uuid}
+                          commentId={reply.uuid}
+                          parentId={comment.uuid}
                           onEdit={() => startEditing(reply)}
                         />
                       </div>

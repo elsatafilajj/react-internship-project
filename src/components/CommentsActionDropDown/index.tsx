@@ -15,6 +15,7 @@ import { getSocket } from '@/helpers/socket';
 interface Props {
   roomId?: string;
   noteId: string;
+  parentId?: string;
   commentId: string;
   onEdit: () => void;
 }
