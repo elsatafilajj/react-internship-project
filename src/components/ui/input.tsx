@@ -71,7 +71,7 @@ export function Input(
           onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
           data-slot="input"
           className={cn(
-            'w-full px-0 py-2 text-foreground text-sm bg-transparent border-b border-muted-foreground/45 disabled:opacity-50 cursor-not-allowed',
+            'w-full px-0 py-2 text-foreground text-sm bg-transparent border-b border-muted-foreground/45 disabled:opacity-50 disabled:cursor-not-allowed',
             'placeholder:text-muted-foreground active:bg-transparent focus:outline-none focus:border-primary ',
             'transition-all duration-300 ease-in-out',
             'focus:ring-0 focus:shadow-2xs focus:shadow-primary',
