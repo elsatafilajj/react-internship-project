@@ -28,7 +28,7 @@ export const RoomCard = ({ title, updatedAt, onClick }: RoomProps) => {
 
   return (
     <div
-      className="w-full max-w-sm cursor-pointer shadow-xl shadow-black/10 rounded-xl"
+      className="w-full  cursor-pointer shadow-xl shadow-black/10 rounded-xl"
       onClick={onClick}
     >
       <div
@@ -36,16 +36,14 @@ export const RoomCard = ({ title, updatedAt, onClick }: RoomProps) => {
       ></div>
 
       <div className="flex items-start gap-2 p-4 bg-card rounded-b-xl">
-        <StickyNote className="text-primary w-5 h-5 mt-1" />
-        <div className="text-foreground flex justify-between w-full">
-          <div className="flex flex-col">
-            <p className="font-semibold text-xl break-words line-clamp-1">
-              {title}
-            </p>
-            <p className="text-xs align-end text-gray-400">
-              Updated at: {getFormattedDate(new Date(updatedAt))}
-            </p>
-          </div>
+        <StickyNote className="text-primary w-5 h-5 mt-1 shrink-0" />
+        <div className="flex flex-col grow overflow-hidden">
+          <p className="font-semibold text-foreground text-xl tracking-wide truncate w-full">
+            {title}
+          </p>
+          <p className="text-xs align-end text-gray-400">
+            Updated at: {getFormattedDate(new Date(updatedAt))}
+          </p>
         </div>
       </div>
     </div>

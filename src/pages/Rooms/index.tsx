@@ -31,9 +31,9 @@ export const Rooms = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary px-6 py-12 text-gray-800">
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 flex items-center justify-center gap-3 animate-fade-in-down">
-          <Sparkles className="text-primary animate-bounce" size={32} />
+          <Sparkles className="text-name animate-bounce" size={32} />
           Welcome{' '}
-          <span className="text-primary capitalize">{user?.firstName}!</span>
+          <span className="text-name capitalize">{user?.firstName}!</span>
         </h1>
         <p className="text-md md:text-lg text-muted-foreground leading-relaxed animate-fade-in">
           Dive into collaborative rooms where creativity meets action. Create
@@ -67,17 +67,15 @@ export const Rooms = () => {
               </div>
             ))
           ) : (
-            <div className="col-span-full flex flex-col items-center justify-center mt-20 text-center text-muted-foreground animate-fade-in">
-              <div className="border p-8 rounded-2xl shadow-lg max-w-md w-full">
-                <ClipboardCopy className="mx-auto h-12 w-12 text-primary mb-4" />
-                <h2 className="text-2xl font-semibold text-foreground">
-                  No rooms yet!
-                </h2>
-                <p className="text-sm mt-3 text-muted-foreground">
-                  Click <span className="font-semibold">+ New Room</span> to
-                  begin your first session.
-                </p>
-              </div>
+            <div className="col-span-full flex bg-card flex-col items-center justify-center mt-10 text-center text-muted-foreground animate-fade-in border p-8 rounded-2xl shadow-lg  w-full">
+              <ClipboardCopy className="mx-auto h-12 w-12 text-name mb-4" />
+              <h2 className="text-2xl font-semibold text-foreground">
+                No rooms yet!
+              </h2>
+              <p className="text-sm mt-3 text-muted-foreground">
+                Click <span className="font-semibold">+ New Room</span> to begin
+                your first session.
+              </p>
             </div>
           )}
         </div>

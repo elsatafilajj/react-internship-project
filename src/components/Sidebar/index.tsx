@@ -1,12 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import {
-  Home,
-  Star,
-  FolderArchive,
-  Settings,
-  LogOut,
-  PanelLeftClose,
-} from 'lucide-react';
+import { Home, FolderArchive, LogOut, PanelLeftClose } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -81,31 +74,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to="/favorites">
-              <Star className="mr-2 h-4 w-4" />
-              Favorites
-            </Link>
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
             <Link to="/archived">
               <FolderArchive className="mr-2 h-4 w-4" />
               Archived
-            </Link>
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link to="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
             </Link>
           </Button>
         </nav>
