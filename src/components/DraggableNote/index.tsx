@@ -7,17 +7,17 @@ import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface NoteProps extends Partial<NoteItem> {
+  note: Partial<NoteItem>;
   setTransformDisabled: (b: boolean) => void;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
 }
 
 export const DraggableNote = ({
-  uuid,
-  xAxis,
-  yAxis,
+  note,
   setTransformDisabled,
   transformRef,
 }: NoteProps) => {
+  const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
 
   const [{ isDragging }, drag] = useNoteDrag({
@@ -44,7 +44,7 @@ export const DraggableNote = ({
       onDragEnd={() => setTransformDisabled(false)}
       onMouseUp={() => setTransformDisabled(false)}
     >
-      <Note uuid={uuid || ''} />
+      <Note note={note} />
     </div>
   );
 };

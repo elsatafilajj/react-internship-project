@@ -8,7 +8,7 @@ interface useNoteDropProps {
   type: DragNoteTypes;
   roomRef: React.MutableRefObject<HTMLDivElement | null>;
   transformRef: React.RefObject<ReactZoomPanPinchRef>;
-  onDrop: (uuid: string, x: number, y: number) => void;
+  onDrop: (x: number, y: number, uuid?: string) => void;
 }
 
 interface DraggedNoteItem extends Partial<NoteItem> {
@@ -55,9 +55,7 @@ export const useNoteDrop = ({
         Math.min(roomEl.offsetHeight - 270, realY),
       );
 
-      if (item && item.uuid) {
-        onDrop(item.uuid, withinBoundsX, withinBoundsY);
-      }
+      onDrop(withinBoundsX, withinBoundsY, item.uuid);
     },
   }));
 
