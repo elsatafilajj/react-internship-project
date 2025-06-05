@@ -48,7 +48,6 @@ export function Input(
           {label}
         </label>
       )}
-
       {isTextArea ? (
         <textarea
           id={name}
@@ -57,7 +56,7 @@ export function Input(
           onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
           data-slot="input"
           className={cn(
-            'bg-transparent text-wrap border-b border-muted-foreground/45 text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-0 focus:border-primary w-full p-2.5  shadow-xs outline-none transition-[color,box-shadow] active:bg-transparent',
+            'bg-transparent text-wrap border-b border-muted-foreground/45 text-foreground placeholder:text-muted-foreground/50 text-sm rounded-lg focus:ring-0 focus:border-primary w-full p-2.5  shadow-xs outline-none transition-[color,box-shadow] active:bg-transparent',
             className,
           )}
           {...(rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
@@ -72,7 +71,7 @@ export function Input(
           data-slot="input"
           className={cn(
             'w-full px-0 py-2 text-foreground text-sm bg-transparent border-b border-muted-foreground/45',
-            'placeholder:text-muted-foreground active:bg-transparent focus:outline-none focus:border-primary ',
+            'placeholder:text-muted-foreground/50 active:bg-transparent focus:outline-none focus:border-primary ',
             'transition-all duration-300 ease-in-out',
             'focus:ring-0 focus:shadow-2xs focus:shadow-primary overflow-x-scroll',
             className,
@@ -80,7 +79,6 @@ export function Input(
           {...(rest as React.InputHTMLAttributes<HTMLInputElement>)}
         />
       )}
-
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );

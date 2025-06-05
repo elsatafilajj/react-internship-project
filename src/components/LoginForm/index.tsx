@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -7,9 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { capitalize } from '@/helpers/capitalize';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { LoginSchema } from '@/schemas/LoginSchema';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const LoginForm = () => {
   const { setAuthState } = useAuthContext();
@@ -24,9 +27,6 @@ export const LoginForm = () => {
         refreshToken: data.data.refreshToken,
       });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
   });
 
   const formik = useForm({
@@ -39,8 +39,21 @@ export const LoginForm = () => {
       try {
         await loginMutation.mutateAsync(values);
         formikHelpers.resetForm();
-      } catch {
-        console.error('Login failed');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const errorMessage = error.response?.data.message as AxiosError<
+            ErrorResponseData['message']
+          >;
+
+          let capitalizedError;
+          if (Array.isArray(errorMessage)) {
+            capitalizedError = capitalize(errorMessage[0]);
+          } else {
+            capitalizedError = capitalize(errorMessage.toLocaleString());
+          }
+
+          formikHelpers.setFieldError('password', capitalizedError);
+        }
       }
     },
   });
@@ -73,6 +86,7 @@ export const LoginForm = () => {
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
         />
+
         <div className="flex text-sm flex-col space-y-5 items-center justify-between">
           <Link
             to={RouteNames.ForgotPassword}
