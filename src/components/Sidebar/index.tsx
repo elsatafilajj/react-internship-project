@@ -55,7 +55,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <PanelLeftClose className="h-4 w-4" />
         </button>
 
-        <nav className="space-y-2 flex1 mt-4">
+        <nav className="space-y-2 mt-4">
           <Button
             variant="ghost"
             className="w-full justify-start font-medium"
@@ -82,11 +82,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </nav>
 
         <div className="mt-auto flex justify-between cursor-pointer">
-          <Button
-            variant="ghost"
-            className="justify-start font-medium cursor-pointer"
-            asChild
-          >
+          <Button variant="ghost" className="justify-start font-medium" asChild>
             <div className="w-fit">
               <LogOut className="mr-2 h-4 w-4" />
               <ConfirmActionDialog

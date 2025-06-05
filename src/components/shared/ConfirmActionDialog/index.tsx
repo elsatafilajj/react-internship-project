@@ -44,7 +44,7 @@ export const ConfirmActionDialog = ({
             {title || 'Are you sure you want to delete this?'}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {message || 'Are you shure you wanna logout'}
+            {message || 'This action cannot be undone.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

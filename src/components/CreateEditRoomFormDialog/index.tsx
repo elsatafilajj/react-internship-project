@@ -86,13 +86,13 @@ export const CreateEditRoomFormDialog = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide cursor-pointer"
+            className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
           >
             Edit
           </Button>
         ) : (
           <Button
-            className="justify-center w-full cursor-pointer"
+            className="justify-center w-full"
             onClick={() => setOpen(true)}
           >
             <PackagePlus className="h-4 w-4" />
@@ -122,7 +122,7 @@ export const CreateEditRoomFormDialog = () => {
             <DialogFooter>
               <Button
                 type="submit"
-                className="w-[150px] cursor-pointer"
+                className="w-[150px]"
                 disabled={formik.isSubmitting}
               >
                 {formik.isSubmitting

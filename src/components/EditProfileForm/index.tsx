@@ -95,14 +95,13 @@ export const EditProfileForm = () => {
             error={getFormikError(formikProfile, 'email')}
             onChange={formikProfile.handleChange}
             onBlur={formikProfile.handleBlur}
-            className="text-gray-400 cursor-not-allowed"
             disabled
           />
         </CardContent>
         <CardFooter>
           <Button
             type="submit"
-            className="mt-8 cursor-pointer"
+            className="mt-8 "
             disabled={formikProfile.isSubmitting}
           >
             {formikProfile.isSubmitting ? 'Saving...' : 'Save changes'}
