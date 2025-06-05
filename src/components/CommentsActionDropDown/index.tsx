@@ -29,7 +29,7 @@ export const CommentsActionsDropDown = ({
   const queryClient = useQueryClient();
 
   const handleDelete = () => {
-    socket.emit(socketEvents.DeletedComment, { roomId, commentId });
+    socket.emit(socketEvents.DeleteComment, { roomId, commentId });
     queryClient.invalidateQueries({
       queryKey: queryKeys.getCommentsByNoteId(noteId),
     });

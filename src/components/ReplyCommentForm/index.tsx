@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { queryKeys } from '@/constants/queryKeys';
+import { socketEvents } from '@/constants/socketEvents';
 import { getFormikError } from '@/helpers/getFormikError';
 import { getSocket } from '@/helpers/socket';
 import { useForm } from '@/hooks/useForm';
@@ -21,7 +22,7 @@ export const ReplyCommentForm = ({
 }: ReplyCommentFormProps) => {
   const queryClient = useQueryClient();
   const socket = getSocket();
-  const params = useParams<{ roomId: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
 
   const formikReply = useForm({
     schema: CommentSchema,
@@ -32,7 +33,10 @@ export const ReplyCommentForm = ({
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        socket.emit('addComment', { roomId: params.roomId, payload: values });
+        socket.emit(socketEvents.AddComment, {
+          roomId: roomId,
+          payload: values,
+        });
         queryClient.invalidateQueries({
           queryKey: queryKeys.getCommentsByNoteId(noteId),
         });

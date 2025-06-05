@@ -31,7 +31,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   const { user } = useAuthContext();
   const [replyComment, setReplyComment] = useState<string | null>(null);
   const socket = getSocket();
-  const params = useParams<{ roomId: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllCommentsQuery(noteId);
 
   const createFormik = useForm({
@@ -44,7 +44,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     onSubmit: async (values, formikHelpers) => {
       try {
         socket.emit(socketEvents.AddComment, {
-          roomId: params.roomId,
+          roomId: roomId,
           payload: values,
         });
         queryClient.invalidateQueries({
@@ -68,7 +68,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
 
       try {
         socket.emit(socketEvents.EditComment, {
-          roomId: params.roomId,
+          roomId: roomId,
           commentId: editingComment.uuid,
           payload: values,
         });
@@ -234,7 +234,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                       className="w-5 h-5 cursor-pointer"
                     />
                     <CommentsActionsDropDown
-                      roomId={params.roomId}
+                      roomId={roomId}
                       noteId={noteId}
                       commentId={comment.uuid}
                       onEdit={() => startEditing(comment)}
@@ -278,7 +278,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                           </div>
                         </div>
                         <CommentsActionsDropDown
-                          roomId={params.roomId}
+                          roomId={roomId}
                           noteId={noteId}
                           commentId={comment.uuid}
                           onEdit={() => startEditing(reply)}
