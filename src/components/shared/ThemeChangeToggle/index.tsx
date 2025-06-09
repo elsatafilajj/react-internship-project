@@ -1,5 +1,6 @@
 import { Moon, Sun } from 'lucide-react';
 
+import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Toggle } from '@/components/ui/toggle';
 import { useThemeContext } from '@/context/ThemeContext/ThemeContext';
 
@@ -11,8 +12,10 @@ export function ThemeChangeToggle() {
   };
 
   return (
-    <Toggle onClick={toggleTheme} size="lg" aria-label="Toggle Theme">
-      {theme === 'light' ? <Moon /> : <Sun />}
-    </Toggle>
+    <div ref={TourRefs.changeThemeRef}>
+      <Toggle onClick={toggleTheme} size="lg" aria-label="Toggle Theme">
+        {theme === 'light' ? <Moon /> : <Sun />}
+      </Toggle>
+    </div>
   );
 }

@@ -2,9 +2,10 @@ import { PanelLeft, User } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { TourTrigger } from '@/components/OnboardingWizard';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
+import { TourLauncher } from '@/components/TourLauncher';
+import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Logo } from '@/components/shared/Logo';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
@@ -75,14 +76,15 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           id="profile"
           className="relative group flex items-center gap-1 rounded-4xl p-1  border-2 border-foreground text-foreground text-sm font-medium shadow cursor-pointer"
         >
-          <User />
-
+          <div ref={TourRefs.profileRef}>
+            <User />
+          </div>
           <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-transform bg-primary text-black text-xs px-2 py-1 rounded shadow">
             Profile
           </span>
         </Link>
 
-        <TourTrigger onToggleSidebar={onToggleSidebar} />
+        <TourLauncher onToggleSidebar={onToggleSidebar} />
       </div>
     </header>
   );

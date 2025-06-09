@@ -1,5 +1,6 @@
 import { Copy, Share2 } from 'lucide-react';
 
+import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,13 +18,12 @@ export const ShareLinkAlertDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          id="share-link"
-          className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]"
-        >
-          <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
-          <span className="hidden md:block">Share</span>
-        </Button>
+        <div ref={TourRefs.shareLinkRef}>
+          <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]">
+            <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
+            <span className="hidden md:block">Share</span>
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md space-y-2">
         <DialogHeader>

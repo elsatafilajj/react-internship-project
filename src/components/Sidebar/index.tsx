@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 
 import { logout as apiLogout } from '@/api/User/user.client';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
+import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
@@ -60,16 +61,18 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </button>
 
         <nav className="space-y-2 flex-1 mt-4">
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link id="rooms-dashboard" to={RouteNames.Rooms}>
-              <Home className="mr-2 h-4 w-4" />
-              My Rooms
-            </Link>
-          </Button>
+          <div ref={TourRefs.myRoomsDashboardRef}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium"
+              asChild
+            >
+              <Link to={RouteNames.Rooms}>
+                <Home className="mr-2 h-4 w-4" />
+                My Rooms
+              </Link>
+            </Button>
+          </div>
 
           <CreateEditRoomFormDialog />
 
@@ -84,16 +87,18 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </Link>
           </Button>
 
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link id="archive" to="/archived">
-              <FolderArchive className="mr-2 h-4 w-4" />
-              Archived
-            </Link>
-          </Button>
+          <div ref={TourRefs.archiveRef}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium"
+              asChild
+            >
+              <Link id="archive" to="/archived">
+                <FolderArchive className="mr-2 h-4 w-4" />
+                Archived
+              </Link>
+            </Button>
+          </div>
 
           <Button
             variant="ghost"

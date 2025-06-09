@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { createRoom, updateRoom } from '@/api/Room/room.client';
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { UpdateRoomInput } from '@/api/Room/room.types';
+import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -77,23 +78,24 @@ export const CreateEditRoomFormDialog = () => {
 
   return (
     <Dialog>
-      <DialogTrigger id="create-edit-room" className="w-full" asChild>
-        {isEditMode ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
-          >
-            Edit
-          </Button>
-        ) : (
-          <Button className="justify-start w-[150px]">
-            <Plus className="mr-2 h-4 w-4" />
-            New Room
-          </Button>
-        )}
-      </DialogTrigger>
-
+      <div ref={TourRefs.createEditRoomRef}>
+        <DialogTrigger className="w-full" asChild>
+          {isEditMode ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
+            >
+              Edit
+            </Button>
+          ) : (
+            <Button className="justify-start w-[150px]">
+              <Plus className="mr-2 h-4 w-4" />
+              New Room
+            </Button>
+          )}
+        </DialogTrigger>
+      </div>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{isEditMode ? 'Edit Room' : 'Create Room'}</DialogTitle>
