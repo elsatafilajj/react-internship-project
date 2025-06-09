@@ -4,8 +4,13 @@ import {
   CreateNoteInput,
   UpdateNoteInput,
 } from '@/api/Note/note.types';
-import { AddVoteResponse } from '@/types/AddVoteResponse';
 import { DeleteResponse } from '@/types/DeleteResponse';
+
+type AddVoteResponse = {
+  success: boolean;
+  message: string;
+  voteSwitched: string;
+};
 
 export const getAllNotesFromRoom = async (roomId: string) =>
   apiRequest<undefined, NoteItem[]>({

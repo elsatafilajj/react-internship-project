@@ -117,7 +117,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               <LogOut className="mr-2 h-4 w-4" />
               <ConfirmActionDialog
                 className="max-w-fit"
-                triggerButton="Logout"
+                triggerButtonName="Logout"
                 title="Are you sure you want to logout?"
                 onConfirm={handleLogout}
               />
