@@ -12,15 +12,18 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { ChangePasswordSchema } from '@/schemas/ChangePasswordSchema';
 
 export const ChangePasswordForm = () => {
+  const { logout } = useAuthContext();
   const changePasswordMutation = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
       toast.success('Password has changed!');
+      logout();
     },
   });
 

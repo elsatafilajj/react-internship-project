@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import { PackagePlus } from 'lucide-react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ import { useForm } from '@/hooks/useForm';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
 
 export const CreateEditRoomFormDialog = () => {
+  const [open, setOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
   const queryClient = useQueryClient();
   const { data: room } = useGetRoomByIdQuery(roomId || '');
@@ -63,8 +65,10 @@ export const CreateEditRoomFormDialog = () => {
             roomId,
             data: { title: values.title },
           });
+          setOpen(false);
         } else {
           await createRoomMutation.mutateAsync(values);
+          setOpen(false);
         }
 
         formikHelpers.resetForm();
@@ -76,7 +80,7 @@ export const CreateEditRoomFormDialog = () => {
   });
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full" asChild>
         {isEditMode ? (
           <Button
@@ -87,8 +91,11 @@ export const CreateEditRoomFormDialog = () => {
             Edit
           </Button>
         ) : (
-          <Button className="justify-start w-[150px]">
-            <Plus className="mr-2 h-4 w-4" />
+          <Button
+            className="justify-center w-full"
+            onClick={() => setOpen(true)}
+          >
+            <PackagePlus className="h-4 w-4" />
             New Room
           </Button>
         )}
@@ -100,7 +107,7 @@ export const CreateEditRoomFormDialog = () => {
           <DialogDescription>
             {isEditMode
               ? "Make changes to your room here. Click save when you're done"
-              : 'Create your new room in one-click'}
+              : 'Enter new name for your room'}
           </DialogDescription>
           <form className="space-y-4" onSubmit={formik.handleSubmit}>
             <Input
@@ -111,6 +118,7 @@ export const CreateEditRoomFormDialog = () => {
               onChange={formik.handleChange}
               error={getFormikError(formik, 'title')}
             />
+
             <DialogFooter>
               <Button
                 type="submit"

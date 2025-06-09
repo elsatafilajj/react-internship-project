@@ -18,7 +18,7 @@ function App() {
           <RouterProvider router={router} />
         </AuthContextProvider>
       </ThemeContextProvider>
-      <Toaster position="top-right" />
+      <Toaster position="bottom-right" />
       <ReactQueryDevtools />
     </QueryClientProvider>
   );
