@@ -65,7 +65,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to={RouteNames.Rooms}>
+            <Link id="rooms-dashboard" to={RouteNames.Rooms}>
               <Home className="mr-2 h-4 w-4" />
               My Rooms
             </Link>
@@ -89,7 +89,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="w-full justify-start font-medium"
             asChild
           >
-            <Link to="/archived">
+            <Link id="archive" to="/archived">
               <FolderArchive className="mr-2 h-4 w-4" />
               Archived
             </Link>

@@ -6,7 +6,7 @@ export interface LoginResponse {
 
 export interface User {
   id: string;
-  createdDate: Date;
+  createdAt: Date;
   updatedDate: Date;
   email: string;
   username: string;

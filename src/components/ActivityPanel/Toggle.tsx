@@ -9,6 +9,7 @@ export const ActivityPanelToggle = () => {
     <Sheet>
       <SheetTrigger asChild>
         <Button
+          id="activity"
           variant="ghost"
           size="icon"
           className="group fixed top-[100px] right-4 z-50 bg-card border border-gray-300 text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200"

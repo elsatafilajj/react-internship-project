@@ -1,8 +1,8 @@
-
-import { PanelLeft, User } from 'lucide-react'; 
+import { PanelLeft, User } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { TourTrigger } from '@/components/OnboardingWizard';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Logo } from '@/components/shared/Logo';
@@ -63,7 +63,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </div>
       </div>
 
-     <div className="flex items-center gap-0.5 sm:gap-3">
+      <div className="flex items-center gap-0.5 sm:gap-3">
         {isUserInRoom && <RoomActionsDropDown />}
 
         <ShareLinkAlertDialog />
@@ -72,6 +72,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
         <Link
           to="/profile"
+          id="profile"
           className="relative group flex items-center gap-1 rounded-4xl p-1  border-2 border-foreground text-foreground text-sm font-medium shadow cursor-pointer"
         >
           <User />
@@ -80,6 +81,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
             Profile
           </span>
         </Link>
+
+        <TourTrigger onToggleSidebar={onToggleSidebar} />
       </div>
     </header>
   );

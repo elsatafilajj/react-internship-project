@@ -55,7 +55,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               onDragEnd={() => setTransformDisabled(false)}
               onMouseUp={() => setTransformDisabled(false)}
             >
-              <div ref={stickyNoteRef}>
+              <div id="note-drag" ref={stickyNoteRef}>
                 <Button
                   size="icon"
                   className="transition hover:text-foreground"

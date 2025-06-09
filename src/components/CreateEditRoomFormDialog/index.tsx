@@ -77,7 +77,7 @@ export const CreateEditRoomFormDialog = () => {
 
   return (
     <Dialog>
-      <DialogTrigger className="w-full" asChild>
+      <DialogTrigger id="create-edit-room" className="w-full" asChild>
         {isEditMode ? (
           <Button
             variant="ghost"
