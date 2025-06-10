@@ -6,11 +6,11 @@ import {
 } from '@/api/Note/note.types';
 import { DeleteResponse } from '@/types/DeleteResponse';
 
-type AddVoteResponse = {
+interface AddVoteResponse {
   success: boolean;
   message: string;
-  voteSwitched: string;
-};
+  voteSwitched: boolean;
+}
 
 export const getAllNotesFromRoom = async (roomId: string) =>
   apiRequest<undefined, NoteItem[]>({
