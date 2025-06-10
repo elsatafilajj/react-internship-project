@@ -22,6 +22,7 @@ export interface ActivityResponse {
   deletedAt: string | null;
   activityType: ActivityType;
   resourceType: ResourceType;
+  resourceId: string;
   room: Room;
   user: User;
 }
