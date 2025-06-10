@@ -4,7 +4,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { NoteItem } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
-import { useNoteScroll } from '@/context/NoteContext/NoteContextProvider';
+import { useNoteScrollContext } from '@/context/NoteContext/NoteScrollContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface NoteProps extends Partial<NoteItem> {
@@ -20,7 +20,7 @@ export const DraggableNote = ({
 }: NoteProps) => {
   const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
-  const { registerNoteRef, selectedNoteId } = useNoteScroll();
+  const { registerNoteRef } = useNoteScrollContext();
 
   useEffect(() => {
     registerNoteRef(note.uuid || '', noteRef);
@@ -46,9 +46,6 @@ export const DraggableNote = ({
         top: yAxis,
         opacity: isDragging ? 0 : 1,
       }}
-      className={`scroll-mt-24 transition-all p-4 ${
-        selectedNoteId === uuid ? 'border border-secondary shadow-md' : ''
-      }`}
       onMouseDown={() => setTransformDisabled(true)}
       onDragEnd={() => setTransformDisabled(false)}
       onMouseUp={() => setTransformDisabled(false)}

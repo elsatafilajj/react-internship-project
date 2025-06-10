@@ -7,12 +7,12 @@ import { queryKeys } from '@/constants/queryKeys';
 
 export const useGetAllActivitiesForRoom = (
   roomId: string,
-  optios?: UseQueryOptions<AxiosResponse<ActivityResponse[]>>,
+  options?: UseQueryOptions<AxiosResponse<ActivityResponse[]>>,
 ) => {
   return useQuery<AxiosResponse<ActivityResponse[]>>({
     queryKey: queryKeys.getActivitiesForRoom(roomId),
     queryFn: () => getAllActivitiesForRoom(roomId),
     enabled: !!roomId,
-    ...optios,
+    ...options,
   });
 };

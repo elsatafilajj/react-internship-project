@@ -1,9 +1,11 @@
+import clsx from 'clsx';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import { socketEvents } from '@/constants/socketEvents';
+import { useNoteScrollContext } from '@/context/NoteContext/NoteScrollContext';
 import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -17,6 +19,7 @@ export const Note = ({ note }: NoteProps) => {
   const { roomId } = useParams<{ roomId: string }>();
   const [noteContent, setNoteContent] = useState('');
   const { uuid, content, author } = note;
+  const { selectedNoteId } = useNoteScrollContext();
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
@@ -43,7 +46,12 @@ export const Note = ({ note }: NoteProps) => {
 
   return (
     <div className="flex">
-      <div className=" w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden">
+      <div
+        className={clsx(
+          'w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden scroll-mt-24 transition-all',
+          selectedNoteId === uuid && 'border border-secondary',
+        )}
+      >
         <div className="flex flex-col justify-between h-full p-2 text-xs">
           <textarea
             value={noteContent}

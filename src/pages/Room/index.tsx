@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
 import { socketEvents } from '@/constants/socketEvents';
@@ -50,6 +51,9 @@ export const Room = () => {
 
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
           <ToolPalette setTransformDisabled={setTransformDisabled} />
+        </div>
+        <div className="fixed z-50">
+          <ActivityPanelToggle />
         </div>
       </TransformWrapper>
     </DndProvider>

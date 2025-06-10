@@ -2,9 +2,9 @@ import { Room } from '@/api/Room/room.types';
 import { User } from '@/api/User/user.types';
 
 export enum ActivityType {
-  'create',
-  'update',
-  'delete',
+  Create,
+  Update,
+  Delete,
 }
 
 export enum ResourceType {
