@@ -7,7 +7,7 @@ import { useControls } from 'react-zoom-pan-pinch';
 import { useGetAllActivitiesForRoom } from '@/api/Activities/activities.queries';
 import { ActivityResponse } from '@/api/Activities/activitites.types';
 import { socketEvents } from '@/constants/socketEvents';
-import { useNoteScrollContext } from '@/context/NoteContext/NoteScrollContext';
+import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { getFormattedDate } from '@/helpers/getFormattedDate';
 import { getSocket } from '@/helpers/socket';
 
@@ -37,9 +37,11 @@ export const ActivityPanel = () => {
   }, []);
 
   const handleActivityClick = (resourceId: string) => {
+    console.log('Clicked activity with ID:', resourceId);
     if (resourceId) {
       scrollToNote(resourceId);
     }
+    zoomOut();
   };
 
   return (
@@ -57,10 +59,7 @@ export const ActivityPanel = () => {
             <div
               key={activity.uuid}
               className="text-sm text-foreground flex justify-between items-start gap-2 border rounded-md p-3 shadow-sm bg-muted cursor-pointer"
-              onClick={() => {
-                handleActivityClick(activity.resourceId || '');
-                zoomOut();
-              }}
+              onClick={() => handleActivityClick(activity.resourceId || '')}
             >
               <div className="flex flex-col">
                 <span className="font-medium">

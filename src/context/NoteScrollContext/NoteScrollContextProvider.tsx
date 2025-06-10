@@ -3,7 +3,7 @@ import { ReactNode, useRef, useState } from 'react';
 import {
   NoteScrollContext,
   NoteScrollContextType,
-} from '@/context/NoteContext/NoteScrollContext';
+} from '@/context/NoteScrollContext/NoteScrollContext';
 
 type NoteRefs = { [noteId: string]: React.RefObject<HTMLElement> };
 
@@ -25,7 +25,6 @@ export const NoteScrollProvider = ({ children }: NoteScrollProviderProps) => {
       element.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
-        inline: 'center',
       });
       setSelectedNoteId(id);
     }

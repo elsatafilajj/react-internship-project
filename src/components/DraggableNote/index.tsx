@@ -4,7 +4,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { NoteItem } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
-import { useNoteScrollContext } from '@/context/NoteContext/NoteScrollContext';
+import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface NoteProps extends Partial<NoteItem> {

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { NoteItem } from '@/api/Note/note.types';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import { socketEvents } from '@/constants/socketEvents';
-import { useNoteScrollContext } from '@/context/NoteContext/NoteScrollContext';
+import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -48,8 +48,9 @@ export const Note = ({ note }: NoteProps) => {
     <div className="flex">
       <div
         className={clsx(
-          'w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden scroll-mt-24 transition-all',
-          selectedNoteId === uuid && 'border border-secondary',
+          'w-2xs h-70 bg-note-background-pink shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300',
+          selectedNoteId === uuid &&
+            'border-2 border-secondary scale-[1.03] shadow-lg z-10 flash-highlight',
         )}
       >
         <div className="flex flex-col justify-between h-full p-2 text-xs">

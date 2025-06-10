@@ -52,6 +52,7 @@ export const Room = () => {
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
           <ToolPalette setTransformDisabled={setTransformDisabled} />
         </div>
+
         <div className="fixed z-50">
           <ActivityPanelToggle />
         </div>

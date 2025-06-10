@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
-import { NoteScrollProvider } from '@/context/NoteContext/NoteScrollContextProvider';
+import { NoteScrollProvider } from '@/context/NoteScrollContext/NoteScrollContextProvider';
 import { RouteWrapper } from '@/routes/RouteWrapper';
 
 export const MainLayout = () => {
