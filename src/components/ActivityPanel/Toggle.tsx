@@ -1,11 +1,13 @@
 import { Activity } from 'lucide-react';
 
 import { ActivityPanel } from '@/components/ActivityPanel';
-import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ActivityPanelToggle = () => {
+  const { activityRef } = useTourRefsContext();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -14,7 +16,7 @@ export const ActivityPanelToggle = () => {
           size="icon"
           className="group fixed top-[100px] right-4 z-50 bg-card border border-gray-300 text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200"
         >
-          <div className="p-2" ref={TourRefs.activityRef}>
+          <div className="p-2" ref={activityRef}>
             <Activity className="h-5 w-5" />
           </div>
 

@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 
 import { logout as apiLogout } from '@/api/User/user.client';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
-import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,6 +18,8 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout } = useAuthContext();
+
+  const { myRoomsDashboardRef, archiveRef } = useTourRefsContext();
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -57,7 +59,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </button>
 
         <nav className="space-y-2 mt-4">
-          <div ref={TourRefs.myRoomsDashboardRef}>
+          <div ref={myRoomsDashboardRef}>
             <Button
               variant="ghost"
               className="w-full justify-start font-medium"
@@ -72,7 +74,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <CreateEditRoomFormDialog />
 
-          <div ref={TourRefs.archiveRef}>
+          <div ref={archiveRef}>
             <Button
               variant="ghost"
               className="w-full justify-start font-medium"

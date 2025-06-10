@@ -5,10 +5,10 @@ import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { TourLauncher } from '@/components/TourLauncher';
-import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Logo } from '@/components/shared/Logo';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -18,6 +18,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
   const { roomId } = useParams<{ roomId: string }>();
 
+  const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
+
   const isUserInRoom = Boolean(roomId);
 
   const { data } = useGetRoomByIdQuery(roomId || '');
@@ -26,7 +28,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
       <div className="flex items-center gap-0.5 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-          <div ref={TourRefs.toggleSidebarIconRef}>
+          <div ref={toggleSidebarIconRef}>
             <PanelLeft className="h-5 w-5 " />
           </div>
         </Button>
@@ -75,7 +77,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
         <ThemeChangeToggle />
 
-        <div ref={TourRefs.profileRef}>
+        <div ref={profileRef}>
           <Link
             to="/profile"
             id="profile"

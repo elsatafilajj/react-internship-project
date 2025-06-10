@@ -7,7 +7,6 @@ import { useParams } from 'react-router-dom';
 import { createRoom, updateRoom } from '@/api/Room/room.client';
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { UpdateRoomInput } from '@/api/Room/room.types';
-import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { queryKeys } from '@/constants/queryKeys';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
@@ -31,6 +31,8 @@ export const CreateEditRoomFormDialog = () => {
   const { data: room } = useGetRoomByIdQuery(roomId || '');
 
   const isEditMode = Boolean(roomId);
+
+  const { createEditRoomRef } = useTourRefsContext();
 
   const editMutation = useMutation({
     mutationFn: ({ roomId, data }: { roomId: string; data: UpdateRoomInput }) =>
@@ -81,8 +83,8 @@ export const CreateEditRoomFormDialog = () => {
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <div ref={TourRefs.createEditRoomRef}>
+    <div ref={createEditRoomRef}>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger className="w-full" asChild>
           {isEditMode ? (
             <Button
@@ -102,44 +104,46 @@ export const CreateEditRoomFormDialog = () => {
             </Button>
           )}
         </DialogTrigger>
-      </div>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Room' : 'Create Room'}</DialogTitle>
-          <DialogDescription>
-            {isEditMode
-              ? "Make changes to your room here. Click save when you're done"
-              : 'Enter new name for your room'}
-          </DialogDescription>
-          <form className="space-y-4" onSubmit={formik.handleSubmit}>
-            <Input
-              id="title"
-              name="title"
-              type="text"
-              value={formik.values.title}
-              onChange={formik.handleChange}
-              error={getFormikError(formik, 'title')}
-            />
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {isEditMode ? 'Edit Room' : 'Create Room'}
+            </DialogTitle>
+            <DialogDescription>
+              {isEditMode
+                ? "Make changes to your room here. Click save when you're done"
+                : 'Enter new name for your room'}
+            </DialogDescription>
+            <form className="space-y-4" onSubmit={formik.handleSubmit}>
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                error={getFormikError(formik, 'title')}
+              />
 
-            <DialogFooter>
-              <Button
-                type="submit"
-                className="w-[150px]"
-                disabled={formik.isSubmitting}
-              >
-                {formik.isSubmitting
-                  ? isEditMode
-                    ? 'Saving...'
-                    : 'Creating...'
-                  : isEditMode
-                    ? 'Save changes'
-                    : 'Create room'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  className="w-[150px]"
+                  disabled={formik.isSubmitting}
+                >
+                  {formik.isSubmitting
+                    ? isEditMode
+                      ? 'Saving...'
+                      : 'Creating...'
+                    : isEditMode
+                      ? 'Save changes'
+                      : 'Create room'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };

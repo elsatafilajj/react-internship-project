@@ -2,10 +2,11 @@ import introJs from 'intro.js';
 import { Info } from 'lucide-react';
 import { useEffect } from 'react';
 
-import { TourRefs } from '@/components/TourSteps/TourSteps';
-import { TourSteps } from '@/components/TourSteps/TourSteps';
 import { buttonVariants } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { TourStep, TourSteps } from '@/helpers/TourSteps';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 interface TourLauncherProps {
   onToggleSidebar: () => void;
@@ -13,8 +14,11 @@ interface TourLauncherProps {
 
 export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   const { isUserNewlyCreated } = useAuthContext();
+  const isUserEnteredInRoom = useHasEnteredRoom();
 
-  const tourSteps = TourSteps();
+  const { tourRef } = useTourRefsContext();
+
+  const tourSteps: TourStep[] = TourSteps(isUserEnteredInRoom);
 
   const startTour = () => {
     setTimeout(() => {
@@ -47,7 +51,7 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   }, [isUserNewlyCreated]);
 
   return (
-    <div ref={TourRefs.tourRef}>
+    <div ref={tourRef}>
       <Info
         onClick={startTour}
         className="bg-primary rounded-full p-0.5 w-7 h-auto"

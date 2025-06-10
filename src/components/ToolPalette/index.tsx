@@ -2,7 +2,6 @@ import { ZoomOutIcon, ZoomInIcon, FilePlus2 } from 'lucide-react';
 import { useRef } from 'react';
 import { useControls } from 'react-zoom-pan-pinch';
 
-import { TourRefs } from '@/components/TourSteps/TourSteps';
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -11,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface ToolPaletteProps {
@@ -21,6 +21,8 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
   const { zoomIn, zoomOut } = useControls();
 
   const stickyNoteRef = useRef<HTMLDivElement>(null);
+
+  const { noteDragRef } = useTourRefsContext();
 
   const [, drag] = useNoteDrag({
     noteRef: stickyNoteRef,
@@ -57,7 +59,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               onMouseUp={() => setTransformDisabled(false)}
             >
               <div ref={stickyNoteRef}>
-                <div ref={TourRefs.noteDragRef}>
+                <div ref={noteDragRef}>
                   <Button
                     size="icon"
                     className="transition hover:text-foreground bg-tool-palette text-foreground"
