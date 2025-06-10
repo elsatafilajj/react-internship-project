@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 
 import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { Header } from '@/components/Header';
@@ -8,6 +8,9 @@ import { RouteWrapper } from '@/routes/RouteWrapper';
 
 export const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const isUserInRoom = Boolean(roomId);
 
   return (
     <RouteWrapper>
@@ -19,8 +22,7 @@ export const MainLayout = () => {
 
           <main className="h-screen">
             <Outlet />
-
-            <ActivityPanelToggle />
+            {isUserInRoom && <ActivityPanelToggle />}
           </main>
         </div>
       </div>

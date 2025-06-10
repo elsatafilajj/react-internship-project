@@ -39,7 +39,7 @@ export const RoomActionsDropDown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <EllipsisVertical />
+        <EllipsisVertical className="cursor-pointer" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <CreateEditRoomFormDialog />

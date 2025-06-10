@@ -1,23 +1,26 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { register } from '@/api/User/user.client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RouteNames } from '@/constants/routeNames';
+import { capitalize } from '@/helpers/capitalize';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { RegisterSchema } from '@/schemas/RegisterSchema';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const RegisterForm = () => {
+  const navigate = useNavigate();
+
   const registerMutation = useMutation({
     mutationFn: register,
     onSuccess: () => {
       toast.success('Registered successfully!');
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      navigate('/login');
     },
   });
 
@@ -34,8 +37,21 @@ export const RegisterForm = () => {
       try {
         await registerMutation.mutateAsync(values);
         formikHelpers.resetForm();
-      } catch {
-        console.error('Register failed! ');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const errorMessage = error.response?.data.message as AxiosError<
+            ErrorResponseData['message']
+          >;
+
+          let capitalizedError;
+          if (Array.isArray(errorMessage)) {
+            capitalizedError = capitalize(errorMessage[0]);
+          } else {
+            capitalizedError = capitalize(errorMessage.toString());
+          }
+
+          formikHelpers.setFieldError('passwordConfirm', capitalizedError);
+        }
       }
     },
   });
@@ -93,6 +109,7 @@ export const RegisterForm = () => {
           onChange={formik.handleChange}
           error={getFormikError(formik, 'passwordConfirm')}
         />
+
         <div className="flex text-xs  flex-col space-y-5 items-center justify-between">
           <div className="text-sm text-foreground text-center">
             Already have an account?{' '}

@@ -13,7 +13,12 @@ export function ThemeChangeToggle() {
 
   return (
     <div ref={TourRefs.changeThemeRef}>
-      <Toggle onClick={toggleTheme} size="lg" aria-label="Toggle Theme">
+      <Toggle
+        onClick={toggleTheme}
+        className="cursor-pointer"
+        size="lg"
+        aria-label="Toggle Theme"
+      >
         {theme === 'light' ? <Moon /> : <Sun />}
       </Toggle>
     </div>

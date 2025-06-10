@@ -29,15 +29,15 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
         skipLabel: 'x',
       });
 
-      onToggleSidebar();
-
       intro.onchange(() => {
         const currentStep = intro._currentStep;
-        if (currentStep === 4) onToggleSidebar();
+        if (currentStep === 2 || currentStep === 6) {
+          onToggleSidebar();
+        }
       });
 
       intro.start();
-    }, 300);
+    }, 500);
   };
 
   useEffect(() => {
