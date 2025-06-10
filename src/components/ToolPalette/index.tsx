@@ -1,4 +1,4 @@
-import { ZoomOutIcon, ZoomInIcon, StickerIcon } from 'lucide-react';
+import { ZoomOutIcon, ZoomInIcon, FilePlus2 } from 'lucide-react';
 import { useRef } from 'react';
 import { useControls } from 'react-zoom-pan-pinch';
 
@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface ToolPaletteProps {
@@ -20,6 +21,8 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
   const { zoomIn, zoomOut } = useControls();
 
   const stickyNoteRef = useRef<HTMLDivElement>(null);
+
+  const { noteDragRef } = useTourRefsContext();
 
   const [, drag] = useNoteDrag({
     noteRef: stickyNoteRef,
@@ -46,7 +49,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
 
   return (
     <TooltipProvider>
-      <div className="bg-secondary border border-muted-foreground/45 rounded-xl shadow-md px-6 py-3 flex items-center gap-6 w-fit">
+      <div className="bg-secondary border border-muted-foreground/45 rounded-xl shadow-md px-4 py-3 flex items-center gap-4 w-fit">
         <Tooltip>
           <TooltipTrigger>
             <div
@@ -56,12 +59,14 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               onMouseUp={() => setTransformDisabled(false)}
             >
               <div ref={stickyNoteRef}>
-                <Button
-                  size="icon"
-                  className="transition hover:text-foreground"
-                >
-                  <StickerIcon />
-                </Button>
+                <div ref={noteDragRef}>
+                  <Button
+                    size="icon"
+                    className="transition hover:text-foreground bg-tool-palette text-foreground"
+                  >
+                    <FilePlus2 />
+                  </Button>
+                </div>
               </div>
             </div>
           </TooltipTrigger>
@@ -74,7 +79,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                 <Button
                   size="icon"
                   onClick={() => tool.function()}
-                  className="transition hover:text-foreground"
+                  className="transition hover:text-foreground bg-tool-palette text-foreground"
                 >
                   <tool.icon />
                 </Button>

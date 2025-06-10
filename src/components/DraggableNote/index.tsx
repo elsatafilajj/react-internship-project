@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import {useEffect, RefObject, useRef } from 'react';
+
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
@@ -10,7 +11,7 @@ import { useNoteDrag } from '@/hooks/useNoteDrag';
 interface NoteProps extends Partial<NoteItem> {
   note: Partial<NoteItem>;
   setTransformDisabled: (b: boolean) => void;
-  transformRef: React.RefObject<ReactZoomPanPinchRef>;
+  transformRef?: RefObject<ReactZoomPanPinchRef>;
 }
 
 export const DraggableNote = ({

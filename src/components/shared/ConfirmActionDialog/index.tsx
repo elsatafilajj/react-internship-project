@@ -48,10 +48,13 @@ export const ConfirmActionDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="bg-white w-[100px] border hover:bg-gray-100">
+          <AlertDialogCancel className="bg-white w-[100px] border hover:bg-gray-100 cursor-pointer">
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction className="w-[100px]" onClick={onConfirm}>
+          <AlertDialogAction
+            className="w-[100px] cursor-pointer"
+            onClick={onConfirm}
+          >
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

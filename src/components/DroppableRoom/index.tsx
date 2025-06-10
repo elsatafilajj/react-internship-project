@@ -19,11 +19,20 @@ export const DroppableRoom = ({
   transformRef,
   setTransformDisabled,
 }: DroppableRoomProps) => {
-  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
-  const { roomId } = useParams<{ roomId: string }>();
-  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const roomRef = useRef<HTMLDivElement | null>(null);
+
+  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
+
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
   const socket = useMemo(() => getSocket(), []);
+
+  useEffect(() => {
+    if (isFetched && data) {
+      setNotes(data.data);
+    }
+  }, [data, isFetched]);
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
@@ -96,7 +105,7 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-[5000px] h-[5000px] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
+      className="w-[5000px] h-[2813px] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
     >
       {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote

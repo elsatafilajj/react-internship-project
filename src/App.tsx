@@ -4,9 +4,10 @@ import { Toaster } from 'react-hot-toast';
 import { RouterProvider } from 'react-router-dom';
 
 import { AuthContextProvider } from '@/context/AuthContext/AuthContextProvider';
+import { TourRefsContextProvider } from '@/context/TourRefsContext/TourRefsContextProvider';
 import { router } from '@/routes/Routes';
 
-import ThemeContextProvider from './context/ThemeContext/ThemeContextProvider';
+import { ThemeContextProvider } from './context/ThemeContext/ThemeContextProvider';
 
 function App() {
   const queryClient = new QueryClient();
@@ -15,10 +16,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeContextProvider>
         <AuthContextProvider>
-          <RouterProvider router={router} />
+          <TourRefsContextProvider>
+            <RouterProvider router={router} />
+          </TourRefsContextProvider>
         </AuthContextProvider>
       </ThemeContextProvider>
-      <Toaster position="top-right" />
+      <Toaster position="bottom-right" />
       <ReactQueryDevtools />
     </QueryClientProvider>
   );

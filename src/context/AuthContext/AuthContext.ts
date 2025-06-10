@@ -7,11 +7,13 @@ interface SetAuthStateProps {
   user?: User;
   accessToken?: string;
   refreshToken?: string;
+  isUserNewlyCreated?: boolean;
 }
 export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user?: User;
+  isUserNewlyCreated: boolean;
   logout: () => void;
   setAuthState: ({
     user,
@@ -24,6 +26,7 @@ const AuthContextValues: AuthContextType = {
   isAuthenticated: false,
   isLoading: false,
   user: undefined,
+  isUserNewlyCreated: false,
   logout: emptyFunction,
   setAuthState: emptyFunction,
 };

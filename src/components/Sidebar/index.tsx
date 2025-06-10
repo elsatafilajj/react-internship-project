@@ -1,12 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import {
-  Home,
-  Star,
-  FolderArchive,
-  Settings,
-  LogOut,
-  PanelLeftClose,
-} from 'lucide-react';
+import { Home, FolderArchive, LogOut, PanelLeftClose } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -16,6 +9,7 @@ import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -24,6 +18,8 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout } = useAuthContext();
+
+  const { myRoomsDashboardRef, archiveRef } = useTourRefsContext();
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -55,68 +51,49 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <button onClick={onClose} className="absolute top-3 right-3">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 cursor-pointer"
+        >
           <PanelLeftClose className="h-4 w-4" />
         </button>
 
-        <nav className="space-y-2 flex-1 mt-4">
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link to={RouteNames.Rooms}>
-              <Home className="mr-2 h-4 w-4" />
-              My Rooms
-            </Link>
-          </Button>
+        <nav className="space-y-2 mt-4">
+          <div ref={myRoomsDashboardRef}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium"
+              asChild
+            >
+              <Link to={RouteNames.Rooms}>
+                <Home className="mr-2 h-4 w-4" />
+                My Rooms
+              </Link>
+            </Button>
+          </div>
 
           <CreateEditRoomFormDialog />
 
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link to="/favorites">
-              <Star className="mr-2 h-4 w-4" />
-              Favorites
-            </Link>
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link to="/archived">
-              <FolderArchive className="mr-2 h-4 w-4" />
-              Archived
-            </Link>
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link to="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </Link>
-          </Button>
+          <div ref={archiveRef}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium"
+              asChild
+            >
+              <Link to="/archived">
+                <FolderArchive className="mr-2 h-4 w-4" />
+                Archived
+              </Link>
+            </Button>
+          </div>
         </nav>
 
-        <div className="mt-auto flex justify-between">
-          <Button
-            variant="ghost"
-            className=" justify-start font-medium"
-            asChild
-          >
+        <div className="mt-auto flex justify-between cursor-pointer">
+          <Button variant="ghost" className="justify-start font-medium" asChild>
             <div className="w-fit">
               <LogOut className="mr-2 h-4 w-4" />
               <ConfirmActionDialog
-                className="max-w-fit"
+                className="max-w-fit cursor-pointer"
                 triggerButtonName="Logout"
                 title="Are you sure you want to logout?"
                 onConfirm={handleLogout}

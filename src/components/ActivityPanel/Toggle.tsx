@@ -3,8 +3,11 @@ import { History } from 'lucide-react';
 import { ActivityPanel } from '@/components/ActivityPanel';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ActivityPanelToggle = () => {
+  const { activityRef } = useTourRefsContext();
+
   return (
     <Sheet>
       <SheetTrigger asChild>

@@ -31,5 +31,5 @@ const companyMenuItems: MenuItem[] = [
 ];
 
 export const getMenuItemsByRole = (role: UserRole) => {
-  return role === UserRole.Admin ? adminMenuItems : companyMenuItems;
+  return role === UserRole.Host ? adminMenuItems : companyMenuItems;
 };

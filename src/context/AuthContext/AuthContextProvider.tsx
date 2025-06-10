@@ -13,6 +13,7 @@ interface AuthContextProviderProps {
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [isUserNewlyCreated, setIsUserNewlyCreated] = useState<boolean>(false);
 
   useEffect(() => {
     const axiosInterceptor = setupAxiosInterceptors(logout, setAuthState);
@@ -67,11 +68,24 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     setUser(undefined);
   };
 
+  useEffect(() => {
+    if (!user) return;
+
+    const now = new Date();
+    const createdUserDate = new Date(user.createdAt);
+
+    const diffInMilliseconds = now.getTime() - createdUserDate.getTime();
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+
+    setIsUserNewlyCreated(diffInMinutes <= 5);
+  }, [user]);
+
   const context: AuthContextType = {
     isAuthenticated: !!user,
     setAuthState,
     isLoading,
     logout,
+    isUserNewlyCreated,
     user,
   };
 

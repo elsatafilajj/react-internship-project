@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import { PackagePlus } from 'lucide-react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
@@ -18,16 +19,20 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { queryKeys } from '@/constants/queryKeys';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
 
 export const CreateEditRoomFormDialog = () => {
+  const [open, setOpen] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
   const queryClient = useQueryClient();
   const { data: room } = useGetRoomByIdQuery(roomId || '');
 
   const isEditMode = Boolean(roomId);
+
+  const { createEditRoomRef } = useTourRefsContext();
 
   const editMutation = useMutation({
     mutationFn: ({ roomId, data }: { roomId: string; data: UpdateRoomInput }) =>
@@ -63,8 +68,10 @@ export const CreateEditRoomFormDialog = () => {
             roomId,
             data: { title: values.title },
           });
+          setOpen(false);
         } else {
           await createRoomMutation.mutateAsync(values);
+          setOpen(false);
         }
 
         formikHelpers.resetForm();
@@ -76,59 +83,67 @@ export const CreateEditRoomFormDialog = () => {
   });
 
   return (
-    <Dialog>
-      <DialogTrigger className="w-full" asChild>
-        {isEditMode ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
-          >
-            Edit
-          </Button>
-        ) : (
-          <Button className="justify-start w-[150px]">
-            <Plus className="mr-2 h-4 w-4" />
-            New Room
-          </Button>
-        )}
-      </DialogTrigger>
+    <div ref={createEditRoomRef}>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger className="w-full" asChild>
+          {isEditMode ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
+            >
+              Edit
+            </Button>
+          ) : (
+            <Button
+              className="justify-center w-full"
+              onClick={() => setOpen(true)}
+            >
+              <PackagePlus className="h-4 w-4" />
+              New Room
+            </Button>
+          )}
+        </DialogTrigger>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Room' : 'Create Room'}</DialogTitle>
-          <DialogDescription>
-            {isEditMode
-              ? "Make changes to your room here. Click save when you're done"
-              : 'Create your new room in one-click'}
-          </DialogDescription>
-          <form className="space-y-4" onSubmit={formik.handleSubmit}>
-            <Input
-              id="title"
-              name="title"
-              type="text"
-              value={formik.values.title}
-              onChange={formik.handleChange}
-              error={getFormikError(formik, 'title')}
-            />
-            <DialogFooter>
-              <Button
-                type="submit"
-                className="w-[150px]"
-                disabled={formik.isSubmitting}
-              >
-                {formik.isSubmitting
-                  ? isEditMode
-                    ? 'Saving...'
-                    : 'Creating...'
-                  : isEditMode
-                    ? 'Save changes'
-                    : 'Create room'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {isEditMode ? 'Edit Room' : 'Create Room'}
+            </DialogTitle>
+            <DialogDescription>
+              {isEditMode
+                ? "Make changes to your room here. Click save when you're done"
+                : 'Enter new name for your room'}
+            </DialogDescription>
+            <form className="space-y-4" onSubmit={formik.handleSubmit}>
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                error={getFormikError(formik, 'title')}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  className="w-[150px]"
+                  disabled={formik.isSubmitting}
+                >
+                  {formik.isSubmitting
+                    ? isEditMode
+                      ? 'Saving...'
+                      : 'Creating...'
+                    : isEditMode
+                      ? 'Save changes'
+                      : 'Create room'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
