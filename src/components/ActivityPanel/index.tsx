@@ -37,7 +37,6 @@ export const ActivityPanel = () => {
   }, []);
 
   const handleActivityClick = (resourceId: string) => {
-    console.log('Clicked activity with ID:', resourceId);
     if (resourceId) {
       scrollToNote(resourceId);
     }
