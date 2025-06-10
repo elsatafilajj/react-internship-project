@@ -18,7 +18,7 @@ export const MainLayout = () => {
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         <div className="">
-          <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+          <Header onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
 
           <main className="h-screen">
             <Outlet />

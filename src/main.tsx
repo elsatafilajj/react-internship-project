@@ -1,3 +1,4 @@
+import 'intro.js/introjs.css';
 import { createRoot } from 'react-dom/client';
 
 import App from '@/App';

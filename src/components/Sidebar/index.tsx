@@ -9,6 +9,7 @@ import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout } = useAuthContext();
+
+  const { myRoomsDashboardRef, archiveRef } = useTourRefsContext();
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -56,29 +59,33 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </button>
 
         <nav className="space-y-2 mt-4">
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link to={RouteNames.Rooms}>
-              <Home className="mr-2 h-4 w-4" />
-              My Rooms
-            </Link>
-          </Button>
+          <div ref={myRoomsDashboardRef}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium"
+              asChild
+            >
+              <Link to={RouteNames.Rooms}>
+                <Home className="mr-2 h-4 w-4" />
+                My Rooms
+              </Link>
+            </Button>
+          </div>
 
           <CreateEditRoomFormDialog />
 
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-medium"
-            asChild
-          >
-            <Link to="/archived">
-              <FolderArchive className="mr-2 h-4 w-4" />
-              Archived
-            </Link>
-          </Button>
+          <div ref={archiveRef}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium"
+              asChild
+            >
+              <Link to="/archived">
+                <FolderArchive className="mr-2 h-4 w-4" />
+                Archived
+              </Link>
+            </Button>
+          </div>
         </nav>
 
         <div className="mt-auto flex justify-between cursor-pointer">

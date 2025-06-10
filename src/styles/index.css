@@ -135,4 +135,12 @@
   body {
     @apply text-foreground;
   }
+
+  .custom-intro-tooltip {
+    background-color: var(--card) !important;
+    color: var(--accent-foreground);
+    opacity: 0.96 !important;
+    padding: 12px;
+    text-align: center;
+  }
 }
