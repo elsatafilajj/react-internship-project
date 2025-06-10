@@ -5,6 +5,7 @@ export enum RouteNames {
   Register = '/register',
   ForgotPassword = '/forgot-password',
   ResetPassword = '/reset-password',
+  VerifyEmail = '/auth-verify-email',
   Rooms = '/rooms',
   Room = 'rooms/:roomId',
 }

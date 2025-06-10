@@ -50,6 +50,16 @@ export interface SetPasswordInput {
   passwordConfirm: string;
 }
 
+export interface SetVerifyEmailCode {
+  code: number;
+}
+
+export interface SetVerifyEmailResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface SetPasswordResponse {
   message: string;
 }

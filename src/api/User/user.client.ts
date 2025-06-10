@@ -9,6 +9,7 @@ import {
   ChangePasswordInput,
   RefreshTokenPayload,
   RefreshTokenResponse,
+  SetVerifyEmailCode,
 } from './user.types';
 
 export const login = async (data: LoginInput) =>
@@ -43,6 +44,13 @@ export const resetPassword = async (data: SetPasswordInput, token: string) =>
   apiRequest<SetPasswordInput, SetPasswordResponse>({
     method: 'POST',
     url: `users/reset/${token}`,
+    data,
+  });
+
+export const verifyEmail = async (data: SetVerifyEmailCode, email: string) =>
+  apiRequest<SetVerifyEmailCode, SetVerifyEmailCode>({
+    method: 'POST',
+    url: `auth/verify-email/${email}`,
     data,
   });
 
