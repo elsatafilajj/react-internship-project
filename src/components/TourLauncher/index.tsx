@@ -5,8 +5,7 @@ import { useEffect } from 'react';
 import { buttonVariants } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
-import { TourStep, TourSteps } from '@/helpers/TourSteps';
-import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
+import { TourStep, useTourSteps } from '@/hooks/useTourSteps';
 
 interface TourLauncherProps {
   onToggleSidebar: () => void;
@@ -14,11 +13,10 @@ interface TourLauncherProps {
 
 export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   const { isUserNewlyCreated } = useAuthContext();
-  const isUserEnteredInRoom = useHasEnteredRoom();
 
   const { tourRef } = useTourRefsContext();
 
-  const tourSteps: TourStep[] = TourSteps(isUserEnteredInRoom);
+  const tourSteps: TourStep[] = useTourSteps();
 
   const startTour = () => {
     setTimeout(() => {

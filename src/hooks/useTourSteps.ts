@@ -1,4 +1,5 @@
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 export interface TourStep {
   title?: string;
@@ -6,8 +7,9 @@ export interface TourStep {
   element?: HTMLDivElement | null;
 }
 
-export const TourSteps = (isUserEnteredInRoom: boolean) => {
+export const useTourSteps = () => {
   const tourRefs = useTourRefsContext();
+  const hasEnteredRoom = useHasEnteredRoom();
   return [
     {
       title: 'Welcome to your Stuck Tour!',
@@ -26,7 +28,7 @@ export const TourSteps = (isUserEnteredInRoom: boolean) => {
     },
     {
       element: tourRefs.createEditRoomRef.current,
-      intro: isUserEnteredInRoom
+      intro: hasEnteredRoom
         ? 'Edit your room’s title here to keep things organized and clear.'
         : 'You can create a brand new room. Just click here!',
     },
@@ -34,7 +36,7 @@ export const TourSteps = (isUserEnteredInRoom: boolean) => {
       element: tourRefs.archiveRef.current,
       intro: 'Archived rooms live here — nothing’s ever truly lost!',
     },
-    ...(isUserEnteredInRoom
+    ...(hasEnteredRoom
       ? [
           {
             element: tourRefs.shareLinkRef.current,
@@ -57,7 +59,7 @@ export const TourSteps = (isUserEnteredInRoom: boolean) => {
       intro: 'Need a refresher later? Restart the tour anytime from here.',
     },
 
-    ...(isUserEnteredInRoom
+    ...(hasEnteredRoom
       ? [
           {
             element: tourRefs.activityRef.current,

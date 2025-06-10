@@ -6,7 +6,7 @@ interface TourRefsContextProviderProps {
   children: ReactNode;
 }
 
-const TourRefsContextProvider = ({
+export const TourRefsContextProvider = ({
   children,
 }: TourRefsContextProviderProps) => {
   const myRoomsDashboardRef = useRef<HTMLDivElement | null>(null);
@@ -40,5 +40,3 @@ const TourRefsContextProvider = ({
     </TourRefsContext.Provider>
   );
 };
-
-export default TourRefsContextProvider;
