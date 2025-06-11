@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import clsx from 'clsx';
 import { Circle, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -28,6 +29,7 @@ import {
 import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -59,15 +61,15 @@ const noteColorClassMap = {
 
 export const Note = ({ note }: NoteProps) => {
   const socket = getSocket();
-  const { roomId } = useParams<{ roomId: string }>();
-
-  const { uuid, content, author } = note;
-  const [noteContent, setNoteContent] = useState('');
-
+  const [hasUserEdited, setHasUserEdited] = useState(false);
   const [localNoteColor, setLocalNoteColor] = useState<string>(
     note.color || 'note-background-green',
   );
 
+  const { roomId } = useParams<{ roomId: string }>();
+  const [noteContent, setNoteContent] = useState('');
+  const { uuid, content, author } = note;
+  const { selectedNoteId } = useNoteScrollContext();
   const queryClient = useQueryClient();
   const queryKey = queryKeys.getNotesByRoomId(roomId || '');
 
@@ -78,7 +80,6 @@ export const Note = ({ note }: NoteProps) => {
   const [hasVoted, setHasVoted] = useState<boolean | null>(
     !!isUserVoter || null,
   );
-
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
   useEffect(() => {
@@ -88,15 +89,18 @@ export const Note = ({ note }: NoteProps) => {
   }, [content]);
 
   useEffect(() => {
-    socket.emit(socketEvents.UpdateNote, {
-      roomId,
-      noteId: uuid,
-      updates: { content: debouncedContent },
-    });
+    if (hasUserEdited) {
+      socket.emit(socketEvents.UpdateNote, {
+        roomId,
+        noteId: uuid,
+        updates: { content: debouncedContent },
+      });
+    }
   }, [debouncedContent]);
 
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
+    setHasUserEdited(true);
   };
 
   const handleNoteColorChange = (noteColor: string) => {
@@ -188,23 +192,28 @@ export const Note = ({ note }: NoteProps) => {
       {uuid && (
         <Popover>
           <PopoverTrigger>
-            <div className="flex relative">
-              <div
-                className={`w-2xs h-70 ${noteColorClassMap[localNoteColor as keyof typeof noteColorClassMap]} shadow-sm overflow-hidden rounded-xs}`}
-              >
-                <div className="flex flex-col justify-between h-full p-2 text-xs">
-                  <textarea
-                    value={noteContent}
-                    onChange={handleNoteContentChange}
-                    placeholder="Type in your idea..."
-                    className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-lg text-muted-foreground brightness-25"
-                    aria-label="Note input"
-                    autoFocus
-                  />
-                  <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
-                    {author?.firstName || 'Unknown'}
-                  </span>
-                </div>
+            <div
+              className={clsx(
+                'w-2xs h-70 shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
+                noteColorClassMap[
+                  localNoteColor as keyof typeof noteColorClassMap
+                ],
+                selectedNoteId === uuid &&
+                  'border-2 border-secondary scale-[1.03] shadow-lg z-10 flash-highlight',
+              )}
+            >
+              <div className="flex flex-col justify-between h-full p-2 text-xs">
+                <textarea
+                  value={noteContent}
+                  onChange={handleNoteContentChange}
+                  placeholder="Type in your idea..."
+                  className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
+                  aria-label="Note input"
+                  autoFocus
+                />
+                <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
+                  {author?.firstName || 'Unknown'}
+                </span>
               </div>
             </div>
           </PopoverTrigger>

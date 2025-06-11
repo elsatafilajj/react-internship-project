@@ -11,4 +11,6 @@ export const queryKeys = {
   getSingleNote: (noteId: string, roomId: string) => ['note', noteId, roomId],
 
   getCommentsByNoteId: (noteId: string) => ['comments', noteId],
+
+  getActivitiesForRoom: (roomId: string) => ['activities', roomId],
 };
