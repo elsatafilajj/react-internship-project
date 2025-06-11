@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import toast from 'react-hot-toast';
@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
+import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
 import { socketEvents } from '@/constants/socketEvents';
@@ -14,7 +15,7 @@ import { getSocket } from '@/helpers/socket';
 export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
   const roomId = useParams<{ roomId: string }>();
 
   useEffect(() => {
@@ -50,6 +51,10 @@ export const Room = () => {
 
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
           <ToolPalette setTransformDisabled={setTransformDisabled} />
+        </div>
+
+        <div className="fixed z-50">
+          <ActivityPanelToggle />
         </div>
       </TransformWrapper>
     </DndProvider>
