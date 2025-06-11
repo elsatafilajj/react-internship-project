@@ -5,6 +5,7 @@ import { useGetAllRoomsQuery } from '@/api/Room/room.queries';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 export const RoomParticipantsPanel = () => {
@@ -12,8 +13,11 @@ export const RoomParticipantsPanel = () => {
 
   const { user } = useAuthContext();
 
-  const { data: participants, isSuccess: isUsersDataSuccess } =
-    useGetAllUsersByRoomQuery(roomId || '');
+  const {
+    data: participants,
+    isSuccess: isUsersDataSuccess,
+    isFetching,
+  } = useGetAllUsersByRoomQuery(roomId || '');
 
   const { data: rooms, isSuccess: isRoomDataSuccess } = useGetAllRoomsQuery();
 
@@ -26,11 +30,18 @@ export const RoomParticipantsPanel = () => {
   }
 
   const isHost = currentRoom?.role === 'host';
-
   return (
     <Sheet>
       <SheetTrigger asChild>
         <div className="flex -space-x-2 cursor-pointer">
+          {isFetching && (
+            <div className="flex -space-x-2">
+              <Skeleton className="h-8 w-8 rounded-full bg-muted-foreground" />
+              <Skeleton className="h-8 w-8 rounded-full bg-muted-foreground" />
+              <Skeleton className="h-8 w-8 rounded-full bg-muted-foreground" />
+              <Skeleton className="h-8 w-8 rounded-full bg-muted-foreground" />
+            </div>
+          )}
           {isUsersDataSuccess &&
             participants.data &&
             participants?.data.slice(0, 4).map((user, i) => (
@@ -59,6 +70,15 @@ export const RoomParticipantsPanel = () => {
           <p className="text-sm tracking-wider">
             Participants joined in {currentRoom?.room.title}
           </p>
+          {isFetching && (
+            <>
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+            </>
+          )}
           {isUsersDataSuccess &&
             participants.data &&
             participants?.data.map((participant) => (
