@@ -60,6 +60,7 @@ export const RoomParticipantsPanel = () => {
             Participants joined in {currentRoom?.room.title}
           </p>
           {isUsersDataSuccess &&
+            participants.data &&
             participants?.data.map((participant) => (
               <div className="flex items-center justify-between px-5 py-3 border bg-muted shadow-sm rounded-md w-full">
                 <div className="flex gap-5 items-center">
