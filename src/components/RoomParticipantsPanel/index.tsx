@@ -67,9 +67,7 @@ export const RoomParticipantsPanel = () => {
 
       <SheetContent className="bg-card w-xs top-25 rounded-s-xl">
         <div className="flex flex-col items-center gap-2 mt-1 p-3">
-          <p className="text-sm tracking-wider">
-            Participants joined in {currentRoom?.room.title}
-          </p>
+          <p className="text-sm tracking-wider mb-3">Participants</p>
           {isFetching && (
             <>
               <Skeleton className="w-[18rem] h-14" />
@@ -88,7 +86,7 @@ export const RoomParticipantsPanel = () => {
                     {isHost && (
                       <Crown
                         strokeWidth={0.5}
-                        className="absolute top-10 left-12 w-3.5 rotate-15 hover:animate-accordion-down"
+                        className="absolute top-13 left-12 w-3.5 rotate-15 hover:animate-accordion-down"
                       />
                     )}
                     <CircleUserRound
