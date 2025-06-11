@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface ToolPaletteProps {
@@ -20,6 +21,8 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
   const { zoomIn, zoomOut } = useControls();
 
   const stickyNoteRef = useRef<HTMLDivElement>(null);
+
+  const { noteDragRef } = useTourRefsContext();
 
   const [, drag] = useNoteDrag({
     noteRef: stickyNoteRef,
@@ -56,12 +59,14 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               onMouseUp={() => setTransformDisabled(false)}
             >
               <div ref={stickyNoteRef}>
-                <Button
-                  size="icon"
-                  className="transition hover:text-foreground bg-tool-palette text-foreground"
-                >
-                  <FilePlus2 />
-                </Button>
+                <div ref={noteDragRef}>
+                  <Button
+                    size="icon"
+                    className="transition hover:text-foreground bg-tool-palette text-foreground"
+                  >
+                    <FilePlus2 />
+                  </Button>
+                </div>
               </div>
             </div>
           </TooltipTrigger>

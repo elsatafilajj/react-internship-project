@@ -12,15 +12,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ShareLinkAlertDialog = () => {
+  const { shareLinkRef } = useTourRefsContext();
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]">
-          <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
-          <span className="hidden md:block">Share</span>
-        </Button>
+        <div ref={shareLinkRef}>
+          <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]">
+            <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
+            <span className="hidden md:block">Share</span>
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md space-y-2">
         <DialogHeader>

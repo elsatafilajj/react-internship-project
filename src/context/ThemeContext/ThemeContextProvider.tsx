@@ -23,7 +23,9 @@ const getInitialTheme = (): ThemeMode => {
   return systemTheme;
 };
 
-const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
+export const ThemeContextProvider = ({
+  children,
+}: ThemeContextProviderProps) => {
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
 
   useEffect(() => {
@@ -43,5 +45,3 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
     </ThemeContext.Provider>
   );
 };
-
-export default ThemeContextProvider;

@@ -1,7 +1,6 @@
 import { MessageSquare } from 'lucide-react';
 
 import { CommentsPanel } from '@/components/CommentsPanel';
-import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
 interface PanelToggleProps {
@@ -12,13 +11,7 @@ export const PanelToggle = ({ noteId }: PanelToggleProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="bg-card text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200 ml-2"
-        >
-          <MessageSquare className="h-5 w-5" />
-        </Button>
+        <MessageSquare className="w-5 h-5" />
       </SheetTrigger>
 
       <SheetContent
