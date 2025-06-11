@@ -53,10 +53,7 @@ export const VerifyEmailForm = () => {
         toast.success(message);
         navigate(RouteNames.Login);
       } else if (status === 422) {
-        toast.error(message);
-      } else {
-        toast.error('Something went wrong. Please try again.');
-        console.error(message);
+        toast.error(message || 'Something went wrong. Please try again.');
       }
     },
   });
