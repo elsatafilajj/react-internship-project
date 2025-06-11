@@ -73,6 +73,13 @@ export const RoomParticipantsPanel = () => {
               <Skeleton className="w-[18rem] h-14" />
               <Skeleton className="w-[18rem] h-14" />
               <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
+              <Skeleton className="w-[18rem] h-14" />
             </>
           )}
           {isUsersDataSuccess &&
@@ -82,7 +89,7 @@ export const RoomParticipantsPanel = () => {
                 <div className="flex gap-5 items-center">
                   <div>
                     {participant.role === 'host' && (
-                      <Crown className="absolute top-13 left-12 w-3.5 rotate-15 hover:animate-accordion-down" />
+                      <Crown className="absolute top-13 left-12 w-3.5 rotate-15 hover:animate-caret-blink " />
                     )}
                     <CircleUserRound
                       className="relative w-8"
@@ -97,7 +104,7 @@ export const RoomParticipantsPanel = () => {
                 {roomHost &&
                   roomHost.uuid === user?.uuid &&
                   participant.uuid !== user.uuid && (
-                    <Button variant="destructive" size="sm">
+                    <Button variant="destructiveSecondary" size="sm">
                       Kick
                     </Button>
                   )}
