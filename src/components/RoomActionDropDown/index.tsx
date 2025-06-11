@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EllipsisVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { deleteRoom } from '@/api/Room/room.client';
+import { deleteRoom, updateRoom } from '@/api/Room/room.client';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import {
@@ -12,10 +12,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { queryKeys } from '@/constants/queryKeys';
 
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
+
+  const archiveMutation = useMutation({
+    mutationFn: (roomId: string) => updateRoom(roomId, { isActive: false }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleRoom(roomId || ''),
+      });
+      toast.success('Room archived successfully.');
+      navigate('/rooms/archived');
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: (roomId: string) => deleteRoom(roomId),
@@ -28,6 +42,13 @@ export const RoomActionsDropDown = () => {
     },
   });
 
+  const handleArchived = async () => {
+    try {
+      await archiveMutation.mutateAsync(roomId || '');
+    } catch (error) {
+      console.error('Archived failed', error);
+    }
+  };
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync(roomId || ' ');
@@ -43,7 +64,7 @@ export const RoomActionsDropDown = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <CreateEditRoomFormDialog />
-        <DropdownMenuItem>Archive</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleArchived}>Archive</DropdownMenuItem>
         <ConfirmActionDialog
           triggerButtonName="Delete"
           title="You are about to delete this room."

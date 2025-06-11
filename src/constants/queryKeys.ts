@@ -6,6 +6,7 @@ export const queryKeys = {
 
   getRooms: () => ['rooms'],
   getSingleRoom: (id: string) => ['room', id],
+  getArchivedRooms: () => ['archivedRooms'],
 
   getNotesByRoomId: (roomId: string) => ['notes', roomId],
   getSingleNote: (noteId: string, roomId: string) => ['note', noteId, roomId],

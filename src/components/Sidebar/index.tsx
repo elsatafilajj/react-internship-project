@@ -58,7 +58,8 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <PanelLeftClose className="h-4 w-4" />
         </button>
 
-        <nav className="space-y-2 mt-4">
+        <nav className="space-y-2 mt-8">
+          <CreateEditRoomFormDialog />
           <div ref={myRoomsDashboardRef}>
             <Button
               variant="ghost"
@@ -72,15 +73,13 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </Button>
           </div>
 
-          <CreateEditRoomFormDialog />
-
           <div ref={archiveRef}>
             <Button
               variant="ghost"
               className="w-full justify-start font-medium"
               asChild
             >
-              <Link to="/archived">
+              <Link to={RouteNames.ArchivedRooms}>
                 <FolderArchive className="mr-2 h-4 w-4" />
                 Archived
               </Link>

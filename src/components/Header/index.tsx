@@ -17,7 +17,7 @@ interface HeaderProps {
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
   const { roomId } = useParams<{ roomId: string }>();
-
+  console.log('THIS IS TH EROOOOMMM ID', roomId);
   const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
 
   const isUserInRoom = Boolean(roomId);

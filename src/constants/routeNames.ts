@@ -7,4 +7,6 @@ export enum RouteNames {
   ResetPassword = '/reset-password',
   Rooms = '/rooms',
   Room = 'rooms/:roomId',
+  ArchivedRooms = 'rooms/archived',
+  ArchivedRoom = 'rooms/archived/:roomId',
 }
