@@ -3,26 +3,27 @@ import { Link, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
+import { RoomParticipantsPanel } from '@/components/RoomParticipantsPanel';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { TourLauncher } from '@/components/TourLauncher';
 import { Logo } from '@/components/shared/Logo';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
 }
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
-  const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
   const { roomId } = useParams<{ roomId: string }>();
 
   const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
 
-  const isUserInRoom = Boolean(roomId);
+  const hasEnteredRoom = useHasEnteredRoom();
 
-  const { data } = useGetRoomByIdQuery(roomId || '');
+  const { data, isFetched } = useGetRoomByIdQuery(roomId || '');
 
   return (
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
@@ -43,37 +44,28 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </Link>
       </div>
 
-      {isUserInRoom && (
+      {hasEnteredRoom && (
         <div className="hidden sm:flex flex-col items-center text-center ">
           <span className="text-xs text-muted-foreground tracking-wide mb-1">
             Active Room
           </span>
 
-          <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
-            <span className="text-base font-semibold text-foreground">
-              {data?.data.title || 'Untitled'}
-            </span>
-
-            <div className="flex -space-x-2">
-              {participants.map((user, i) => (
-                <div
-                  key={i}
-                  className="h-8 w-8 rounded-full bg-secondary text-sm font-medium border-2 border-foreground flex items-center justify-center shadow"
-                >
-                  <p className="text-accent-foreground capitalize">
-                    {user.name[0]}
-                  </p>
-                </div>
-              ))}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
+              <span className="text-base font-semibold text-foreground">
+                {(isFetched && data?.data.title) || 'Untitled'}
+              </span>
             </div>
+
+            <RoomParticipantsPanel />
           </div>
         </div>
       )}
 
       <div className="flex items-center gap-0.5 sm:gap-3">
-        {isUserInRoom && <RoomActionsDropDown />}
+        {hasEnteredRoom && <RoomActionsDropDown />}
 
-        {isUserInRoom && <ShareLinkAlertDialog />}
+        {hasEnteredRoom && <ShareLinkAlertDialog />}
 
         <ThemeChangeToggle />
 
