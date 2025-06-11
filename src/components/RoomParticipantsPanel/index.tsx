@@ -1,8 +1,8 @@
 import { CircleUserRound, Crown } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
-import { useGetAllRoomsQuery } from '@/api/Room/room.queries';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import { User } from '@/api/User/user.types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,17 +19,15 @@ export const RoomParticipantsPanel = () => {
     isFetching,
   } = useGetAllUsersByRoomQuery(roomId || '');
 
-  const { data: rooms, isSuccess: isRoomDataSuccess } = useGetAllRoomsQuery();
+  let roomHost: User | undefined;
 
-  let currentRoom;
-
-  if (isRoomDataSuccess && rooms.data) {
-    currentRoom = rooms.data.find(
-      (roomWithRole) => roomWithRole.room.uuid === roomId,
-    );
+  if (isUsersDataSuccess && participants.data) {
+    roomHost = participants.data.find((user) => user.role === 'host');
+    console.log(roomHost);
   }
 
-  const isHost = currentRoom?.role === 'host';
+  console.log(participants?.data);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -50,7 +48,7 @@ export const RoomParticipantsPanel = () => {
                 key={i}
               >
                 <p className="text-accent-foreground capitalize">
-                  {user.firstName[0]}
+                  {user.firstname[0]}
                 </p>
               </div>
             ))}
@@ -83,11 +81,8 @@ export const RoomParticipantsPanel = () => {
               <div className="flex items-center justify-between px-5 py-3 border bg-muted shadow-sm rounded-md w-full">
                 <div className="flex gap-5 items-center">
                   <div>
-                    {isHost && (
-                      <Crown
-                        strokeWidth={0.5}
-                        className="absolute top-13 left-12 w-3.5 rotate-15 hover:animate-accordion-down"
-                      />
+                    {participant.role === 'host' && (
+                      <Crown className="absolute top-13 left-12 w-3.5 rotate-15 hover:animate-accordion-down" />
                     )}
                     <CircleUserRound
                       className="relative w-8"
@@ -96,14 +91,16 @@ export const RoomParticipantsPanel = () => {
                     />
                   </div>
                   <p className="text-sm tracking-wider">
-                    {participant.firstName} {participant.lastName}
+                    {participant.firstname} {participant.lastname}
                   </p>
                 </div>
-                {isHost && user?.uuid !== participant.uuid && (
-                  <Button variant="destructive" size="sm">
-                    Kick
-                  </Button>
-                )}
+                {roomHost &&
+                  roomHost.uuid === user?.uuid &&
+                  participant.uuid !== user.uuid && (
+                    <Button variant="destructive" size="sm">
+                      Kick
+                    </Button>
+                  )}
               </div>
             ))}
         </div>

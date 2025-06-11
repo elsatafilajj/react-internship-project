@@ -6,12 +6,10 @@ export interface LoginResponse {
 
 export interface User {
   uuid: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
+  createdat: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   role?: UserRole;
 }
 

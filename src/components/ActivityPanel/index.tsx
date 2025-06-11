@@ -11,7 +11,7 @@ export const ActivityPanel = () => {
         <div className="text-sm text-foreground flex justify-between items-start gap-2 border rounded-md p-3 shadow-sm bg-muted">
           <div className="flex flex-col">
             <span className="font-medium">
-              {user?.firstName} added a sticky note
+              {user?.firstname} added a sticky note
             </span>
             <span className="text-xs text-muted-foreground">2 min ago</span>
           </div>
