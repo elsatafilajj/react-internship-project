@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
-import { OTPInput } from 'input-otp';
+import { OTPInput, REGEXP_ONLY_DIGITS } from 'input-otp';
 import toast from 'react-hot-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -9,7 +9,6 @@ import {
   SetVerifyEmailCode,
   SetVerifyEmailResponse,
 } from '@/api/User/user.types';
-import { Button } from '@/components/ui/button';
 import { InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
@@ -46,14 +45,13 @@ export const VerifyEmailForm = () => {
     onError: (error) => {
       const axiosError = error as AxiosError<ErrorResponseData>;
 
-      const status = axiosError.response?.status;
       const message = axiosError.response?.data?.message as string;
 
-      if (status === 404) {
-        toast.success(message);
+      if (message === 'User does not exist or is already verified') {
+        toast.info(message);
         navigate(RouteNames.Login);
-      } else if (status === 422) {
-        toast.error(message || 'Something went wrong. Please try again.');
+      } else {
+        toast.error(message || 'Something went wrong');
       }
     },
   });
@@ -65,6 +63,8 @@ export const VerifyEmailForm = () => {
     },
     onSubmit: async (values, formikHelpers) => {
       try {
+        console.log('syb');
+
         await verifyEmailMutation.mutateAsync({
           data: {
             code: Number(values.code),
@@ -78,6 +78,16 @@ export const VerifyEmailForm = () => {
       }
     },
   });
+  console.log('fornvofniabsds', formikVerifyEmail.values);
+
+  const handleOtpChange = async (newValue: string) => {
+    await formikVerifyEmail.setFieldValue('code', newValue);
+
+    if (newValue.length === 6) {
+      formikVerifyEmail.submitForm();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
       <label className="mb-3 text-md font-medium" htmlFor="code">
@@ -85,12 +95,14 @@ export const VerifyEmailForm = () => {
       </label>
       <form onSubmit={formikVerifyEmail.handleSubmit} className="space-y-8">
         <OTPInput
+          autoFocus
           maxLength={6}
           id="code"
           name="code"
           type="code"
           value={formikVerifyEmail.values.code}
-          onChange={(value) => formikVerifyEmail.setFieldValue('code', value)}
+          onChange={(value) => handleOtpChange(value)}
+          pattern={REGEXP_ONLY_DIGITS}
         >
           <InputOTPGroup>
             <InputOTPSlot index={0} />
@@ -101,8 +113,17 @@ export const VerifyEmailForm = () => {
             <InputOTPSlot index={5} />
           </InputOTPGroup>
         </OTPInput>
-        <Button type="submit">Send</Button>
       </form>
     </div>
   );
 };
+
+// <input
+//   name="code"
+//   value={formik.values.code}
+//   onChange={(e) => {
+//     const digitsOnly = e.target.value.replace(/\D/g, '');
+//     formik.setFieldValue('code', digitsOnly);
+//   }}
+//   onBlur={formik.handleBlur}
+// />
