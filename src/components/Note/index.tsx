@@ -10,9 +10,8 @@ import {
   addVoteToNote,
   deleteNote,
   removeVoteFromNote,
-  updateNote,
 } from '@/api/Note/note.client';
-import { NoteItem, UpdateNoteInput } from '@/api/Note/note.types';
+import { NoteItem } from '@/api/Note/note.types';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
@@ -106,9 +105,11 @@ export const Note = ({ note }: NoteProps) => {
   const handleNoteColorChange = (noteColor: string) => {
     setLocalNoteColor(noteColor);
     if (!uuid) return;
-    updateNoteMutation.mutateAsync({
-      uuid,
-      data: { color: noteColor },
+
+    socket.emit(socketEvents.UpdateNote, {
+      roomId,
+      noteId: uuid,
+      updates: { color: noteColor },
     });
   };
 
@@ -121,25 +122,6 @@ export const Note = ({ note }: NoteProps) => {
     onError: (error: AxiosError) => {
       const responseData = error.response?.data as ErrorResponseData;
       toast.error(responseData.message || 'Failed to delete note.');
-    },
-  });
-
-  const updateNoteMutation = useMutation({
-    mutationFn: ({
-      uuid,
-      data,
-    }: {
-      uuid: NoteItem['uuid'];
-      data: UpdateNoteInput;
-    }) => updateNote(uuid, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
-      });
-    },
-    onError: (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      toast.error(responseData.message || 'Failed to update note.');
     },
   });
 
@@ -209,7 +191,6 @@ export const Note = ({ note }: NoteProps) => {
                   placeholder="Type in your idea..."
                   className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
                   aria-label="Note input"
-                  autoFocus
                 />
                 <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
                   {author?.firstName || 'Unknown'}
