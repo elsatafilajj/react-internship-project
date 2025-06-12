@@ -11,12 +11,6 @@ export const Rooms = () => {
   const { user } = useAuthContext();
   const { data: rooms, isLoading, isError, error } = useGetAllRoomsQuery();
 
-  // const activeRooms = rooms?.data.filter((room) => room.room.isActive);
-  // console.log('bla', activeRooms);
-  // console.log(rooms?.data.filter((room) => room.room.isActive));
-  // const archivedRooms = rooms?.data.filter((room) => !room.room.isActive);
-  // console.log('same', archivedRooms);
-
   if (isLoading)
     return (
       <p className="text-center mt-20 text-gray-500 animate-pulse text-lg">

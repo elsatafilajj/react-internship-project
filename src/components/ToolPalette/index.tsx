@@ -69,10 +69,10 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                 <div ref={noteDragRef}>
                   <Button
                     size="icon"
-                    disabled={data?.data.isActive === false}
                     className={clsx(
                       'transition hover:text-foreground bg-tool-palette text-foreground',
-                      data?.data.isActive === false && 'cursor-not-allowed',
+                      data?.data.isActive === false &&
+                        'disabled:cursor-not-allowed opacity-50',
                     )}
                   >
                     <FilePlus2 />
@@ -90,7 +90,6 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                 <Button
                   size="icon"
                   onClick={() => tool.function()}
-                  disabled={data?.data.isActive === false}
                   className={clsx(
                     'transition hover:text-foreground bg-tool-palette text-foreground',
                     data?.data.isActive === false &&

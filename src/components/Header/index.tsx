@@ -45,15 +45,11 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       {isUserInRoom && (
         <div className="hidden sm:flex flex-col items-center text-center ">
           <span className="text-xs text-black tracking-wide mb-1">
-            {data?.data.isActive === true ? (
-              <p className="border px-2 py-1 m-1 rounded-2xl bg-green-500 text-foreground">
-                Active Room
-              </p>
-            ) : (
-              <p className="border px-2 py-1 m-1 rounded-2xl bg-red-500 text-foreground">
-                Archived Room
-              </p>
-            )}
+            <p
+              className={`border px-2 py-1 m-1 rounded-2xl bg-green-500 text-foreground ${data?.data.isActive === true ? 'bg-green-500' : 'bg-red-500'}`}
+            >
+              {data?.data.isActive === true ? 'Active Room' : 'Archived Room'}
+            </p>
           </span>
 
           <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">

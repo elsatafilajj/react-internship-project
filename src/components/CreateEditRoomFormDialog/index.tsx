@@ -89,7 +89,7 @@ export const CreateEditRoomFormDialog = () => {
           {isEditMode ? (
             <Button
               variant="ghost"
-              disabled={room?.data.isActive === false}
+              disabled={!room?.data.isActive}
               size="sm"
               className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
             >

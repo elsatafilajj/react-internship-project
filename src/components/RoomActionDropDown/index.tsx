@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import clsx from 'clsx';
 import { EllipsisVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { queryKeys } from '@/constants/queryKeys';
+import { cn } from '@/lib/utils';
 
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -48,7 +48,7 @@ export const RoomActionsDropDown = () => {
     },
   });
 
-  const handleArchived = async () => {
+  const handleArchiveRoom = async () => {
     try {
       await archiveMutation.mutateAsync(roomId || '');
     } catch (error) {
@@ -67,7 +67,7 @@ export const RoomActionsDropDown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div
-          className={clsx(
+          className={cn(
             'p-2 rounded',
             data?.data.isActive === false
               ? 'cursor-not-allowed opacity-50 pointer-events-none'
@@ -80,7 +80,7 @@ export const RoomActionsDropDown = () => {
 
       <DropdownMenuContent>
         <CreateEditRoomFormDialog />
-        <DropdownMenuItem onClick={handleArchived}>Archive</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleArchiveRoom}>Archive</DropdownMenuItem>
         <ConfirmActionDialog
           triggerButtonName="Delete"
           title="You are about to delete this room."
