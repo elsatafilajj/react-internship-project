@@ -26,29 +26,24 @@ export const RoomParticipantsPanel = () => {
 
   const roomHost = participants?.data?.find((user) => user.role === 'host');
 
+  const iterable = Array.from('123456789');
+
   return (
     <div className="flex flex-col items-center gap-2 mt-1 p-3">
       <p className="text-sm tracking-wider mb-3">Participants</p>
-      {isFetching && (
-        <>
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-          <Skeleton className="w-[18rem] h-14" />
-        </>
-      )}
+      <div className="flex flex-col gap-2 overflow-y-scroll w-full h-auto">
+        {isFetching &&
+          iterable.map(() => (
+            <Skeleton className="bg-muted-foreground w-full h-12" />
+          ))}
+      </div>
       {participants &&
         participants.data &&
         participants?.data.map((participant) => (
-          <div className="flex items-center justify-between px-5 py-3 border bg-muted shadow-sm rounded-md w-full">
+          <div
+            key={participant.uuid}
+            className="flex items-center justify-between px-5 py-3 border bg-muted shadow-sm rounded-md w-full"
+          >
             <div className="flex gap-5 items-center">
               <div>
                 {participant.role === 'host' && (
