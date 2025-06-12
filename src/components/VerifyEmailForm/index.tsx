@@ -63,8 +63,6 @@ export const VerifyEmailForm = () => {
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        console.log('syb');
-
         await verifyEmailMutation.mutateAsync({
           data: {
             code: Number(values.code),
@@ -78,7 +76,6 @@ export const VerifyEmailForm = () => {
       }
     },
   });
-  console.log('fornvofniabsds', formikVerifyEmail.values);
 
   const handleOtpChange = async (newValue: string) => {
     await formikVerifyEmail.setFieldValue('code', newValue);
