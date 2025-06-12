@@ -20,7 +20,7 @@ export const RegisterForm = () => {
     mutationFn: register,
     onSuccess: () => {
       toast.success('Registered successfully!');
-      navigate('/login');
+      navigate(RouteNames.Login);
     },
   });
 

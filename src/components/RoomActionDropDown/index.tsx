@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { queryKeys } from '@/constants/queryKeys';
+import { RouteNames } from '@/constants/routeNames';
 import { cn } from '@/lib/utils';
 
 export const RoomActionsDropDown = () => {
@@ -30,7 +31,7 @@ export const RoomActionsDropDown = () => {
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });
       toast.success('Room archived successfully.');
-      navigate('/rooms/archived');
+      navigate(RouteNames.ArchivedRooms);
     },
     onError: () => {
       toast.error('Only host can archive this room!');
@@ -41,7 +42,7 @@ export const RoomActionsDropDown = () => {
     mutationFn: (roomId: string) => deleteRoom(roomId),
     onSuccess: () => {
       toast.success('Room deleted successfully!');
-      navigate('/rooms');
+      navigate(RouteNames.Rooms);
     },
     onError: () => {
       toast.error('Room deletion failed.');
