@@ -48,7 +48,7 @@ export const VerifyEmailForm = () => {
       const message = axiosError.response?.data?.message as string;
 
       if (message === 'User does not exist or is already verified') {
-        toast.info(message);
+        toast.success(message);
         navigate(RouteNames.Login);
       } else {
         toast.error(message || 'Something went wrong');
