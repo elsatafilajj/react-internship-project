@@ -52,7 +52,7 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
     <div ref={tourRef}>
       <Info
         onClick={startTour}
-        className="bg-primary rounded-full p-0.5 w-7 h-auto"
+        className="bg-primary rounded-full p-0.5 m-2 w-7 h-auto"
         strokeWidth={1.5}
         color="black"
       />

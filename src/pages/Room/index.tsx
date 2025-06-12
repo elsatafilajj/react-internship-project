@@ -8,6 +8,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
+import { MobileParticipantsToggle } from '@/components/RoomParticipantsPanel/MobileParticipantsToggle';
 import { ToolPalette } from '@/components/ToolPalette';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
@@ -55,6 +56,10 @@ export const Room = () => {
 
         <div className="fixed z-50">
           <ActivityPanelToggle />
+        </div>
+
+        <div className="fixed">
+          <MobileParticipantsToggle />
         </div>
       </TransformWrapper>
     </DndProvider>

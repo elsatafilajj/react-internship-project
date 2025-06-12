@@ -85,3 +85,10 @@ export const refreshTokenApi = async ({
 
 export const getUserDetails = async () =>
   apiRequest<undefined, User>({ method: 'GET', url: 'users/me' });
+
+export const getAllUsersInRoom = async (roomId: string) => {
+  return apiRequest<undefined, User[]>({
+    method: 'GET',
+    url: `users/room/${roomId}`,
+  });
+};

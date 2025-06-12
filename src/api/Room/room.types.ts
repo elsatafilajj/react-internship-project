@@ -1,3 +1,5 @@
+import { User } from '@/api/User/user.types';
+
 export interface RoomWithRole {
   room: Room;
   role: string;
@@ -13,14 +15,6 @@ export interface Room {
   isActive: boolean;
   user: User[];
   note: Note[];
-}
-
-export interface User {
-  uuid: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
 }
 
 export interface Note {

@@ -1,7 +1,5 @@
-import { GetUsersParams } from '@/api/Users/users.types';
-
 export const queryKeys = {
-  getUsers: (params: GetUsersParams) => ['users', params],
+  getUsers: () => ['users'],
   getSingleUser: (id: string) => ['user', id],
 
   getRooms: () => ['rooms'],
