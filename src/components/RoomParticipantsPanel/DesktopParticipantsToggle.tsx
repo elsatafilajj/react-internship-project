@@ -22,8 +22,11 @@ export const DesktopParticipantsToggle = () => {
           <div className="-space-x-2 flex cursor-pointer">
             {isLoading && (
               <div className="flex -space-x-2">
-                {Array.from('123', () => (
-                  <Skeleton className="h-8 w-8 rounded-full bg-muted-foreground" />
+                {Array.from({ length: 3 }, (_, index) => (
+                  <Skeleton
+                    key={index}
+                    className="h-8 w-8 rounded-full bg-muted-foreground"
+                  />
                 ))}
               </div>
             )}

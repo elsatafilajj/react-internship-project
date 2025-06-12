@@ -6,6 +6,7 @@ import { removeUserFromRoom } from '@/api/Room/room.client';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { queryKeys } from '@/constants/queryKeys';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 
 export const RoomParticipantsPanel = () => {
@@ -21,20 +22,19 @@ export const RoomParticipantsPanel = () => {
   const removeUserFromRoomMutation = useMutation({
     mutationFn: (participantId: string) =>
       removeUserFromRoom(roomId || '', participantId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.getUsers() }),
   });
 
   const roomHost = participants?.data?.find((user) => user.role === 'host');
-
-  const iterable = Array.from('123456789');
 
   return (
     <div className="flex flex-col items-center gap-2 mt-1 p-3">
       <p className="text-sm tracking-wider mb-3">Participants</p>
       <div className="flex flex-col gap-2 overflow-y-scroll w-full h-auto">
         {isFetching &&
-          iterable.map(() => (
-            <Skeleton className="bg-muted-foreground w-full h-12" />
+          Array.from({ length: 10 }, (_, index) => (
+            <Skeleton key={index} className="bg-muted-foreground w-full h-12" />
           ))}
       </div>
       {participants &&
