@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
-import { RoomParticipantsPanel } from '@/components/RoomParticipantsPanel';
+import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { TourLauncher } from '@/components/TourLauncher';
 import { Logo } from '@/components/shared/Logo';
@@ -23,7 +23,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
   const hasEnteredRoom = useHasEnteredRoom();
 
-  const { data, isFetched } = useGetRoomByIdQuery(roomId || '');
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
 
   return (
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
@@ -45,19 +45,19 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       {hasEnteredRoom && (
-        <div className="hidden sm:flex flex-col items-center text-center ">
-          <span className="text-xs text-muted-foreground tracking-wide mb-1">
+        <div className="flex flex-col gap-2 items-center">
+          <p className="text-xs sm:flex text-muted-foreground tracking-wide mb-1">
             Active Room
-          </span>
+          </p>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
+            <div className="sm:flex hidden items-center gap-0 sm:gap-2 flex-wrap justify-center">
               <span className="text-base font-semibold text-foreground">
-                {(isFetched && data?.data.title) || 'Untitled'}
+                {(room && room.data && room?.data.title) || 'Untitled'}
               </span>
             </div>
 
-            <RoomParticipantsPanel />
+            <DesktopParticipantsToggle />
           </div>
         </div>
       )}
@@ -81,7 +81,6 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
             </span>
           </Link>
         </div>
-
         <TourLauncher onToggleSidebar={onToggleSidebar} />
       </div>
     </header>
