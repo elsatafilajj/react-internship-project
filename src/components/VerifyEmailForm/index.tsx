@@ -114,13 +114,3 @@ export const VerifyEmailForm = () => {
     </div>
   );
 };
-
-// <input
-//   name="code"
-//   value={formik.values.code}
-//   onChange={(e) => {
-//     const digitsOnly = e.target.value.replace(/\D/g, '');
-//     formik.setFieldValue('code', digitsOnly);
-//   }}
-//   onBlur={formik.handleBlur}
-// />
