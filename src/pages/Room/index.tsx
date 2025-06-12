@@ -15,7 +15,7 @@ export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
   const socket = getSocket();
-  const roomId = useParams<{ roomId: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
 
   useEffect(() => {
     if (!roomId) return;

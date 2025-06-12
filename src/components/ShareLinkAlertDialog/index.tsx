@@ -1,5 +1,7 @@
 import { Copy, Share2 } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,12 +18,18 @@ import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ShareLinkAlertDialog = () => {
   const { shareLinkRef } = useTourRefsContext();
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const { data } = useGetRoomByIdQuery(roomId || '');
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <div ref={shareLinkRef}>
-          <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]">
+          <Button
+            className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]"
+            disabled={data?.data.isActive === false}
+          >
             <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
             <span className="hidden md:block">Share</span>
           </Button>

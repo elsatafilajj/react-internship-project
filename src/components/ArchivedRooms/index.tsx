@@ -1,33 +1,13 @@
 import { FileArchive } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useGetAllArchivedRoomsQuery } from '@/api/Room/room.queries';
 import { RoomCard } from '@/components/RoomCard';
 
 export const ArchivedRooms = () => {
-  const {
-    data: archivedRooms,
-    isLoading,
-    isError,
-    error,
-  } = useGetAllArchivedRoomsQuery();
-  const roomId = useParams<{ roomId: string }>();
-  console.log('tes', roomId);
   const navigate = useNavigate();
 
-  if (isLoading)
-    return (
-      <p className="text-center mt-20 text-gray-500 animate-pulse text-lg">
-        Loading brainstorm rooms...
-      </p>
-    );
-
-  if (isError)
-    return (
-      <p className="text-center mt-20 text-red-500 text-lg">
-        Error: {(error as Error).message}
-      </p>
-    );
+  const { data: archivedRooms } = useGetAllArchivedRoomsQuery();
 
   const hasRooms = archivedRooms?.data.length;
 

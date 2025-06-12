@@ -17,7 +17,6 @@ interface HeaderProps {
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
   const { roomId } = useParams<{ roomId: string }>();
-  console.log('THIS IS TH EROOOOMMM ID', roomId);
   const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
 
   const isUserInRoom = Boolean(roomId);
@@ -45,8 +44,16 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
       {isUserInRoom && (
         <div className="hidden sm:flex flex-col items-center text-center ">
-          <span className="text-xs text-muted-foreground tracking-wide mb-1">
-            Active Room
+          <span className="text-xs text-black tracking-wide mb-1">
+            {data?.data.isActive === true ? (
+              <p className="border px-2 py-1 m-1 rounded-2xl bg-green-500 text-foreground">
+                Active Room
+              </p>
+            ) : (
+              <p className="border px-2 py-1 m-1 rounded-2xl bg-red-500 text-foreground">
+                Archived Room
+              </p>
+            )}
           </span>
 
           <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">

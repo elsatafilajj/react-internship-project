@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { EllipsisVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { deleteRoom, updateRoom } from '@/api/Room/room.client';
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import {
@@ -17,8 +19,9 @@ import { queryKeys } from '@/constants/queryKeys';
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const queryClient = useQueryClient();
-
   const navigate = useNavigate();
+
+  const { data } = useGetRoomByIdQuery(roomId || '');
 
   const archiveMutation = useMutation({
     mutationFn: (roomId: string) => updateRoom(roomId, { isActive: false }),
@@ -28,6 +31,9 @@ export const RoomActionsDropDown = () => {
       });
       toast.success('Room archived successfully.');
       navigate('/rooms/archived');
+    },
+    onError: () => {
+      toast.error('Only host can archive this room!');
     },
   });
 
@@ -59,9 +65,19 @@ export const RoomActionsDropDown = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <EllipsisVertical className="cursor-pointer" />
+      <DropdownMenuTrigger asChild>
+        <div
+          className={clsx(
+            'p-2 rounded',
+            data?.data.isActive === false
+              ? 'cursor-not-allowed opacity-50 pointer-events-none'
+              : 'cursor-pointer hover:bg-muted',
+          )}
+        >
+          <EllipsisVertical />
+        </div>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent>
         <CreateEditRoomFormDialog />
         <DropdownMenuItem onClick={handleArchived}>Archive</DropdownMenuItem>
