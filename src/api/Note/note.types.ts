@@ -1,6 +1,5 @@
 import { Room } from '@/api/Room/room.types';
 import { User } from '@/api/User/user.types';
-import { RoomType } from '@/api/Users/users.types';
 
 type NoteColor =
   | 'note-background-green'
@@ -25,7 +24,7 @@ export interface NoteItem {
 }
 
 export interface CreateNoteInput {
-  roomId: RoomType['uuid'];
+  roomId: Room['uuid'];
   content?: string;
   xAxis: number;
   yAxis: number;
