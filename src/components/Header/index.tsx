@@ -9,6 +9,7 @@ import { Logo } from '@/components/shared/Logo';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -46,9 +47,12 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         <div className="hidden sm:flex flex-col items-center text-center ">
           <span className="text-xs text-black tracking-wide mb-1">
             <p
-              className={`border px-2 py-1 m-1 rounded-2xl bg-green-500 text-foreground ${data?.data.isActive === true ? 'bg-green-500' : 'bg-red-500'}`}
+              className={cn(
+                'border px-2 py-1 m-1 rounded-2xl text-foreground',
+                data?.data.isActive ? 'bg-green-500' : 'bg-red-500',
+              )}
             >
-              {data?.data.isActive === true ? 'Active Room' : 'Archived Room'}
+              {data?.data.isActive ? 'Active Room' : 'Archived Room'}
             </p>
           </span>
 
