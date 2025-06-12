@@ -19,7 +19,6 @@ const ResetPasswordForm = () => {
   const [params] = useSearchParams();
   const token = params.get('token');
   const firstName = params.get('firstname');
-  console.log(token, firstName);
   const [messageSent, setMessageSent] = useState(false);
 
   const resetPasswordMutation = useMutation({

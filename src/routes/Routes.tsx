@@ -11,6 +11,7 @@ import { Register } from '@/pages/Register';
 import { ResetPassword } from '@/pages/ResetPassword';
 import { Room } from '@/pages/Room';
 import { Rooms } from '@/pages/Rooms';
+import { VerifyEmail } from '@/pages/VerifyEmail';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -20,6 +21,7 @@ export const appRoutes: RouteObject[] = [
       { path: RouteNames.Register, element: <Register /> },
       { path: RouteNames.ForgotPassword, element: <ForgotPassword /> },
       { path: RouteNames.ResetPassword, element: <ResetPassword /> },
+      { path: RouteNames.VerifyEmail, element: <VerifyEmail /> },
     ],
   },
   {
