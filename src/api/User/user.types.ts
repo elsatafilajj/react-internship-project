@@ -5,26 +5,28 @@ export interface LoginResponse {
 }
 
 export interface User {
-  id: string;
-  createdDate: Date;
-  updatedDate: Date;
+  uuid: string;
+  createdAt: string;
+  deletedAt: string;
+  updatedAt: string;
   email: string;
-  username: string;
   firstName: string;
   lastName: string;
-  employeStatus: string;
-  department: string;
-  invitedOn: Date;
-  firstTimeInvitedOn: Date;
-  active: boolean;
-  invitationAcceptedOn: Date;
-  role: UserRole;
-  receiveNotifications: boolean;
+  role?: UserRole;
+}
+
+export interface UserInRoom {
+  uuid: string;
+  createdat: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  role?: UserRole;
 }
 
 export enum UserRole {
-  Admin = 'Admin',
-  Company = 'Company',
+  Host = 'host',
+  Participant = 'participant',
 }
 
 export interface LoginRegisterResponse {
@@ -48,6 +50,16 @@ export interface LoginInput {
 export interface SetPasswordInput {
   password: string;
   passwordConfirm: string;
+}
+
+export interface SetVerifyEmailCode {
+  code: number;
+}
+
+export interface SetVerifyEmailResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface SetPasswordResponse {

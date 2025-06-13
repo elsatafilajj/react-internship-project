@@ -61,7 +61,9 @@ export const EditProfileForm = () => {
       <div className="flex flex-col items-center gap-4">
         <Avatar className="h-20 w-20 border-2 border-primary">
           <AvatarImage src="/placeholder-user.jpg" alt="Profile Picture" />
-          <AvatarFallback>{user?.firstName[0]}</AvatarFallback>
+          <AvatarFallback className="capitalize">
+            {user?.firstName[0]}
+          </AvatarFallback>
         </Avatar>
       </div>
       <form onSubmit={formikProfile.handleSubmit}>
@@ -99,7 +101,7 @@ export const EditProfileForm = () => {
         <CardFooter>
           <Button
             type="submit"
-            className="mt-8"
+            className="mt-8 "
             disabled={formikProfile.isSubmitting}
           >
             {formikProfile.isSubmitting ? 'Saving...' : 'Save changes'}

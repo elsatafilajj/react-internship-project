@@ -9,6 +9,9 @@ import {
   ChangePasswordInput,
   RefreshTokenPayload,
   RefreshTokenResponse,
+  SetVerifyEmailCode,
+  SetVerifyEmailResponse,
+  UserInRoom,
 } from './user.types';
 
 export const login = async (data: LoginInput) =>
@@ -46,6 +49,13 @@ export const resetPassword = async (data: SetPasswordInput, token: string) =>
     data,
   });
 
+export const verifyEmail = async (data: SetVerifyEmailCode, email: string) =>
+  apiRequest<SetVerifyEmailCode, SetVerifyEmailResponse>({
+    method: 'POST',
+    url: `auth/verify-email/${email}`,
+    data,
+  });
+
 export const editProfile = async (data: Partial<User>) => {
   return apiRequest<Partial<User>, User>({
     method: 'PATCH',
@@ -76,3 +86,10 @@ export const refreshTokenApi = async ({
 
 export const getUserDetails = async () =>
   apiRequest<undefined, User>({ method: 'GET', url: 'users/me' });
+
+export const getAllUsersInRoom = async (roomId: string) => {
+  return apiRequest<undefined, UserInRoom[]>({
+    method: 'GET',
+    url: `users/room/${roomId}`,
+  });
+};

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
+import { NoteScrollProvider } from '@/context/NoteScrollContext/NoteScrollContextProvider';
 import { RouteWrapper } from '@/routes/RouteWrapper';
 
 export const MainLayout = () => {
@@ -11,18 +11,23 @@ export const MainLayout = () => {
 
   return (
     <RouteWrapper>
-      <div className="w-full">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <NoteScrollProvider>
+        <div className="w-full">
+          <Sidebar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+          />
 
-        <div className="">
-          <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+          <div className="">
+            <Header onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
 
-          <main className="h-screen">
-            <Outlet />
-            <ActivityPanelToggle />
-          </main>
+            <main className="h-screen">
+              <Outlet />
+            </main>
+          </div>
         </div>
-      </div>
+      </NoteScrollProvider>
     </RouteWrapper>
   );
 };

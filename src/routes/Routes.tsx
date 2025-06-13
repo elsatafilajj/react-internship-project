@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 
+import { ArchivedRooms } from '@/components/ArchivedRooms';
 import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
@@ -11,6 +12,7 @@ import { Register } from '@/pages/Register';
 import { ResetPassword } from '@/pages/ResetPassword';
 import { Room } from '@/pages/Room';
 import { Rooms } from '@/pages/Rooms';
+import { VerifyEmail } from '@/pages/VerifyEmail';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -20,6 +22,7 @@ export const appRoutes: RouteObject[] = [
       { path: RouteNames.Register, element: <Register /> },
       { path: RouteNames.ForgotPassword, element: <ForgotPassword /> },
       { path: RouteNames.ResetPassword, element: <ResetPassword /> },
+      { path: RouteNames.VerifyEmail, element: <VerifyEmail /> },
     ],
   },
   {
@@ -28,7 +31,7 @@ export const appRoutes: RouteObject[] = [
     children: [
       {
         path: '/',
-        element: <Navigate to={RouteNames.Room} replace />,
+        element: <Navigate to={RouteNames.Rooms} replace />,
       },
       {
         path: RouteNames.Profile,
@@ -36,6 +39,8 @@ export const appRoutes: RouteObject[] = [
       },
       { path: RouteNames.Rooms, element: <Rooms /> },
       { path: RouteNames.Room, element: <Room /> },
+      { path: RouteNames.ArchivedRooms, element: <ArchivedRooms /> },
+      { path: RouteNames.ArchivedRoom, element: <Room /> },
     ],
   },
   {

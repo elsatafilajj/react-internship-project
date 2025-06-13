@@ -6,6 +6,12 @@ import {
 } from '@/api/Note/note.types';
 import { DeleteResponse } from '@/types/DeleteResponse';
 
+interface AddVoteResponse {
+  success: boolean;
+  message: string;
+  voteSwitched: boolean;
+}
+
 export const getAllNotesFromRoom = async (roomId: string) =>
   apiRequest<undefined, NoteItem[]>({
     url: 'notes',
@@ -32,3 +38,12 @@ export const deleteNote = async (noteId: string) =>
     url: `notes/${noteId}`,
     method: 'DELETE',
   });
+
+export const addVoteToNote = async (noteId: NoteItem['uuid']) =>
+  apiRequest<undefined, AddVoteResponse>({
+    url: `notes/${noteId}/vote`,
+    method: 'POST',
+  });
+
+export const removeVoteFromNote = async (noteId: NoteItem['uuid']) =>
+  apiRequest({ url: `notes/${noteId}/vote`, method: 'DELETE' });
