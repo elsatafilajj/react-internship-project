@@ -35,7 +35,7 @@ export const Room = () => {
     <DndProvider backend={HTML5Backend}>
       <TransformWrapper
         initialScale={1}
-        minScale={0.4}
+        minScale={0.5}
         limitToBounds={true}
         ref={transformRef}
         disabled={transformDisabled}

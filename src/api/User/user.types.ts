@@ -6,6 +6,17 @@ export interface LoginResponse {
 
 export interface User {
   uuid: string;
+  createdAt: string;
+  deletedAt: string;
+  updatedAt: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role?: UserRole;
+}
+
+export interface UserInRoom {
+  uuid: string;
   createdat: string;
   email: string;
   firstname: string;

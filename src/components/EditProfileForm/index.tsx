@@ -36,8 +36,8 @@ export const EditProfileForm = () => {
   const formikProfile = useForm({
     schema: EditProfileSchema,
     initialValues: {
-      firstName: user?.firstname || '',
-      lastName: user?.lastname || '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
       email: user?.email,
     },
     onSubmit: async (values, formikHelpers) => {
@@ -62,7 +62,7 @@ export const EditProfileForm = () => {
         <Avatar className="h-20 w-20 border-2 border-primary">
           <AvatarImage src="/placeholder-user.jpg" alt="Profile Picture" />
           <AvatarFallback className="capitalize">
-            {user?.firstname[0]}
+            {user?.firstName[0]}
           </AvatarFallback>
         </Avatar>
       </div>

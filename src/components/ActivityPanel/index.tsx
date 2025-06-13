@@ -62,7 +62,7 @@ export const ActivityPanel = () => {
             >
               <div className="flex flex-col">
                 <span className="font-medium">
-                  {activity?.user?.firstname} {activity.activityType} a{' '}
+                  {activity?.user?.firstName} {activity.activityType} a{' '}
                   {activity.resourceType}
                 </span>
                 <span className="text-[10px] text-muted-foreground">

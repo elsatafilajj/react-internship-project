@@ -212,7 +212,7 @@ export const Note = ({ note }: NoteProps) => {
                   autoFocus
                 />
                 <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
-                  {author?.firstname || 'Unknown'}
+                  {author?.firstName || 'Unknown'}
                 </span>
               </div>
             </div>
