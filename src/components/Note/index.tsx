@@ -1,16 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import clsx from 'clsx';
-import { Circle, Star, X } from 'lucide-react';
+import { Circle, Ellipsis, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
-import {
-  addVoteToNote,
-  deleteNote,
-  removeVoteFromNote,
-} from '@/api/Note/note.client';
 import { NoteItem } from '@/api/Note/note.types';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
@@ -25,7 +18,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
@@ -69,8 +61,6 @@ export const Note = ({ note }: NoteProps) => {
   const [noteContent, setNoteContent] = useState('');
   const { uuid, content, author } = note;
   const { selectedNoteId } = useNoteScrollContext();
-  const queryClient = useQueryClient();
-  const queryKey = queryKeys.getNotesByRoomId(roomId || '');
 
   const { user } = useAuthContext();
   const isUserVoter = note.noteVotes?.find(
@@ -113,93 +103,62 @@ export const Note = ({ note }: NoteProps) => {
     });
   };
 
-  const deleteMutation = useMutation({
-    mutationFn: (uuid: string) => deleteNote(uuid),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-      toast.success('Your note has been deleted!');
-    },
-    onError: (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      toast.error(responseData.message || 'Failed to delete note.');
-    },
-  });
-
-  const addVoteMutation = useMutation({
-    mutationFn: (uuid: NoteItem['uuid']) => addVoteToNote(uuid),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({
-        queryKey,
-      });
-      const voteResponse = response?.data;
-      if (voteResponse.voteSwitched) {
-        toast.success('Your vote has been switched!');
-      } else {
-        toast.success('Your vote has been registered!');
-      }
-      setHasVoted(true);
-    },
-    onError: (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      toast.error(responseData.message || 'Failed to register your vote.');
-    },
-  });
-
-  const removeVoteMutation = useMutation({
-    mutationFn: (uuid: NoteItem['uuid']) => removeVoteFromNote(uuid),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey,
-      });
-      toast.success('Your vote has been removed!');
-      setHasVoted(false);
-    },
-    onError: (error: AxiosError) => {
-      const responseData = error.response?.data as ErrorResponseData;
-      toast.error(responseData.message || 'Failed to remove vote.');
-    },
-  });
-
   const handleVote = async () => {
     if (!uuid) return;
     if (hasVoted && !!isUserVoter) {
-      removeVoteMutation.mutateAsync(uuid);
+      socket.emit(socketEvents.RemoveVote, {
+        roomId,
+        noteId: note.uuid,
+      });
+      toast.success('You removed the vote! 🎉');
     } else if (uuid) {
-      addVoteMutation.mutateAsync(uuid);
+      socket.emit(socketEvents.AddVote, {
+        roomId,
+        noteId: note.uuid,
+      });
+      setHasVoted(true);
+      toast.success('You voted! 🎉');
     }
   };
 
+  const handleDeleteNote = (noteId: string) => {
+    socket.emit(socketEvents.DeleteNote, { roomId, noteId });
+  };
   return (
     <>
       {uuid && (
         <Popover>
-          <PopoverTrigger>
-            <div
-              className={clsx(
-                'w-2xs h-70 shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
-                noteColorClassMap[
-                  localNoteColor as keyof typeof noteColorClassMap
-                ],
-                selectedNoteId === uuid &&
-                  'border-2 border-secondary scale-[1.03] shadow-lg z-10 flash-highlight',
-              )}
-            >
-              <div className="flex flex-col justify-between h-full p-2 text-xs">
-                <textarea
-                  value={noteContent}
-                  onChange={handleNoteContentChange}
-                  placeholder="Type in your idea..."
-                  className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
-                  aria-label="Note input"
-                />
-                <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
-                  {author?.firstName || 'Unknown'}
-                </span>
-              </div>
+          <div
+            className={clsx(
+              'w-2xs h-70 shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
+              noteColorClassMap[
+                localNoteColor as keyof typeof noteColorClassMap
+              ],
+              selectedNoteId === uuid &&
+                'border-5 border-primary scale-[1.03] shadow-lg z-10 flash-highlight',
+            )}
+          >
+            <div className="flex flex-col justify-between h-full p-2 text-xs">
+              <textarea
+                value={noteContent}
+                onChange={handleNoteContentChange}
+                placeholder="Type in your idea..."
+                className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
+                aria-label="Note input"
+              />
+              <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
+                {author?.firstName || 'Unknown'}
+              </span>
+            </div>
+          </div>
+
+          <PopoverTrigger asChild>
+            <div className="absolute top-1 right-0 z-20 cursor-pointer">
+              <Ellipsis className="cursor-pointer text-black -ml-8" />
             </div>
           </PopoverTrigger>
 
-          <PopoverContent side="top" sideOffset={10}>
+          <PopoverContent side="top" align="end" sideOffset={10}>
             <div className="bg-popover flex items-center justify-around h-fit">
               <TooltipProvider>
                 <Tooltip>
@@ -208,7 +167,7 @@ export const Note = ({ note }: NoteProps) => {
                       strokeWidth={2.5}
                       size={20}
                       className="cursor-pointer"
-                      onClick={() => deleteMutation.mutateAsync(uuid)}
+                      onClick={() => handleDeleteNote(note.uuid || '')}
                     />
                   </TooltipTrigger>
                   <TooltipContent>Delete</TooltipContent>
@@ -216,24 +175,21 @@ export const Note = ({ note }: NoteProps) => {
               </TooltipProvider>
 
               <div className="flex gap-3 p-3">
-                {fillColors.map((noteColor, i) => {
-                  return (
-                    <Circle
-                      key={i}
-                      style={{
-                        fill: `var(--${noteColor})`,
-                      }}
-                      className={`w-4 h-4 cursor-pointer brightness- ${
-                        localNoteColor === noteColor
-                          ? 'ring-2 ring-primary rounded-full'
-                          : ''
-                      }`}
-                      strokeWidth={2.5}
-                      onClick={() => handleNoteColorChange(noteColor)}
-                    />
-                  );
-                })}
+                {fillColors.map((noteColor, i) => (
+                  <Circle
+                    key={i}
+                    style={{ fill: `var(--${noteColor})` }}
+                    className={`w-4 h-4 cursor-pointer brightness- ${
+                      localNoteColor === noteColor
+                        ? 'ring-2 ring-primary rounded-full'
+                        : ''
+                    }`}
+                    strokeWidth={2.5}
+                    onClick={() => handleNoteColorChange(noteColor)}
+                  />
+                ))}
               </div>
+
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
@@ -258,6 +214,7 @@ export const Note = ({ note }: NoteProps) => {
                   <TooltipContent>Vote / Unvote</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+
               <PanelToggle noteId={uuid} />
             </div>
           </PopoverContent>

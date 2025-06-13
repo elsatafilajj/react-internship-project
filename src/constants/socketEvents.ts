@@ -2,7 +2,7 @@ enum Namespaces {
   ROOMS = 'rooms',
   NOTES = 'notes',
   COMMENTS = 'comments',
-  ACTIVITIES = 'activities',
+  ACTIVITIES = 'activity',
 }
 
 enum Actions {
@@ -11,6 +11,8 @@ enum Actions {
   CREATE = 'create',
   UPDATE = 'update',
   DELETE = 'delete',
+  VOTE = 'vote',
+  REMOVEVOTE = 'removeVote',
 }
 
 enum Listeners {
@@ -19,6 +21,8 @@ enum Listeners {
   CREATED = 'created',
   UPDATED = 'updated',
   DELETED = 'deleted',
+  VOTED = 'voted',
+  REMOVED = 'removed',
 }
 
 export enum socketEvents {
@@ -45,4 +49,12 @@ export enum socketEvents {
 
   DeleteComment = `${Namespaces.COMMENTS}/${Actions.DELETE}`,
   DeletedComment = `${Namespaces.COMMENTS}/${Listeners.DELETED}`,
+
+  AddVote = `${Namespaces.NOTES}/${Actions.VOTE}`,
+  AddedVote = `${Namespaces.NOTES}/${Listeners.VOTED}`,
+
+  RemoveVote = `${Namespaces.NOTES}/${Actions.REMOVEVOTE}`,
+  RemovedVote = `${Namespaces.NOTES}/${Listeners.REMOVED}`,
+
+  NewActivity = `${Namespaces.ACTIVITIES}`,
 }
