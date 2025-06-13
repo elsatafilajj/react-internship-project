@@ -10,8 +10,8 @@ import { Logo } from '@/components/shared/Logo';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
-import { cn } from '@/lib/utils';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -44,12 +44,18 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </Link>
       </div>
 
-
       {hasEnteredRoom && (
         <div className="flex flex-col gap-2 items-center">
-          <p className="text-xs sm:flex text-muted-foreground tracking-wide mb-1">
-            Active Room
-          </p>
+          <span className="text-xs text-black tracking-wide mb-1">
+            <p
+              className={cn(
+                'border px-2 py-1 m-1 rounded-2xl text-foreground',
+                room?.data.isActive ? 'bg-green-500' : 'bg-red-500',
+              )}
+            >
+              {room?.data.isActive ? 'Active Room' : 'Archived Room'}
+            </p>
+          </span>
 
           <div className="flex items-center gap-3">
             <div className="sm:flex hidden items-center gap-0 sm:gap-2 flex-wrap justify-center">
