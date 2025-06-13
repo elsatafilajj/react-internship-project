@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
@@ -6,6 +7,7 @@ import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
@@ -23,9 +25,12 @@ export const DroppableRoom = ({
 
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
 
+  const queryClient = useQueryClient();
+
   const { roomId } = useParams<{ roomId: string }>();
 
   const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
+
   const socket = useMemo(() => getSocket(), []);
 
   useEffect(() => {
@@ -78,23 +83,47 @@ export const DroppableRoom = ({
   useEffect(() => {
     if (!socket) return;
 
-    socket.on(socketEvents.NewNote, (newNote) => {
+    socket.on(socketEvents.CreatedNote, (newNote) => {
       console.log('new note', newNote);
       setNotes((prev) => [...(prev || []), newNote]);
     });
 
     socket.on(socketEvents.UpdatedNote, (data) => {
-      const { uuid, xAxis, yAxis, content } = data;
+      const { uuid, xAxis, yAxis, content, color } = data;
       setNotes((prev) =>
         prev.map((note) =>
-          note.uuid === uuid ? { ...note, xAxis, yAxis, content } : note,
+          note.uuid === uuid ? { ...note, xAxis, yAxis, content, color } : note,
         ),
       );
     });
 
+    socket.on(socketEvents.AddedVote, (newVote) => {
+      console.log('new vote', newVote);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
+    });
+
+    socket.on(socketEvents.RemovedVote, (removedVote) => {
+      console.log('removed note', removedVote);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
+    });
+
+    socket.on(socketEvents.DeletedNote, (deletedNote) => {
+      console.log('note deleted', deletedNote);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
+    });
+
     return () => {
-      socket.off(socketEvents.NewNote);
+      socket.off(socketEvents.CreatedNote);
       socket.off(socketEvents.UpdatedNote);
+      socket.off(socketEvents.AddedVote);
+      socket.off(socketEvents.RemovedVote);
+      socket.off(socketEvents.DeletedNote);
     };
   }, []);
 

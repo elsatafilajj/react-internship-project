@@ -33,7 +33,7 @@ export const ReplyCommentForm = ({
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        socket.emit(socketEvents.AddComment, {
+        socket.emit(socketEvents.CreateComment, {
           roomId: roomId,
           payload: values,
         });

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
+import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Logo } from '@/components/shared/Logo';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -20,7 +22,6 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { roomId } = useParams<{ roomId: string }>();
-
   const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
 
   const hasEnteredRoom = useHasEnteredRoom();
@@ -50,8 +51,25 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
       {hasEnteredRoom && (
         <div className="hidden md:flex items-center text-center gap-3">
-          <div className="text-sm text-foreground font-medium tracking-wide p-3 py-1 rounded-4xl bg-primary">
-            Active Room
+          <span className="text-xs text-black tracking-wide mb-1">
+            <p
+              className={cn(
+                'border px-2 py-1 m-1 rounded-2xl text-foreground',
+                room?.data.isActive ? 'bg-green-500' : 'bg-red-500',
+              )}
+            >
+              {room?.data.isActive ? 'Active Room' : 'Archived Room'}
+            </p>
+          </span>
+
+          <div className="flex items-center gap-3">
+            <div className="sm:flex hidden items-center gap-0 sm:gap-2 flex-wrap justify-center">
+              <span className="text-base font-semibold text-foreground">
+                {(room && room.data && room?.data.title) || 'Untitled'}
+              </span>
+            </div>
+
+            <DesktopParticipantsToggle />
           </div>
 
           <span className="text-base font-semibold text-foreground">

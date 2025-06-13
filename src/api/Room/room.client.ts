@@ -14,6 +14,12 @@ export const getAllRooms = async () =>
     url: 'rooms',
   });
 
+export const getAllArchivedRooms = async () =>
+  apiRequest<undefined, RoomWithRole[]>({
+    method: 'GET',
+    url: 'rooms/archived',
+  });
+
 export const getRoomById = async (roomId: string) =>
   apiRequest<undefined, Room>({
     method: 'GET',
@@ -40,10 +46,11 @@ export const deleteRoom = async (roomId: string) =>
     url: `rooms/${roomId}`,
   });
 
-export const removeUserFromRoom = async (roomId: string) =>
+export const removeUserFromRoom = async (roomId: string, userId: string) =>
   apiRequest<undefined, DeleteResponse>({
     method: 'POST',
-    url: `rooms/remove/${roomId}`,
+    url: `rooms/${roomId}/remove`,
+    params: { userId },
   });
 
 export const joinRoom = async (roomId: string) =>

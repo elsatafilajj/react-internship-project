@@ -1,5 +1,4 @@
-import {useEffect, RefObject, useRef } from 'react';
-
+import { useEffect, RefObject, useRef } from 'react';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';

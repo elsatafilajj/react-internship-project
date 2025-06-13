@@ -8,6 +8,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
+import { MobileParticipantsToggle } from '@/components/RoomParticipantsPanel/MobileParticipantsToggle';
 import { ToolPalette } from '@/components/ToolPalette';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
@@ -15,8 +16,9 @@ import { getSocket } from '@/helpers/socket';
 export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
+  const { roomId } = useParams<{ roomId: string }>();
   const socket = useMemo(() => getSocket(), []);
-  const roomId = useParams<{ roomId: string }>();
+
 
   useEffect(() => {
     if (!roomId) return;
@@ -34,7 +36,7 @@ export const Room = () => {
     <DndProvider backend={HTML5Backend}>
       <TransformWrapper
         initialScale={1}
-        minScale={0.4}
+        minScale={0.5}
         limitToBounds={true}
         ref={transformRef}
         disabled={transformDisabled}
@@ -55,6 +57,10 @@ export const Room = () => {
 
         <div className="fixed z-50">
           <ActivityPanelToggle />
+        </div>
+
+        <div className="fixed">
+          <MobileParticipantsToggle />
         </div>
       </TransformWrapper>
     </DndProvider>
