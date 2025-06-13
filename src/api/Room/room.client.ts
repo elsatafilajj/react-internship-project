@@ -16,6 +16,12 @@ export const getAllRooms = async () =>
     url: 'rooms',
   });
 
+export const getAllArchivedRooms = async () =>
+  apiRequest<undefined, RoomWithRole[]>({
+    method: 'GET',
+    url: 'rooms/archived',
+  });
+
 export const getRoomById = async (roomId: string) =>
   apiRequest<undefined, Room>({
     method: 'GET',

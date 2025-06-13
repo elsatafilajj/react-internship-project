@@ -43,7 +43,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        socket.emit(socketEvents.AddComment, {
+        socket.emit(socketEvents.CreateComment, {
           roomId: roomId,
           payload: values,
         });
@@ -67,7 +67,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
       if (!editingComment) return;
 
       try {
-        socket.emit(socketEvents.EditComment, {
+        socket.emit(socketEvents.UpdateComment, {
           roomId: roomId,
           commentId: editingComment.uuid,
           payload: values,
@@ -90,7 +90,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   }, [data, isFetched]);
 
   useEffect(() => {
-    socket.on(socketEvents.NewComment, (newComment) => {
+    socket.on(socketEvents.CreatedComment, (newComment) => {
       console.log('Received new comment:', newComment);
       if (noteId === newComment.note.uuid) {
         setComments((prev) => [...(prev || []), newComment]);
@@ -116,7 +116,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     );
 
     return () => {
-      socket.off(socketEvents.NewComment);
+      socket.off(socketEvents.CreatedComment);
       socket.off(socketEvents.UpdatedComment);
       socket.off(socketEvents.DeletedComment);
     };
@@ -134,9 +134,9 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
           <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
             <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
               <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                {user?.firstname[0].toUpperCase()}
+                {user?.firstName[0].toUpperCase()}
               </div>
-              {user?.firstname} {user?.lastname}
+              {user?.firstName} {user?.lastName}
             </div>
             {editingComment ? (
               <form
@@ -207,11 +207,11 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                     <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                      {comment.user.firstname[0].toUpperCase()}
+                      {comment.user.firstName[0].toUpperCase()}
                     </div>
                     <div className="flex flex-col">
                       <span>
-                        {comment.user.firstname} {comment.user.lastname}
+                        {comment.user.firstName} {comment.user.lastName}
                       </span>
                       <span className="text-[10px] text-muted-foreground">
                         {getFormattedDate(new Date(comment.createdAt), {
@@ -260,11 +260,11 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                           <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                            {reply.user.firstname[0].toUpperCase()}
+                            {reply.user.firstName[0].toUpperCase()}
                           </div>
                           <div className="flex flex-col">
                             <span>
-                              {reply.user.firstname} {reply.user.lastname}
+                              {reply.user.firstName} {reply.user.lastName}
                             </span>
                             <span className="text-[10px] text-muted-foreground">
                               {getFormattedDate(new Date(reply.createdAt), {

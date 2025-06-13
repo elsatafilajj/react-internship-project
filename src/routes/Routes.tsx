@@ -1,6 +1,10 @@
 import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 
+
 import { JoinRoom } from '@/components/JoinRoom';
+
+import { ArchivedRooms } from '@/components/ArchivedRooms';
+
 import { RouteNames } from '@/constants/routeNames';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
@@ -39,8 +43,12 @@ export const appRoutes: RouteObject[] = [
       },
       { path: RouteNames.Rooms, element: <Rooms /> },
       { path: RouteNames.Room, element: <Room /> },
-      { path: RouteNames.ArchivedRoom, element: <Room /> },
+
       { path: RouteNames.JoinRoom, element: <JoinRoom /> },
+
+      { path: RouteNames.ArchivedRooms, element: <ArchivedRooms /> },
+      { path: RouteNames.ArchivedRoom, element: <Room /> },
+
     ],
   },
   {

@@ -33,7 +33,7 @@ export const Rooms = () => {
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 flex items-center justify-center gap-3 animate-fade-in-down">
           <Sparkles className="text-name animate-bounce" size={32} />
           Welcome{' '}
-          <span className="text-name capitalize">{user?.firstname}!</span>
+          <span className="text-name capitalize">{user?.firstName}!</span>
         </h1>
         <p className="text-md md:text-lg text-muted-foreground leading-relaxed animate-fade-in">
           Dive into collaborative rooms where creativity meets action. Create
@@ -54,7 +54,7 @@ export const Rooms = () => {
         </div>
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 w-full px-4">
           {hasRooms ? (
-            rooms?.data.map((roomData) => (
+            rooms.data?.map((roomData) => (
               <div
                 key={roomData.room.uuid}
                 className="transform hover:scale-105 transition-transform duration-300 animate-fade-in-up"
