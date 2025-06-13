@@ -16,8 +16,8 @@ import { getSocket } from '@/helpers/socket';
 export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
-  const socket = useMemo(() => getSocket(), []);
   const roomId = useParams<{ roomId: string }>();
+  const socket = useMemo(() => getSocket(), []);
 
   useEffect(() => {
     if (!roomId) return;

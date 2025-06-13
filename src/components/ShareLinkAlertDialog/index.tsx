@@ -21,10 +21,10 @@ import { queryKeys } from '@/constants/queryKeys';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ShareLinkAlertDialog = () => {
+  const [code, setCode] = useState('');
   const { shareLinkRef } = useTourRefsContext();
   const queryClient = useQueryClient();
   const { roomId } = useParams<{ roomId: string }>();
-  const [data, setData] = useState('');
 
   const shareLinkMutation = useMutation({
     mutationFn: (roomId: string) => getInviteCodeForRoom(roomId),
@@ -32,18 +32,20 @@ export const ShareLinkAlertDialog = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });
-
-      setData(data.data.inviteCode);
-
-      toast.success('LINK');
+      setCode(data.data.inviteCode);
     },
   });
 
   const handleShareLinkClick = () => {
     shareLinkMutation.mutateAsync(roomId || '');
   };
+  const handleCopyLink = () => {
+    if (!code) return;
+    const link = `http://localhost:8000/rooms/join/${code}`;
+    navigator.clipboard.writeText(link);
+    toast.success('Link copied to clipboard!');
+  };
 
-  const handleCopyLink = () => {};
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -57,41 +59,44 @@ export const ShareLinkAlertDialog = () => {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md space-y-2">
-        <DialogHeader>
-          <DialogTitle className="text-base">Share link</DialogTitle>
-          <DialogDescription>
-            Anyone who has this link will be able to view this.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex items-center space-x-2 sm:space-x-0">
-          <div className="grid flex-1 gap-2 text-foreground">
-            <Input
-              name="link"
-              id="link"
-              defaultValue={`http://192.168.0.163:8000/rooms/join/${data}`}
-              readOnly
-            />
-          </div>
-          <Button
-            type="submit"
-            size="sm"
-            className="px-3 bg-card-revert border hover:bg-foreground transform hover:scale-110 transition-transform duration-200"
-          >
-            <span className="sr-only" onClick={handleCopyLink}>
-              Copy
-            </span>
-            <Copy className="text-card" />
-          </Button>
-        </div>
-        <DialogFooter className="sm:justify-start ">
-          <DialogClose asChild>
-            <Button type="button" className="w-[100px]">
-              Close
+      {shareLinkMutation.isPending ? (
+        'loading'
+      ) : (
+        <DialogContent className="sm:max-w-md space-y-2">
+          <DialogHeader>
+            <DialogTitle className="text-base">Share link</DialogTitle>
+            <DialogDescription>
+              Anyone who has this link will be able to view this.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2 sm:space-x-0">
+            <div className="grid flex-1 gap-2 text-white">
+              <Input
+                name="link"
+                id="link"
+                defaultValue={`http://localhost:8000/rooms/join/${code}`}
+                readOnly
+              />
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              className="px-3 bg-card-revert border hover:bg-foreground transform hover:scale-110 transition-transform duration-200"
+              onClick={handleCopyLink}
+            >
+              <span className="sr-only">Copy</span>
+              <Copy className="text-card" />
             </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
+          </div>
+          <DialogFooter className="sm:justify-start ">
+            <DialogClose asChild>
+              <Button type="button" className="w-[100px]">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      )}
     </Dialog>
   );
 };

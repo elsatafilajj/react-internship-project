@@ -8,4 +8,7 @@ export enum RouteNames {
   VerifyEmail = '/verify-email',
   Rooms = '/rooms',
   Room = 'rooms/:roomId',
+  ArchivedRooms = 'rooms/archived',
+  ArchivedRoom = 'rooms/archived/:roomId',
+  JoinRoom = 'rooms/join/:code',
 }
