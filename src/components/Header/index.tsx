@@ -1,31 +1,36 @@
-import { PanelLeft, User } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { PanelLeft, UserCircle2 } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
-import { TourLauncher } from '@/components/TourLauncher';
 import { Logo } from '@/components/shared/Logo';
-import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
 }
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
-  const participants = [{ name: 'Ben' }, { name: 'Alice' }, { name: 'Elara' }];
   const { roomId } = useParams<{ roomId: string }>();
 
   const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
 
-  const isUserInRoom = Boolean(roomId);
+  const hasEnteredRoom = useHasEnteredRoom();
 
-  const { data } = useGetRoomByIdQuery(roomId || '');
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
+
+  const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b bg-secondary shadow-sm sm:flex-nowrap">
+    <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-1.5 border-b bg-secondary shadow-sm sm:flex-nowrap">
       <div className="flex items-center gap-0.5 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <div ref={toggleSidebarIconRef}>
@@ -43,54 +48,37 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </Link>
       </div>
 
-      {isUserInRoom && (
-        <div className="hidden sm:flex flex-col items-center text-center ">
-          <span className="text-xs text-muted-foreground tracking-wide mb-1">
+      {hasEnteredRoom && (
+        <div className="hidden md:flex items-center text-center gap-3">
+          <div className="text-sm text-foreground font-medium tracking-wide p-3 py-1 rounded-4xl bg-primary">
             Active Room
-          </span>
-
-          <div className="flex items-center gap-0 sm:gap-2 flex-wrap justify-center sm:justify-start">
-            <span className="text-base font-semibold text-foreground">
-              {data?.data.title || 'Untitled'}
-            </span>
-
-            <div className="flex -space-x-2">
-              {participants.map((user, i) => (
-                <div
-                  key={i}
-                  className="h-8 w-8 rounded-full bg-secondary text-sm font-medium border-2 border-foreground flex items-center justify-center shadow"
-                >
-                  <p className="text-accent-foreground capitalize">
-                    {user.name[0]}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
+
+          <span className="text-base font-semibold text-foreground">
+            {room?.data?.title}
+          </span>
         </div>
       )}
 
-      <div className="flex items-center gap-0.5 sm:gap-3">
-        {isUserInRoom && <RoomActionsDropDown />}
+      <div className="flex items-center gap-3 sm:gap-4">
+        {hasEnteredRoom && <RoomActionsDropDown />}
 
-        {isUserInRoom && <ShareLinkAlertDialog />}
+        {hasEnteredRoom && <ShareLinkAlertDialog />}
 
-        <ThemeChangeToggle />
-
-        <div ref={profileRef}>
-          <Link
-            to="/profile"
-            id="profile"
-            className="relative group flex items-center gap-1 rounded-4xl p-1  border-2 border-foreground text-foreground text-sm font-medium shadow cursor-pointer"
-          >
-            <User />
-            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-transform bg-primary text-black text-xs px-2 py-1 rounded shadow">
-              Profile
-            </span>
-          </Link>
-        </div>
-
-        <TourLauncher onToggleSidebar={onToggleSidebar} />
+        <Tooltip>
+          <TooltipTrigger className="mr-2.5">
+            <div ref={profileRef}>
+              <UserCircle2
+                strokeWidth={1.5}
+                size={40}
+                onClick={() => navigate('/profile')}
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent sideOffset={-5} side="bottom">
+            Profile
+          </TooltipContent>
+        </Tooltip>
       </div>
     </header>
   );
