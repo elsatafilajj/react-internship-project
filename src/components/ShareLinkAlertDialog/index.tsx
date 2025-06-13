@@ -1,5 +1,10 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Copy, Share2 } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
 
+import { getInviteCodeForRoom } from '@/api/Room/room.client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,21 +17,46 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { queryKeys } from '@/constants/queryKeys';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ShareLinkAlertDialog = () => {
   const { shareLinkRef } = useTourRefsContext();
+  const queryClient = useQueryClient();
+  const { roomId } = useParams<{ roomId: string }>();
+  const [data, setData] = useState('');
 
+  const shareLinkMutation = useMutation({
+    mutationFn: (roomId: string) => getInviteCodeForRoom(roomId),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleRoom(roomId || ''),
+      });
+
+      setData(data.data.inviteCode);
+
+      toast.success('LINK');
+    },
+  });
+
+  const handleShareLinkClick = () => {
+    shareLinkMutation.mutateAsync(roomId || '');
+  };
+
+  const handleCopyLink = () => {};
   return (
     <Dialog>
       <DialogTrigger asChild>
         <div ref={shareLinkRef}>
           <Button className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]">
             <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
-            <span className="hidden md:block">Share</span>
+            <span className="hidden md:block" onClick={handleShareLinkClick}>
+              Share
+            </span>
           </Button>
         </div>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-md space-y-2">
         <DialogHeader>
           <DialogTitle className="text-base">Share link</DialogTitle>
@@ -35,11 +65,11 @@ export const ShareLinkAlertDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2 sm:space-x-0">
-          <div className="grid flex-1 gap-2">
+          <div className="grid flex-1 gap-2 text-foreground">
             <Input
               name="link"
               id="link"
-              defaultValue="https://ui.shadcn.com/docs/installation"
+              defaultValue={`http://192.168.0.163:8000/rooms/join/${data}`}
               readOnly
             />
           </div>
@@ -48,7 +78,9 @@ export const ShareLinkAlertDialog = () => {
             size="sm"
             className="px-3 bg-card-revert border hover:bg-foreground transform hover:scale-110 transition-transform duration-200"
           >
-            <span className="sr-only">Copy</span>
+            <span className="sr-only" onClick={handleCopyLink}>
+              Copy
+            </span>
             <Copy className="text-card" />
           </Button>
         </div>
