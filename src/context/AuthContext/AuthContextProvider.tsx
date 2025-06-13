@@ -72,7 +72,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     if (!user) return;
 
     const now = new Date();
-    const createdUserDate = new Date(user.createdat);
+    const createdUserDate = new Date(user.createdAt);
 
     const diffInMilliseconds = now.getTime() - createdUserDate.getTime();
     const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));

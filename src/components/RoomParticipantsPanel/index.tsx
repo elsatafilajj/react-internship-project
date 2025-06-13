@@ -19,6 +19,8 @@ export const RoomParticipantsPanel = () => {
     roomId || '',
   );
 
+  console.log(participants);
+
   const removeUserFromRoomMutation = useMutation({
     mutationFn: (participantId: string) =>
       removeUserFromRoom(roomId || '', participantId),
@@ -47,7 +49,7 @@ export const RoomParticipantsPanel = () => {
             <div className="flex gap-5 items-center">
               <div>
                 {participant.role === 'host' && (
-                  <Crown className="absolute top-[3.5rem] left-7 w-3.5 -rotate-40 hover:animate-caret-blink " />
+                  <Crown className="absolute top-16 left-7 w-3.5 -rotate-40 hover:animate-caret-blink " />
                 )}
                 <CircleUserRound
                   className="relative w-8"

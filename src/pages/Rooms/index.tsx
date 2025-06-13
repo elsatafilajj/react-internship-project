@@ -33,7 +33,7 @@ export const Rooms = () => {
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 flex items-center justify-center gap-3 animate-fade-in-down">
           <Sparkles className="text-name animate-bounce" size={32} />
           Welcome{' '}
-          <span className="text-name capitalize">{user?.firstname}!</span>
+          <span className="text-name capitalize">{user?.firstName}!</span>
         </h1>
         <p className="text-md md:text-lg text-muted-foreground leading-relaxed animate-fade-in">
           Dive into collaborative rooms where creativity meets action. Create

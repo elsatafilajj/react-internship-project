@@ -134,9 +134,9 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
           <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
             <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
               <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                {user?.firstname[0].toUpperCase()}
+                {user?.firstName[0].toUpperCase()}
               </div>
-              {user?.firstname} {user?.lastname}
+              {user?.firstName} {user?.lastName}
             </div>
             {editingComment ? (
               <form
@@ -207,11 +207,11 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                     <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                      {comment.user.firstname[0].toUpperCase()}
+                      {comment.user.firstName[0].toUpperCase()}
                     </div>
                     <div className="flex flex-col">
                       <span>
-                        {comment.user.firstname} {comment.user.lastname}
+                        {comment.user.firstName} {comment.user.lastName}
                       </span>
                       <span className="text-[10px] text-muted-foreground">
                         {getFormattedDate(new Date(comment.createdAt), {
@@ -260,11 +260,11 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                           <div className="rounded-full bg-primary w-7 h-7 text-center text-black p-1">
-                            {reply.user.firstname[0].toUpperCase()}
+                            {reply.user.firstName[0].toUpperCase()}
                           </div>
                           <div className="flex flex-col">
                             <span>
-                              {reply.user.firstname} {reply.user.lastname}
+                              {reply.user.firstName} {reply.user.lastName}
                             </span>
                             <span className="text-[10px] text-muted-foreground">
                               {getFormattedDate(new Date(reply.createdAt), {
