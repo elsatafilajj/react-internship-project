@@ -1,15 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Copy, Share2 } from 'lucide-react';
-
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 import { getInviteCodeForRoom } from '@/api/Room/room.client';
-
-
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -31,6 +27,7 @@ export const ShareLinkAlertDialog = () => {
 
   const queryClient = useQueryClient();
   const { roomId } = useParams<{ roomId: string }>();
+  const { data } = useGetRoomByIdQuery(roomId || '');
 
   const shareLinkMutation = useMutation({
     mutationFn: (roomId: string) => getInviteCodeForRoom(roomId),
