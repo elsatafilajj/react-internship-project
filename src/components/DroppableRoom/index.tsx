@@ -26,6 +26,7 @@ export const DroppableRoom = ({
   const { roomId } = useParams<{ roomId: string }>();
 
   const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
+
   const socket = useMemo(() => getSocket(), []);
 
   useEffect(() => {

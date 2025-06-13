@@ -54,7 +54,7 @@ export const Rooms = () => {
         </div>
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 w-full px-4">
           {hasRooms ? (
-            rooms?.data.map((roomData) => (
+            rooms.data?.map((roomData) => (
               <div
                 key={roomData.room.uuid}
                 className="transform hover:scale-105 transition-transform duration-300 animate-fade-in-up"

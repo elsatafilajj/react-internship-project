@@ -1,7 +1,10 @@
+import clsx from 'clsx';
 import { ZoomOutIcon, ZoomInIcon, FilePlus2 } from 'lucide-react';
 import { useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import { useControls } from 'react-zoom-pan-pinch';
 
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -23,6 +26,10 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
   const stickyNoteRef = useRef<HTMLDivElement>(null);
 
   const { noteDragRef } = useTourRefsContext();
+
+  const { roomId } = useParams<{ roomId: string }>();
+
+  const { data } = useGetRoomByIdQuery(roomId || '');
 
   const [, drag] = useNoteDrag({
     noteRef: stickyNoteRef,
@@ -62,7 +69,12 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                 <div ref={noteDragRef}>
                   <Button
                     size="icon"
-                    className="transition hover:text-foreground bg-tool-palette text-foreground"
+                    disabled={!data?.data.isActive}
+                    className={clsx(
+                      'transition hover:text-foreground bg-tool-palette text-foreground',
+                      data?.data.isActive === false &&
+                        'disabled:cursor-not-allowed opacity-50',
+                    )}
                   >
                     <FilePlus2 />
                   </Button>
@@ -78,8 +90,13 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               <TooltipTrigger>
                 <Button
                   size="icon"
+                  disabled={!data?.data.isActive}
                   onClick={() => tool.function()}
-                  className="transition hover:text-foreground bg-tool-palette text-foreground"
+                  className={clsx(
+                    'transition hover:text-foreground bg-tool-palette text-foreground',
+                    data?.data.isActive === false &&
+                      'disabled:cursor-not-allowed opacity-50',
+                  )}
                 >
                   <tool.icon />
                 </Button>
