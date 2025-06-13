@@ -7,11 +7,20 @@ export interface LoginResponse {
 export interface User {
   uuid: string;
   createdAt: string;
+  deletedAt: string;
   updatedAt: string;
-  deletedAt: string | null;
   email: string;
   firstName: string;
   lastName: string;
+  role?: UserRole;
+}
+
+export interface UserInRoom {
+  uuid: string;
+  createdat: string;
+  email: string;
+  firstname: string;
+  lastname: string;
   role?: UserRole;
 }
 
@@ -41,6 +50,16 @@ export interface LoginInput {
 export interface SetPasswordInput {
   password: string;
   passwordConfirm: string;
+}
+
+export interface SetVerifyEmailCode {
+  code: number;
+}
+
+export interface SetVerifyEmailResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface SetPasswordResponse {

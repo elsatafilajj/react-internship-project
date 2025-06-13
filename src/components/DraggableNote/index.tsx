@@ -1,9 +1,11 @@
-import { RefObject, useRef } from 'react';
+import {useEffect, RefObject, useRef } from 'react';
+
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface NoteProps extends Partial<NoteItem> {
@@ -19,6 +21,11 @@ export const DraggableNote = ({
 }: NoteProps) => {
   const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
+  const { registerNoteRef } = useNoteScrollContext();
+
+  useEffect(() => {
+    registerNoteRef(note.uuid || '', noteRef);
+  }, [note.uuid, registerNoteRef]);
 
   const [{ isDragging }, drag] = useNoteDrag({
     uuid,

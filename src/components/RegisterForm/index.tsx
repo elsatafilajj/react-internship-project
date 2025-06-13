@@ -18,9 +18,9 @@ export const RegisterForm = () => {
 
   const registerMutation = useMutation({
     mutationFn: register,
-    onSuccess: () => {
-      toast.success('Registered successfully!');
-      navigate(RouteNames.Login);
+    onSuccess: (_, variables) => {
+      toast.success('Registered successfully!')
+      navigate(`${RouteNames.VerifyEmail}?email=${variables.email}`);
     },
   });
 
