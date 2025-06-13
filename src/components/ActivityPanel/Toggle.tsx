@@ -14,7 +14,7 @@ export const ActivityPanelToggle = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="group fixed top-[100px] right-4 z-50 bg-card border border-gray-300 text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200"
+          className="group fixed top-[70px] right-5 z-50 bg-card border border-gray-300 text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200"
         >
           <div className="p-2" ref={activityRef}>
             <History className="h-5 w-5" />

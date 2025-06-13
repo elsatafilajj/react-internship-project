@@ -69,7 +69,7 @@ export const RoomActionsDropDown = () => {
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            'p-2 rounded',
+            'rounded',
             data?.data.isActive === false
               ? 'cursor-not-allowed opacity-50 pointer-events-none'
               : 'cursor-pointer hover:bg-muted',

@@ -31,7 +31,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-4 py-1.5 border-b bg-secondary shadow-sm sm:flex-nowrap">
+    <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-2 py-1.5 border-b bg-secondary shadow-sm sm:flex-nowrap">
       <div className="flex items-center gap-0.5 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <div ref={toggleSidebarIconRef}>
@@ -51,7 +51,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
       {hasEnteredRoom && (
         <div className="hidden md:flex items-center text-center gap-3">
-          <span className="text-xs text-black tracking-wide mb-1">
+          <span className="text-xs text-black tracking-wide">
             <p
               className={cn(
                 'border px-2 py-1 m-1 rounded-2xl text-foreground',
@@ -65,23 +65,19 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           <div className="flex items-center gap-3">
             <div className="sm:flex hidden items-center gap-0 sm:gap-2 flex-wrap justify-center">
               <span className="text-base font-semibold text-foreground">
-                {(room && room.data && room?.data.title) || 'Untitled'}
+                {room?.data?.title}
               </span>
             </div>
-
-            <DesktopParticipantsToggle />
           </div>
-
-          <span className="text-base font-semibold text-foreground">
-            {room?.data?.title}
-          </span>
         </div>
       )}
 
-      <div className="flex items-center gap-3 sm:gap-4">
-        {hasEnteredRoom && <RoomActionsDropDown />}
+      <div className="flex items-center gap-1 sm:gap-2">
+        <DesktopParticipantsToggle />
 
         {hasEnteredRoom && <ShareLinkAlertDialog />}
+
+        {hasEnteredRoom && <RoomActionsDropDown />}
 
         <Tooltip>
           <TooltipTrigger className="mr-2.5">
