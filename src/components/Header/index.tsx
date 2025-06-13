@@ -2,6 +2,7 @@ import { PanelLeft, UserCircle2 } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
@@ -12,6 +13,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
+
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
@@ -28,14 +31,21 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
   const { data: room } = useGetRoomByIdQuery(roomId || '');
 
+
   const navigate = useNavigate();
+
+  const { user } = useAuthContext();
+  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
+
+  const roomHost = users?.data.find((user) => user.role === 'host');
+  const isUserHost = roomHost?.uuid === user?.uuid;
 
   return (
     <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-2 py-1.5 border-b bg-secondary shadow-sm sm:flex-nowrap">
       <div className="flex items-center gap-0.5 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <div ref={toggleSidebarIconRef}>
-            <PanelLeft className="h-5 w-5 " />
+            <PanelLeft className="h-5 w-5" />
           </div>
         </Button>
 
@@ -77,7 +87,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
         {hasEnteredRoom && <ShareLinkAlertDialog />}
 
-        {hasEnteredRoom && <RoomActionsDropDown />}
+        {hasEnteredRoom && isUserHost && <RoomActionsDropDown />}
 
         <Tooltip>
           <TooltipTrigger className="mr-2.5">
