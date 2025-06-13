@@ -137,10 +137,15 @@
   }
 
   .custom-intro-tooltip {
-    background-color: var(--card) !important;
-    color: var(--accent-foreground);
-    opacity: 0.96 !important;
-    padding: 12px;
+    background-image: url('../assets/images/background-4.jpg') !important;
+    width: 30rem;
+    background-blend-mode: lighten !important;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    font-size: large;
+    background-position: center;
+    color: black;
+    box-shadow: 3px 3px 1px var(--muted-foreground) !important;
+    padding: 0.5rem;
     text-align: center;
   }
 }

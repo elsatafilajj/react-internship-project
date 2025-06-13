@@ -1,12 +1,20 @@
 import { useMutation } from '@tanstack/react-query';
-import { Home, FolderArchive, LogOut, PanelLeftClose } from 'lucide-react';
+import {
+  Home,
+  FolderArchive,
+  LogOut,
+  PanelLeftClose,
+  FolderInput,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link, useParams } from 'react-router-dom';
 
 import { logout as apiLogout } from '@/api/User/user.client';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
+import { TourLauncher } from '@/components/TourLauncher';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
+import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
@@ -15,9 +23,10 @@ import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onToggleSidebar: () => void;
 }
 
-export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
   const { logout } = useAuthContext();
 
   const { roomId } = useParams<{ roomId: string }>();
@@ -89,7 +98,24 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             >
               <Link to={RouteNames.ArchivedRooms}>
                 <FolderArchive className="mr-2 h-4 w-4" />
-                Archived
+                Archived Rooms
+              </Link>
+            </Button>
+          </div>
+
+          <ThemeChangeToggle />
+
+          <TourLauncher onToggleSidebar={onToggleSidebar} />
+
+          <div ref={archiveRef}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium"
+              asChild
+            >
+              <Link to="/archived">
+                <FolderInput className="mr-2 h-4 w-4" />
+                Export data
               </Link>
             </Button>
           </div>

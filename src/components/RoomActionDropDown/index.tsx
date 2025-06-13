@@ -69,7 +69,7 @@ export const RoomActionsDropDown = () => {
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            'p-2 rounded',
+            'rounded',
             data?.data.isActive === false
               ? 'cursor-not-allowed opacity-50 pointer-events-none'
               : 'cursor-pointer hover:bg-muted',
@@ -78,15 +78,17 @@ export const RoomActionsDropDown = () => {
           <EllipsisVertical />
         </div>
       </DropdownMenuTrigger>
-
-      <DropdownMenuContent>
+      <DropdownMenuContent
+        sideOffset={10}
+        className="flex flex-col gap-3 p-4 w-42"
+      >
         <CreateEditRoomFormDialog />
         <DropdownMenuItem onClick={handleArchiveRoom}>Archive</DropdownMenuItem>
         <ConfirmActionDialog
           triggerButtonName="Delete"
           title="You are about to delete this room."
           message="This action cannot be undone. This will permanently delete your
-            room."
+          room."
           onConfirm={handleDelete}
         />
       </DropdownMenuContent>
