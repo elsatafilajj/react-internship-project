@@ -43,7 +43,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     },
     onSubmit: async (values, formikHelpers) => {
       try {
-        socket.emit(socketEvents.AddComment, {
+        socket.emit(socketEvents.CreateComment, {
           roomId: roomId,
           payload: values,
         });
@@ -67,7 +67,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
       if (!editingComment) return;
 
       try {
-        socket.emit(socketEvents.EditComment, {
+        socket.emit(socketEvents.UpdateComment, {
           roomId: roomId,
           commentId: editingComment.uuid,
           payload: values,
@@ -90,7 +90,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   }, [data, isFetched]);
 
   useEffect(() => {
-    socket.on(socketEvents.NewComment, (newComment) => {
+    socket.on(socketEvents.CreatedComment, (newComment) => {
       console.log('Received new comment:', newComment);
       if (noteId === newComment.note.uuid) {
         setComments((prev) => [...(prev || []), newComment]);
@@ -116,7 +116,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
     );
 
     return () => {
-      socket.off(socketEvents.NewComment);
+      socket.off(socketEvents.CreatedComment);
       socket.off(socketEvents.UpdatedComment);
       socket.off(socketEvents.DeletedComment);
     };
