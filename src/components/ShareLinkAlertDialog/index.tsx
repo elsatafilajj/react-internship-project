@@ -18,6 +18,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Config } from '@/constants/config';
 import { queryKeys } from '@/constants/queryKeys';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
@@ -44,7 +45,7 @@ export const ShareLinkAlertDialog = () => {
   };
   const handleCopyLink = () => {
     if (!code) return;
-    const link = `http://localhost:8000/rooms/join/${code}`;
+    const link = `${Config.joinRoomUrl}/${code}`;
     navigator.clipboard.writeText(link);
     toast.success('Link copied to clipboard!');
   };
@@ -80,7 +81,7 @@ export const ShareLinkAlertDialog = () => {
               <Input
                 name="link"
                 id="link"
-                defaultValue={`http://localhost:8000/rooms/join/${code}`}
+                defaultValue={`${Config.joinRoomUrl}/${code}`}
                 readOnly
               />
             </div>
