@@ -12,7 +12,8 @@ enum Actions {
   UPDATE = 'update',
   DELETE = 'delete',
   VOTE = 'vote',
-  REMOVEVOTE = 'removeVote',
+  REMOVE_VOTE = 'removeVote',
+  ARCHIVE = 'archive',
 }
 
 enum Listeners {
@@ -23,6 +24,7 @@ enum Listeners {
   DELETED = 'deleted',
   VOTED = 'voted',
   REMOVED = 'removed',
+  ARCHIVED = 'archived',
 }
 
 export enum socketEvents {
@@ -53,8 +55,13 @@ export enum socketEvents {
   AddVote = `${Namespaces.NOTES}/${Actions.VOTE}`,
   AddedVote = `${Namespaces.NOTES}/${Listeners.VOTED}`,
 
-  RemoveVote = `${Namespaces.NOTES}/${Actions.REMOVEVOTE}`,
+  RemoveVote = `${Namespaces.NOTES}/${Actions.REMOVE_VOTE}`,
   RemovedVote = `${Namespaces.NOTES}/${Listeners.REMOVED}`,
 
   NewActivity = `${Namespaces.ACTIVITIES}`,
+
+  ArchiveRoom = `${Namespaces.ROOMS}/${Actions.ARCHIVE}`,
+  ArchivedRoom = `${Namespaces.ROOMS}/${Listeners.ARCHIVED}`,
+
+  UserRemove = `${Namespaces.ROOMS}/${Listeners.REMOVED}`,
 }

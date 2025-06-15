@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { EllipsisVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { deleteRoom, updateRoom } from '@/api/Room/room.client';
+import { deleteRoom } from '@/api/Room/room.client';
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
@@ -13,30 +13,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { queryKeys } from '@/constants/queryKeys';
 import { RouteNames } from '@/constants/routeNames';
+import { socketEvents } from '@/constants/socketEvents';
+import { getSocket } from '@/helpers/socket';
 import { cn } from '@/lib/utils';
 
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const socket = getSocket();
 
   const { data } = useGetRoomByIdQuery(roomId || '');
-
-  const archiveMutation = useMutation({
-    mutationFn: (roomId: string) => updateRoom(roomId, { isActive: false }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleRoom(roomId || ''),
-      });
-      toast.success('Room archived successfully.');
-      navigate(RouteNames.ArchivedRooms);
-    },
-    onError: () => {
-      toast.error('Only host can archive this room!');
-    },
-  });
 
   const deleteMutation = useMutation({
     mutationFn: (roomId: string) => deleteRoom(roomId),
@@ -50,11 +37,11 @@ export const RoomActionsDropDown = () => {
   });
 
   const handleArchiveRoom = async () => {
-    try {
-      await archiveMutation.mutateAsync(roomId || '');
-    } catch (error) {
-      console.error('Archived failed', error);
-    }
+    socket.emit(socketEvents.ArchiveRoom, { roomId });
+
+    setTimeout(() => {
+      navigate('/rooms/archived');
+    }, 300);
   };
   const handleDelete = async () => {
     try {
