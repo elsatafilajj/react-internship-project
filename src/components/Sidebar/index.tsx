@@ -4,7 +4,6 @@ import {
   FolderArchive,
   LogOut,
   PanelLeftClose,
-  FolderInput,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link, useParams } from 'react-router-dom';
