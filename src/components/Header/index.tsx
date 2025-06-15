@@ -35,7 +35,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { user } = useAuthContext();
   const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
 
-  const roomHost = users?.data.find((user) => user.role === 'host');
+  const roomHost = users?.data?.find((user) => user.role === 'host');
   const isUserHost = roomHost?.uuid === user?.uuid;
 
   return (

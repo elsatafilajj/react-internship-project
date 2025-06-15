@@ -59,7 +59,7 @@ export const CreateEditRoomFormDialog = () => {
   const formik = useForm({
     schema: CreateRoomSchema,
     initialValues: {
-      title: isEditMode ? room?.data.title || '' : '',
+      title: isEditMode ? room?.data?.title || '' : '',
     },
     onSubmit: async (values, formikHelpers) => {
       try {
@@ -84,21 +84,24 @@ export const CreateEditRoomFormDialog = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <div ref={createEditRoomRef}>
         <DialogTrigger className="w-full" asChild>
           {isEditMode ? (
+          <div ref={createEditRoomRef}>
             <Button size="sm" className="justify-center w-full gap-3 flex">
               <PenLineIcon className="h-4 w-4" />
               Edit
             </Button>
+          </div>
           ) : (
+            <div ref={createEditRoomRef}>
             <Button
               className="justify-center w-full"
               onClick={() => setOpen(true)}
-            >
+              >
               <PackagePlus className="h-4 w-4" />
               New Room
             </Button>
+            </div>
           )}
         </DialogTrigger>
 
@@ -140,7 +143,6 @@ export const CreateEditRoomFormDialog = () => {
             </form>
           </DialogHeader>
         </DialogContent>
-      </div>
     </Dialog>
   );
 };

@@ -19,8 +19,9 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   const tourSteps: TourStep[] = useTourSteps();
 
   const startTour = () => {
-    setTimeout(() => {
       const intro = introJs();
+
+      setTimeout(() => {
 
       intro.setOptions({
         steps: tourSteps,
@@ -34,17 +35,20 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
       intro.onchange(() => {
         const currentStep = intro._currentStep;
 
-        if (currentStep === 0 || currentStep === 2 || currentStep === 9) {
+        if (!isUserNewlyCreated && currentStep === 0) {
+            onToggleSidebar();
+        }
+        
+        if (currentStep === 0) {
+            onToggleSidebar();
+        }
+
+        if (currentStep === 2 || currentStep === 9) {
           onToggleSidebar();
         }
-
-        if (currentStep === 2) {
-          intro._hintCloseCallback = () => {};
-        }
       });
-
       intro.start();
-    }, 1000);
+    }, 700);
   };
 
   useEffect(() => {

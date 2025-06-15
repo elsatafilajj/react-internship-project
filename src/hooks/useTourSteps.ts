@@ -1,5 +1,9 @@
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
+import { useParams } from 'react-router-dom';
 
 export interface TourStep {
   title?: string;
@@ -10,6 +14,18 @@ export interface TourStep {
 export const useTourSteps = () => {
   const tourRefs = useTourRefsContext();
   const hasEnteredRoom = useHasEnteredRoom();
+
+  const { roomId } = useParams<{ roomId: string }>();
+  const { data } = useGetRoomByIdQuery(roomId || '')
+  const isRoomActive = data?.data?.isActive;
+
+
+  const { user } = useAuthContext();
+  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
+  
+  const roomHost = users?.data.find((user) => user.role === 'host');
+  const isHost = roomHost?.uuid === user?.uuid;
+
   return [
     {
       title: 'Welcome to your Stuck Tour!',
@@ -21,10 +37,10 @@ export const useTourSteps = () => {
       intro: 'Here you can find more and navigate through the application!',
     },
     { intro: 'Then in the sidebar' },
-     {
+    {
       element: tourRefs.createEditRoomRef.current,
       intro: hasEnteredRoom
-        ? 'Edit your room’s title here to keep things organized and clear.'
+        ? isHost ? 'Edit your room’s title here to keep things organized and clear.' : 'Only the host can edit the room title. If you need to change it, ask the host to do so.'
         : 'You can create a brand new room. Just click here!',
     },
     {
@@ -50,45 +66,51 @@ export const useTourSteps = () => {
           {
             element: tourRefs.exportDataRef.current,
             intro:
-              'Need to save your work? Export your notes in various formats like JSON, CSV, XML, or PDF.',
+              `Need to ${isRoomActive ? 'save' : 'review'} your work? Export your notes in various formats like JSON, CSV, XML, or PDF.`,
           },
           {
             element: tourRefs.participantsRef.current,
-            intro:
-              'See who’s in your room and manage participants easily. You can also kick them out if needed.',
+            intro: isRoomActive
+              ? isHost ? 'See and manage all participants here — you can even remove someone if needed.' : 'Here’s the list of everyone in this room. If you want someone to be removed from the room ask the host to do so!'
+              : 'This is the list of everyone who participated. Since this room is locked, no new members can join or leave.',
           },
           {
             element: tourRefs.shareLinkRef.current,
-            intro:
-              'Want to collaborate? Share this link to invite others into your room.',
-          },
-          {
-            element: tourRefs.roomActionsRef.current,
-            intro:
-              'Here you can archive or delete your room, or create a new one. Just click the three dots icon.',
-          },
-        ]
+            intro: isRoomActive
+              ? 'Invite others to collaborate by sharing this room’s link.'
+              : 'This room is no longer active, so sharing is disabled. But you can revisit what was built here anytime.',
+        },
+      ]
       : []),
-
-    {
-      element: tourRefs.profileRef.current,
-      intro: 'Update your personal info and preferences anytime from here.',
-    },
- 
-    ...(hasEnteredRoom
+      ...(hasEnteredRoom && isHost ? [
+        {
+          element: tourRefs.roomActionsRef.current,
+          intro: 'As the host, you can manage room settings, archive, or delete it.',
+        },
+      ] : []
+      ),
+      {
+        element: tourRefs.profileRef.current,
+        intro: 'Update your personal info and preferences anytime from here.',
+      },
+      ...(hasEnteredRoom
       ? [
           {
             element: tourRefs.activityRef.current,
-            intro:
-              'Stay in the loop with real-time updates on everything happening in your room.',
+            intro: isRoomActive
+            ? 'Stay updated with live activities and changes happening in this room.'
+            : 'This room is locked — no more activities will occur, but you can review all past actions here.',
           },
-          {
+          {  
             element: tourRefs.noteDragRef.current,
-            intro: 'Drag this icon anywhere on the board to create a new note!',
+            intro: isRoomActive
+              ? 'Drag this icon to create a new note and keep the ideas flowing!'
+              : 'Notes can’t be created in a locked room — but you can still browse and reflect on what was discussed.',
           },
           {
-            intro:
-              'You can move notes around, change their colors, vote on the best ones, and most importantly — share your ideas and keep the creativity flowing. Have fun!',
+          intro: isRoomActive
+            ? 'Feel free to move notes, change colors, vote on ideas, and share your thoughts.'
+            : 'The room is in view-only mode now — all creativity that happened here is saved for your reference.',
           },
         ]
       : []),

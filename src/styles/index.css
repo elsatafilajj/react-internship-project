@@ -164,7 +164,7 @@
     background-size: 10px 10px;
     background-repeat: repeat;
   }
-  .custom-intro-tooltip {
+  /* .custom-intro-tooltip {
     background-image: url('../assets/images/background-4.jpg') !important;
     width: 30rem;
     background-blend-mode: lighten !important;
@@ -175,8 +175,8 @@
     box-shadow: 3px 3px 1px var(--muted-foreground) !important;
     padding: 0.5rem;
     text-align: center;
-  }
-  /* .custom-intro-tooltip {
+  } */
+  .custom-intro-tooltip {
     position: relative;
     background: radial-gradient(
       circle at top left,
@@ -191,12 +191,12 @@
       0 4px 30px rgba(0, 0, 0, 0.2),
       inset 0 0 10px rgba(255, 255, 255, 0.1);
     width: 32rem;
-    padding: 1.5rem;
+    padding: 0.5rem;
     color: oklch(0.2 0.01 240);
     font-size: 1rem;
     text-align: center;
     animation: enterGlow 0.5s ease forwards;
     overflow: hidden;
     isolation: isolate;
-  } */
+  }
 }
