@@ -17,6 +17,17 @@ export interface Room {
   note: Note[];
 }
 
+export interface InviteRoomCodeRepsonse {
+  inviteCode: string;
+}
+
+export interface RoomJoinedResponse {
+  room: Room;
+  user: User;
+  role: string;
+  joined_at: string;
+}
+
 export interface Note {
   uuid: string;
   content: string;
