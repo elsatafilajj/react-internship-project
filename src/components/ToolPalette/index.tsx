@@ -69,7 +69,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                 <div ref={noteDragRef}>
                   <Button
                     size="icon"
-                    disabled={!data?.data.isActive}
+                    disabled={!data?.data?.isActive}
                     className={clsx(
                       'transition hover:text-foreground bg-tool-palette text-foreground',
                       data?.data.isActive === false &&

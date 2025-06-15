@@ -4,7 +4,6 @@ import {
   FolderArchive,
   LogOut,
   PanelLeftClose,
-  FolderInput,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
@@ -13,28 +12,12 @@ import { logout as apiLogout } from '@/api/User/user.client';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -45,6 +28,8 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout } = useAuthContext();
 
   const { myRoomsDashboardRef, archiveRef } = useTourRefsContext();
+
+  const hasEnteredRoom = useHasEnteredRoom()
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -111,50 +96,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </Button>
           </div>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                className="flex items-center gap-2 p-2 justify-start"
-                variant="ghost"
-              >
-                <FolderInput className="mr-2 h-4 w-4" />
-                Export data
-              </Button>
-            </DialogTrigger>
-            <form>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Choose your data file format</DialogTitle>
-                  <DialogDescription>
-                    Choose how you want to export your session data!
-                  </DialogDescription>
-                </DialogHeader>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="CSV" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>File Format</SelectLabel>
-                      <SelectItem value="csv">CSV</SelectItem>
-                      <SelectItem value="json">JSON</SelectItem>
-                      <SelectItem value="xml">XML</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline" size="sm">
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button type="submit" size="sm">
-                    Download
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </form>
-          </Dialog>
+          {hasEnteredRoom && <ExportDataFormDialog />}
+
+      
         </nav>
 
         <div className="mt-auto flex justify-between cursor-pointer">
