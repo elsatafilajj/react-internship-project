@@ -1,10 +1,11 @@
 import clsx from 'clsx';
-import { Circle, Star, X } from 'lucide-react';
+import { Circle, Crown, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 import { NoteItem } from '@/api/Note/note.types';
+import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
@@ -61,6 +62,7 @@ export const Note = ({ note }: NoteProps) => {
   const [noteContent, setNoteContent] = useState('');
   const { uuid, content, author } = note;
   const { selectedNoteId } = useNoteScrollContext();
+  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
 
   const { user } = useAuthContext();
   const isUserVoter = note.noteVotes?.find(
@@ -133,35 +135,54 @@ export const Note = ({ note }: NoteProps) => {
 
   if (!uuid) return null;
 
+  const notes = data?.data ?? [];
+
+  const maxVotes = Math.max(...notes.map((note) => note.totalVotes ?? 0));
+
+  const isWinner = (note.totalVotes ?? 0) === maxVotes && maxVotes > 0;
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <div
-          onClick={(e) => {
-            const tag = (e.target as HTMLElement).tagName.toLowerCase();
-            if (tag !== 'textarea') {
-              setIsOpen(true);
-            }
-          }}
-          className={clsx(
-            'w-2xs h-70 shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
-            noteColorClassMap[localNoteColor as keyof typeof noteColorClassMap],
-            selectedNoteId === uuid &&
-              'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
-          )}
-        >
-          <div className="flex flex-col justify-between h-full p-2 text-xs">
-            <textarea
-              value={noteContent}
-              onChange={handleNoteContentChange}
-              placeholder="Type in your idea..."
-              className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
-              aria-label="Note input"
-            />
-            <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
-              {author?.firstName || 'Unknown'}
-            </span>
+        <div className="flex flex-col items-center">
+          <div
+            onClick={(e) => {
+              const tag = (e.target as HTMLElement).tagName.toLowerCase();
+              if (tag !== 'textarea') {
+                setIsOpen(true);
+              }
+            }}
+            className={clsx(
+              'w-2xs h-70 relative shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
+              noteColorClassMap[
+                localNoteColor as keyof typeof noteColorClassMap
+              ],
+              selectedNoteId === uuid &&
+                'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
+              isWinner && 'ring-1 ring-yellow-400',
+            )}
+          >
+            <div className="flex flex-col justify-between relative h-full p-2 text-xs">
+              <textarea
+                value={noteContent}
+                onChange={handleNoteContentChange}
+                placeholder="Type in your idea..."
+                className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
+                aria-label="Note input"
+              />
+              <span className="text-muted-foreground brightness-50 -mt-10 ml-1 tracking-wide text-xs self-start">
+                {author?.firstName || 'Unknown'}
+              </span>
+            </div>
           </div>
+
+          {isWinner && (
+            <div className="absolute top-2 right-1 z-30 rotate-[50deg] scale-110 pointer-events-none">
+              <div className="text-3xl select-none">
+                <Crown className="rotate-[-20deg] w-6 h-6 text-yellow-100 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)] pointer-events-none select-none" />
+              </div>
+            </div>
+          )}
         </div>
       </PopoverTrigger>
 
