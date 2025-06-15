@@ -21,44 +21,60 @@ export const useTourSteps = () => {
       intro: 'Here you can find more and navigate through the application!',
     },
     { intro: 'Then in the sidebar' },
-    {
-      element: tourRefs.myRoomsDashboardRef.current,
-      intro:
-        'Here’s where you’ll find all the rooms you’ve joined — your creative hubs!',
-    },
-    {
+     {
       element: tourRefs.createEditRoomRef.current,
       intro: hasEnteredRoom
         ? 'Edit your room’s title here to keep things organized and clear.'
         : 'You can create a brand new room. Just click here!',
     },
     {
+      element: tourRefs.myRoomsDashboardRef.current,
+      intro:
+        'Here’s where you’ll find all the rooms you’ve joined — your creative hubs!',
+    },
+    {
       element: tourRefs.archiveRef.current,
       intro: 'Archived rooms live here — nothing’s ever truly lost!',
     },
-    ...(hasEnteredRoom
-      ? [
-          {
-            element: tourRefs.shareLinkRef.current,
-            intro:
-              'Want to collaborate? Share this link to invite others into your room.',
-          },
-        ]
-      : []),
     {
       element: tourRefs.changeThemeRef.current,
       intro:
         'Customize your experience by toggling between light and dark themes.',
     },
     {
-      element: tourRefs.profileRef.current,
-      intro: 'Update your personal info and preferences anytime from here.',
-    },
-    {
       element: tourRefs.tourRef.current,
       intro: 'Need a refresher later? Restart the tour anytime from here.',
     },
+    ...(hasEnteredRoom
+      ? [
+          {
+            element: tourRefs.exportDataRef.current,
+            intro:
+              'Need to save your work? Export your notes in various formats like JSON, CSV, XML, or PDF.',
+          },
+          {
+            element: tourRefs.participantsRef.current,
+            intro:
+              'See who’s in your room and manage participants easily. You can also kick them out if needed.',
+          },
+          {
+            element: tourRefs.shareLinkRef.current,
+            intro:
+              'Want to collaborate? Share this link to invite others into your room.',
+          },
+          {
+            element: tourRefs.roomActionsRef.current,
+            intro:
+              'Here you can archive or delete your room, or create a new one. Just click the three dots icon.',
+          },
+        ]
+      : []),
 
+    {
+      element: tourRefs.profileRef.current,
+      intro: 'Update your personal info and preferences anytime from here.',
+    },
+ 
     ...(hasEnteredRoom
       ? [
           {

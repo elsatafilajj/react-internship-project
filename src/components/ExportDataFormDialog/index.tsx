@@ -29,9 +29,12 @@ import { useForm } from '@/hooks/useForm';
 import { AxiosError } from 'axios';
 import { ExportSchema } from '@/schemas/ExportSchema';
 import { getFormikError } from '@/helpers/getFormikError';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ExportDataFormDialog = () => {
   const { roomId } = useParams<{ roomId: string }>();
+
+  const { exportDataRef } = useTourRefsContext()
 
   const exportDataMutation = useMutation({
     mutationFn: async (fileType: ExportNotesInput['fileType']) => {
@@ -89,13 +92,15 @@ export const ExportDataFormDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          className="flex items-center gap-2 p-2 justify-start"
-          variant="ghost"
-        >
-          <FolderInput className="mr-2 h-4 w-4" />
-          Export data
-        </Button>
+        <div ref={exportDataRef}>
+          <Button
+            className="flex items-center gap-2 p-2 justify-start"
+            variant="ghost"
+            >
+            <FolderInput className="mr-2 h-4 w-4" />
+            Export data
+          </Button>
+        </div>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">

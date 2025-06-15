@@ -15,7 +15,10 @@ export const TourRefsContextProvider = ({
   const createEditRoomRef = useRef<HTMLDivElement | null>(null);
   const archiveRef = useRef<HTMLDivElement | null>(null);
   const shareLinkRef = useRef<HTMLDivElement | null>(null);
+  const participantsRef = useRef<HTMLDivElement | null>(null);
   const changeThemeRef = useRef<HTMLDivElement | null>(null);
+  const roomActionsRef = useRef<HTMLDivElement | null>(null);
+  const exportDataRef = useRef<HTMLDivElement | null>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
   const tourRef = useRef<HTMLDivElement | null>(null);
   const activityRef = useRef<HTMLDivElement | null>(null);
@@ -27,7 +30,10 @@ export const TourRefsContextProvider = ({
     createEditRoomRef,
     archiveRef,
     shareLinkRef,
+    participantsRef,
     changeThemeRef,
+    roomActionsRef,
+    exportDataRef,
     profileRef,
     tourRef,
     activityRef,

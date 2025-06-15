@@ -34,7 +34,7 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
       intro.onchange(() => {
         const currentStep = intro._currentStep;
 
-        if (currentStep === 0 || currentStep === 2 || currentStep === 8) {
+        if (currentStep === 0 || currentStep === 2 || currentStep === 9) {
           onToggleSidebar();
         }
 
@@ -54,16 +54,12 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   }, [isUserNewlyCreated]);
 
   return (
-    <Button variant="ghost" onClick={startTour}>
-      <div
-        ref={tourRef}
-        className="cursor-pointer hover:bg-muted w-full flex justify-start gap-4
-      items-center -ml-2.5"
-      >
+    <div ref={tourRef}>
+      <Button variant="ghost"  className="cursor-pointer hover:bg-muted w-full flex justify-start gap-4
+      items-center" onClick={startTour}>
         <Binoculars className="stroke-foreground" />
-
         <p>Stuck Tour</p>
-      </div>
-    </Button>
+      </Button>
+    </div>
   );
 };

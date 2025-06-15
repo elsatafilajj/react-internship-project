@@ -16,9 +16,11 @@ import {
 import { queryKeys } from '@/constants/queryKeys';
 import { RouteNames } from '@/constants/routeNames';
 import { cn } from '@/lib/utils';
+import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
+  const { roomActionsRef } = useTourRefsContext()
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -68,6 +70,7 @@ export const RoomActionsDropDown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div
+        ref={roomActionsRef}
           className={cn(
             'rounded',
             data?.data?.isActive === false

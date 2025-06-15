@@ -6,7 +6,10 @@ export interface TourRefsContextType {
   createEditRoomRef: MutableRefObject<HTMLDivElement | null>;
   archiveRef: MutableRefObject<HTMLDivElement | null>;
   shareLinkRef: MutableRefObject<HTMLDivElement | null>;
+  participantsRef: MutableRefObject<HTMLDivElement | null>;
   changeThemeRef: MutableRefObject<HTMLDivElement | null>;
+  exportDataRef: MutableRefObject<HTMLDivElement | null>;
+  roomActionsRef: MutableRefObject<HTMLDivElement | null>;
   profileRef: MutableRefObject<HTMLDivElement | null>;
   tourRef: MutableRefObject<HTMLDivElement | null>;
   activityRef: MutableRefObject<HTMLDivElement | null>;
@@ -19,7 +22,10 @@ export const TourRefsContext = createContext<TourRefsContextType>({
   createEditRoomRef: { current: null },
   archiveRef: { current: null },
   shareLinkRef: { current: null },
+  participantsRef: { current: null },
   changeThemeRef: { current: null },
+  exportDataRef: { current: null },
+  roomActionsRef: { current: null },
   profileRef: { current: null },
   tourRef: { current: null },
   activityRef: { current: null },
