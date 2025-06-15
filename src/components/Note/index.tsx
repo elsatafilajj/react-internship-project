@@ -27,6 +27,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 
 interface NoteProps {
   note: Partial<NoteItem>;
+  isReadOnly: boolean;
 }
 
 export type ErrorResponseData = {
@@ -51,7 +52,7 @@ const noteColorClassMap = {
   'note-background-red': `bg-note-background-red`,
 } as const;
 
-export const Note = ({ note }: NoteProps) => {
+export const Note = ({ note, isReadOnly }: NoteProps) => {
   const socket = getSocket();
   const [isOpen, setIsOpen] = useState(false);
   const [hasUserEdited, setHasUserEdited] = useState(false);
@@ -164,8 +165,12 @@ export const Note = ({ note }: NoteProps) => {
           >
             <div className="flex flex-col justify-between relative h-full p-2 text-xs">
               <textarea
+                readOnly={isReadOnly}
                 value={noteContent}
-                onChange={handleNoteContentChange}
+                onChange={(e) => {
+                  if (isReadOnly) return;
+                  handleNoteContentChange(e);
+                }}
                 placeholder="Type in your idea..."
                 className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
                 aria-label="Note input"
@@ -195,7 +200,10 @@ export const Note = ({ note }: NoteProps) => {
                   strokeWidth={2.5}
                   size={20}
                   className="cursor-pointer"
-                  onClick={() => handleDeleteNote(note.uuid || '')}
+                  onClick={() => {
+                    if (isReadOnly) return;
+                    handleDeleteNote(note.uuid || '');
+                  }}
                 />
               </TooltipTrigger>
               <TooltipContent>Delete</TooltipContent>
@@ -213,7 +221,10 @@ export const Note = ({ note }: NoteProps) => {
                     : ''
                 }`}
                 strokeWidth={2.5}
-                onClick={() => handleNoteColorChange(noteColor)}
+                onClick={() => {
+                  if (isReadOnly) return;
+                  handleNoteColorChange(noteColor);
+                }}
               />
             ))}
           </div>
@@ -226,7 +237,10 @@ export const Note = ({ note }: NoteProps) => {
                     size="sm"
                     variant="ghost"
                     className="cursor-pointer py-2"
-                    onClick={handleVote}
+                    onClick={() => {
+                      if (isReadOnly) return;
+                      handleVote();
+                    }}
                   >
                     {isUserVoter ? (
                       <Star className="fill-foreground" />
