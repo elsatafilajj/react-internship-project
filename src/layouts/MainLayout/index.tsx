@@ -13,7 +13,11 @@ export const MainLayout = () => {
     <RouteWrapper>
       <NoteScrollProvider>
         <div className="w-full">
-          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+          <Sidebar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+          />
 
           <div className="">
             <Header onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />

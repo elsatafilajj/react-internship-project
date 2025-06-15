@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { PackagePlus } from 'lucide-react';
+import { PackagePlus, PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -83,16 +83,12 @@ export const CreateEditRoomFormDialog = () => {
   });
 
   return (
-    <div ref={createEditRoomRef}>
-      <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <div ref={createEditRoomRef}>
         <DialogTrigger className="w-full" asChild>
           {isEditMode ? (
-            <Button
-              variant="ghost"
-              disabled={!room?.data.isActive}
-              size="sm"
-              className="focus:bg-accent focus:text-accent-foreground relative flex justify-start items-center gap-2 rounded-sm px-2 py-1.5 tracking-wide"
-            >
+            <Button size="sm" className="justify-center w-full gap-3 flex">
+              <PenLineIcon className="h-4 w-4" />
               Edit
             </Button>
           ) : (
@@ -144,7 +140,7 @@ export const CreateEditRoomFormDialog = () => {
             </form>
           </DialogHeader>
         </DialogContent>
-      </Dialog>
-    </div>
+      </div>
+    </Dialog>
   );
 };

@@ -19,8 +19,6 @@ export const RoomParticipantsPanel = () => {
     roomId || '',
   );
 
-  console.log(participants);
-
   const removeUserFromRoomMutation = useMutation({
     mutationFn: (participantId: string) =>
       removeUserFromRoom(roomId || '', participantId),

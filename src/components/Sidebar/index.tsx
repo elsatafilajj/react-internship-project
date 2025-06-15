@@ -4,13 +4,17 @@ import {
   FolderArchive,
   LogOut,
   PanelLeftClose,
+  FolderInput,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { logout as apiLogout } from '@/api/User/user.client';
+import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
+import { TourLauncher } from '@/components/TourLauncher';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
+import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 
 import { RouteNames } from '@/constants/routeNames';
@@ -22,14 +26,21 @@ import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onToggleSidebar: () => void;
 }
 
-export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
   const { logout } = useAuthContext();
 
+  const { roomId } = useParams<{ roomId: string }>();
   const { myRoomsDashboardRef, archiveRef } = useTourRefsContext();
 
   const hasEnteredRoom = useHasEnteredRoom()
+  const { user } = useAuthContext();
+  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
+
+  const roomHost = users?.data.find((user) => user.role === 'host');
+  const isUserHost = roomHost?.uuid === user?.uuid;
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -69,7 +80,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </button>
 
         <nav className="space-y-2 mt-8">
-          <CreateEditRoomFormDialog />
+          {isUserHost && <CreateEditRoomFormDialog />}
           <div ref={myRoomsDashboardRef}>
             <Button
               variant="ghost"
@@ -91,10 +102,14 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             >
               <Link to={RouteNames.ArchivedRooms}>
                 <FolderArchive className="mr-2 h-4 w-4" />
-                Archived
+                Archived Rooms
               </Link>
             </Button>
           </div>
+
+          <ThemeChangeToggle />
+
+          <TourLauncher onToggleSidebar={onToggleSidebar} />
 
           {hasEnteredRoom && <ExportDataFormDialog />}
 

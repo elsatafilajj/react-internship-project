@@ -1,8 +1,8 @@
 import introJs from 'intro.js';
-import { Info } from 'lucide-react';
+import { Binoculars } from 'lucide-react';
 import { useEffect } from 'react';
 
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { TourStep, useTourSteps } from '@/hooks/useTourSteps';
@@ -33,13 +33,18 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
 
       intro.onchange(() => {
         const currentStep = intro._currentStep;
-        if (currentStep === 2 || currentStep === 6) {
+
+        if (currentStep === 0 || currentStep === 2 || currentStep === 8) {
           onToggleSidebar();
+        }
+
+        if (currentStep === 2) {
+          intro._hintCloseCallback = () => {};
         }
       });
 
       intro.start();
-    }, 500);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -49,13 +54,16 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   }, [isUserNewlyCreated]);
 
   return (
-    <div ref={tourRef}>
-      <Info
-        onClick={startTour}
-        className="bg-primary rounded-full p-0.5 m-2 w-7 h-auto"
-        strokeWidth={1.5}
-        color="black"
-      />
-    </div>
+    <Button variant="ghost" onClick={startTour}>
+      <div
+        ref={tourRef}
+        className="cursor-pointer hover:bg-muted w-full flex justify-start gap-4
+      items-center -ml-2.5"
+      >
+        <Binoculars className="stroke-foreground" />
+
+        <p>Stuck Tour</p>
+      </div>
+    </Button>
   );
 };
