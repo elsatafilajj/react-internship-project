@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Circle, Ellipsis, Star, X } from 'lucide-react';
+import { Circle, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -52,11 +52,11 @@ const noteColorClassMap = {
 
 export const Note = ({ note }: NoteProps) => {
   const socket = getSocket();
+  const [isOpen, setIsOpen] = useState(false);
   const [hasUserEdited, setHasUserEdited] = useState(false);
   const [localNoteColor, setLocalNoteColor] = useState<string>(
     note.color || 'note-background-green',
   );
-
   const { roomId } = useParams<{ roomId: string }>();
   const [noteContent, setNoteContent] = useState('');
   const { uuid, content, author } = note;
@@ -70,6 +70,12 @@ export const Note = ({ note }: NoteProps) => {
     !!isUserVoter || null,
   );
   const debouncedContent: string = useDebounce(noteContent, 1000);
+
+  useEffect(() => {
+    if (note.color) {
+      setLocalNoteColor(note.color);
+    }
+  }, [note.color]);
 
   useEffect(() => {
     if (content) {
@@ -124,102 +130,101 @@ export const Note = ({ note }: NoteProps) => {
   const handleDeleteNote = (noteId: string) => {
     socket.emit(socketEvents.DeleteNote, { roomId, noteId });
   };
+
+  if (!uuid) return null;
+
   return (
-    <>
-      {uuid && (
-        <Popover>
-          <div
-            className={clsx(
-              'w-2xs h-70 shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
-              noteColorClassMap[
-                localNoteColor as keyof typeof noteColorClassMap
-              ],
-              selectedNoteId === uuid &&
-                'border-5 border-primary scale-[1.03] shadow-lg z-10 flash-highlight',
-            )}
-          >
-            <div className="flex flex-col justify-between h-full p-2 text-xs">
-              <textarea
-                value={noteContent}
-                onChange={handleNoteContentChange}
-                placeholder="Type in your idea..."
-                className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
-                aria-label="Note input"
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <div
+          onClick={(e) => {
+            const tag = (e.target as HTMLElement).tagName.toLowerCase();
+            if (tag !== 'textarea') {
+              setIsOpen(true);
+            }
+          }}
+          className={clsx(
+            'w-2xs h-70 shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
+            noteColorClassMap[localNoteColor as keyof typeof noteColorClassMap],
+            selectedNoteId === uuid &&
+              'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
+          )}
+        >
+          <div className="flex flex-col justify-between h-full p-2 text-xs">
+            <textarea
+              value={noteContent}
+              onChange={handleNoteContentChange}
+              placeholder="Type in your idea..."
+              className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
+              aria-label="Note input"
+            />
+            <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
+              {author?.firstName || 'Unknown'}
+            </span>
+          </div>
+        </div>
+      </PopoverTrigger>
+
+      <PopoverContent side="top" align="end" sideOffset={10}>
+        <div className="bg-popover flex items-center justify-around h-fit">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <X
+                  strokeWidth={2.5}
+                  size={20}
+                  className="cursor-pointer"
+                  onClick={() => handleDeleteNote(note.uuid || '')}
+                />
+              </TooltipTrigger>
+              <TooltipContent>Delete</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <div className="flex gap-3 p-3">
+            {fillColors.map((noteColor, i) => (
+              <Circle
+                key={i}
+                style={{ fill: `var(--${noteColor})` }}
+                className={`w-4 h-4 cursor-pointer ${
+                  localNoteColor === noteColor
+                    ? 'ring-2 ring-primary rounded-full'
+                    : ''
+                }`}
+                strokeWidth={2.5}
+                onClick={() => handleNoteColorChange(noteColor)}
               />
-              <span className="text-muted-foreground brightness-50 mt-1 ml-1 tracking-wide text-xs self-start">
-                {author?.firstName || 'Unknown'}
-              </span>
-            </div>
+            ))}
           </div>
 
-          <PopoverTrigger asChild>
-            <div className="absolute top-1 right-0 z-20 cursor-pointer">
-              <Ellipsis className="cursor-pointer text-black -ml-8" />
-            </div>
-          </PopoverTrigger>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className="flex flex-col mr-1.5">
+                  <Toggle
+                    size="sm"
+                    variant="ghost"
+                    className="cursor-pointer py-2"
+                    onClick={handleVote}
+                  >
+                    {isUserVoter ? (
+                      <Star className="fill-foreground" />
+                    ) : (
+                      <Star strokeWidth={2.5} />
+                    )}
+                  </Toggle>
+                  <p className="text-xs font-semibold">
+                    {note.totalVotes || 0}
+                  </p>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>Vote / Unvote</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-          <PopoverContent side="top" align="end" sideOffset={10}>
-            <div className="bg-popover flex items-center justify-around h-fit">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <X
-                      strokeWidth={2.5}
-                      size={20}
-                      className="cursor-pointer"
-                      onClick={() => handleDeleteNote(note.uuid || '')}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <div className="flex gap-3 p-3">
-                {fillColors.map((noteColor, i) => (
-                  <Circle
-                    key={i}
-                    style={{ fill: `var(--${noteColor})` }}
-                    className={`w-4 h-4 cursor-pointer brightness- ${
-                      localNoteColor === noteColor
-                        ? 'ring-2 ring-primary rounded-full'
-                        : ''
-                    }`}
-                    strokeWidth={2.5}
-                    onClick={() => handleNoteColorChange(noteColor)}
-                  />
-                ))}
-              </div>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="flex flex-col mr-1.5">
-                      <Toggle
-                        size="sm"
-                        variant="ghost"
-                        className="cursor-pointer py-2"
-                        onClick={handleVote}
-                      >
-                        {isUserVoter ? (
-                          <Star className="fill-foreground" />
-                        ) : (
-                          <Star strokeWidth={2.5} />
-                        )}
-                      </Toggle>
-                      <p className="text-xs font-semibold">
-                        {note.totalVotes || 0}
-                      </p>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Vote / Unvote</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <PanelToggle noteId={uuid} />
-            </div>
-          </PopoverContent>
-        </Popover>
-      )}
-    </>
+          <PanelToggle noteId={uuid} />
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
