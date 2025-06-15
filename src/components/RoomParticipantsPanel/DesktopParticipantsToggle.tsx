@@ -34,13 +34,13 @@ export const DesktopParticipantsToggle = () => {
               participants.data &&
               participants?.data.slice(0, 3).map((participant) => (
                 <div
-                  className="relative h-8 w-8 rounded-full bg-secondary text-sm font-medium border-2 border-foreground flex items-center justify-center shadow"
+                  className="relative h-8 w-8 rounded-full bg-card-revert  text-sm font-medium -ml-1.5 border-2 border-card flex items-center justify-center shadow"
                   key={participant.uuid}
                 >
                   {roomHost?.uuid === participant.uuid && (
                     <Crown className="absolute h-3 -top-2.5 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
-                  <p className="text-accent-foreground capitalize">
+                  <p className="text-card capitalize">
                     {participant.firstname[0]}
                   </p>
                 </div>

@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -15,6 +17,7 @@ import { LoginSchema } from '@/schemas/LoginSchema';
 import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const { setAuthState } = useAuthContext();
 
   const loginMutation = useMutation({
@@ -78,13 +81,22 @@ export const LoginForm = () => {
         />
         <Input
           name="password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           placeholder="••••••••"
           id="password"
           className="mb-2 placeholder:tracking-widest tracking-widest"
           value={formik.values.password}
           onChange={formik.handleChange}
           error={getFormikError(formik, 'password')}
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          }
         />
 
         <div className="flex text-sm flex-col space-y-5 items-center justify-between">

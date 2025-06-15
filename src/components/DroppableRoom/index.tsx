@@ -87,14 +87,16 @@ export const DroppableRoom = ({
       console.log('new note', newNote);
       setNotes((prev) => [...(prev || []), newNote]);
     });
-
-    socket.on(socketEvents.UpdatedNote, (data) => {
-      const { uuid, xAxis, yAxis, content, color } = data;
+    socket.on(socketEvents.UpdatedNote, (updatedNote) => {
+      console.log('received real-time update:', updatedNote); // ✅ check if color is included
       setNotes((prev) =>
         prev.map((note) =>
-          note.uuid === uuid ? { ...note, xAxis, yAxis, content, color } : note,
+          note.uuid === updatedNote.uuid ? { ...note, ...updatedNote } : note,
         ),
       );
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
@@ -134,7 +136,7 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-[5000px] h-[2813px] relative bg-gradient-to-br from-[var(--color-background-from)] to-[var(--color-background-to)] p-8 rounded-lg"
+      className="w-[5000px] h-[2813px] relative bg-dot-grid overflow-hidden   p-8 rounded-lg"
     >
       {notes?.map((note: Partial<NoteItem>) => (
         <DraggableNote

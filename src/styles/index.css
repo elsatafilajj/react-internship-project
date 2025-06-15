@@ -76,6 +76,11 @@
   --note-background-pink: oklch(0.83 0.119 344.57);
   --note-background-blue: oklch(0.87 0.0731 240.71);
   --note-background-red: oklch(0.83 0.095 28.83);
+  /* --note-background-red: oklch(0.85 0.16 25);
+  --note-background-pink: oklch(0.91 0.18 340);
+  --note-background-yellow: oklch(0.96 0.13 100);
+  --note-background-green: oklch(0.93 0.14 140);
+  --note-background-blue: oklch(0.92 0.14 250); */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
   --sidebar-primary: oklch(0.723 0.219 149.579);
@@ -108,11 +113,11 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(0.3 0.02 161.18);
   --ring: oklch(0.527 0.154 150.069);
-  --note-background-green: oklch(0.85 0.092 149.73);
+  /* --note-background-green: oklch(0.85 0.092 149.73);
   --note-background-yellow: oklch(0.85 0.0964 89.37);
   --note-background-pink: oklch(0.8 0.119 344.57);
   --note-background-blue: oklch(0.8 0.0731 240.71);
-  --note-background-red: oklch(0.8 0.095 28.83);
+  --note-background-red: oklch(0.8 0.095 28.83); */
   --sidebar: oklch(0.21 0.006 285.885);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.696 0.17 162.48);
@@ -136,6 +141,29 @@
     @apply text-foreground;
   }
 
+  .bg-grid {
+    background-color: #f8f9fa;
+    background-image:
+      linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .bg-dot-grid {
+    background-color: #f9fafb;
+    background-image: radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 0);
+    background-size: 10px 10px;
+    background-repeat: repeat;
+  }
+  .bg-dot-grid-colored {
+    background-color: #f9fafb;
+    background-image: radial-gradient(
+      oklch(0.85 0.178 161.18) 1px,
+      transparent 0
+    );
+    background-size: 10px 10px;
+    background-repeat: repeat;
+  }
   .custom-intro-tooltip {
     background-image: url('../assets/images/background-4.jpg') !important;
     width: 30rem;
@@ -148,4 +176,27 @@
     padding: 0.5rem;
     text-align: center;
   }
+  /* .custom-intro-tooltip {
+    position: relative;
+    background: radial-gradient(
+      circle at top left,
+      oklch(0.96 0.13 90),
+      oklch(0.92 0.15 140)
+    );
+    backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 1.5rem;
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.05),
+      0 4px 30px rgba(0, 0, 0, 0.2),
+      inset 0 0 10px rgba(255, 255, 255, 0.1);
+    width: 32rem;
+    padding: 1.5rem;
+    color: oklch(0.2 0.01 240);
+    font-size: 1rem;
+    text-align: center;
+    animation: enterGlow 0.5s ease forwards;
+    overflow: hidden;
+    isolation: isolate;
+  } */
 }
