@@ -6,11 +6,13 @@ import { Note } from '@/components/Note';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
+import { useRoomStatus } from '@/hooks/useRoomStatus';
 
 interface NoteProps extends Partial<NoteItem> {
   note: Partial<NoteItem>;
   setTransformDisabled: (b: boolean) => void;
   transformRef?: RefObject<ReactZoomPanPinchRef>;
+  isReadOnly: boolean;
 }
 
 export const DraggableNote = ({
@@ -21,6 +23,8 @@ export const DraggableNote = ({
   const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
   const { registerNoteRef } = useNoteScrollContext();
+
+  const { isRoomArchived } = useRoomStatus();
 
   useEffect(() => {
     registerNoteRef(note.uuid || '', noteRef);
@@ -33,6 +37,7 @@ export const DraggableNote = ({
     transformRef,
     xAxis,
     yAxis,
+    isDisabled: isRoomArchived,
   });
 
   drag(noteRef);
@@ -50,7 +55,7 @@ export const DraggableNote = ({
       onDragEnd={() => setTransformDisabled(false)}
       onMouseUp={() => setTransformDisabled(false)}
     >
-      <Note note={note} />
+      <Note note={note} isReadOnly={isRoomArchived} />
     </div>
   );
 };

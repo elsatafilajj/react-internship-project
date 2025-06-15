@@ -1,16 +1,22 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
+import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
+import { useRoomStatus } from '@/hooks/useRoomStatus';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
@@ -23,6 +29,7 @@ export const DroppableRoom = ({
 }: DroppableRoomProps) => {
   const roomRef = useRef<HTMLDivElement | null>(null);
 
+  const { user } = useAuthContext();
   const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
 
   const queryClient = useQueryClient();
@@ -32,6 +39,24 @@ export const DroppableRoom = ({
   const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
 
   const socket = useMemo(() => getSocket(), []);
+
+  const navigate = useNavigate();
+  const { isRoomArchived } = useRoomStatus();
+
+  const { error } = useGetRoomByIdQuery(roomId || '');
+
+  useEffect(() => {
+    if (!error) return;
+
+    const axiosError = error as AxiosError<ErrorResponseData>;
+
+    if (axiosError.response?.status === 403) {
+      const message =
+        axiosError.response?.data?.message ?? 'You were removed from this room';
+      toast.error(message);
+      navigate('/rooms');
+    }
+  }, [error]);
 
   useEffect(() => {
     if (isFetched && data) {
@@ -88,7 +113,6 @@ export const DroppableRoom = ({
       setNotes((prev) => [...(prev || []), newNote]);
     });
     socket.on(socketEvents.UpdatedNote, (updatedNote) => {
-      console.log('received real-time update:', updatedNote); // ✅ check if color is included
       setNotes((prev) =>
         prev.map((note) =>
           note.uuid === updatedNote.uuid ? { ...note, ...updatedNote } : note,
@@ -120,12 +144,27 @@ export const DroppableRoom = ({
       });
     });
 
+    socket.on(socketEvents.ArchivedRoom, ({ roomId: archivedRoomId }) => {
+      if (archivedRoomId === roomId) {
+        navigate('/rooms/archived');
+      }
+    });
+
+    socket.on(socketEvents.UserRemove, ({ userId }) => {
+      if (userId === user?.uuid) {
+        toast.error("You've been removed from this room.");
+        navigate('/rooms');
+      }
+    });
+
     return () => {
       socket.off(socketEvents.CreatedNote);
       socket.off(socketEvents.UpdatedNote);
       socket.off(socketEvents.AddedVote);
       socket.off(socketEvents.RemovedVote);
       socket.off(socketEvents.DeletedNote);
+      socket.off(socketEvents.ArchivedRoom);
+      socket.off(socketEvents.UserRemove);
     };
   }, []);
 
@@ -144,6 +183,7 @@ export const DroppableRoom = ({
           note={note}
           setTransformDisabled={setTransformDisabled}
           transformRef={transformRef}
+          isReadOnly={isRoomArchived}
         />
       ))}
     </div>
