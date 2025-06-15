@@ -10,4 +10,6 @@ export enum RouteNames {
   Room = 'rooms/:roomId',
   ArchivedRooms = 'rooms/archived',
   ArchivedRoom = 'rooms/archived/:roomId',
+  JoinRoom = 'rooms/join/:code',
+
 }
