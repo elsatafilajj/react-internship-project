@@ -70,7 +70,7 @@ export const RoomActionsDropDown = () => {
         <div
           className={cn(
             'rounded',
-            data?.data.isActive === false
+            data?.data?.isActive === false
               ? 'cursor-not-allowed opacity-50 pointer-events-none'
               : 'cursor-pointer hover:bg-muted',
           )}
