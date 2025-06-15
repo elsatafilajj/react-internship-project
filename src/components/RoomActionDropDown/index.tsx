@@ -46,6 +46,7 @@ export const RoomActionsDropDown = () => {
       navigate('/rooms/archived');
     }, 300);
   };
+  
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync(roomId || ' ');

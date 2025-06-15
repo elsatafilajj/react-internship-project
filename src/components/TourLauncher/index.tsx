@@ -42,7 +42,7 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
             onToggleSidebar();
         }
 
-        if (currentStep === 0 || currentStep === 2 || currentStep === 9) {
+        if (currentStep === 2 || currentStep === 9) {
           onToggleSidebar();
         }
       });
