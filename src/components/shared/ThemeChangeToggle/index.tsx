@@ -2,7 +2,6 @@ import { Moon, Sun } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
 import { useThemeContext } from '@/context/ThemeContext/ThemeContext';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export function ThemeChangeToggle() {
   const { changeTheme, theme } = useThemeContext();
@@ -11,10 +10,8 @@ export function ThemeChangeToggle() {
     changeTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const { changeThemeRef } = useTourRefsContext();
-
   return (
-    <div ref={changeThemeRef}>
+    <div id="theme">
       <Toggle
         onClick={toggleTheme}
         className="cursor-pointer hover:bg-muted w-full flex justify-start px-3 py-4.5 gap-4 items-center"
@@ -22,14 +19,15 @@ export function ThemeChangeToggle() {
         variant={'ghost'}
         aria-label="Toggle Theme"
       >
-        {theme === 'light' ? (
+        {theme === 'dark' ? (
           <>
-            <Moon />
+            <Sun />
             <p>Light Mode</p>
           </>
         ) : (
           <>
-            <Sun />
+            <Moon />
+
             <p>Dark Mode</p>
           </>
         )}

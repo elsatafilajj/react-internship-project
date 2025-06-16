@@ -1,11 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import {
-  Home,
-  FolderArchive,
-  LogOut,
-  PanelLeftClose,
-  FolderInput,
-} from 'lucide-react';
+import { Home, FolderArchive, LogOut, PanelLeftClose } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link, useParams } from 'react-router-dom';
 
@@ -18,7 +12,6 @@ import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -30,12 +23,11 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
   const { logout } = useAuthContext();
 
   const { roomId } = useParams<{ roomId: string }>();
-  const { myRoomsDashboardRef, archiveRef } = useTourRefsContext();
 
   const { user } = useAuthContext();
   const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
 
-  const roomHost = users?.data.find((user) => user.role === 'host');
+  const roomHost = users?.data?.find((user) => user.role === 'host');
   const isUserHost = roomHost?.uuid === user?.uuid;
 
   const logoutMutation = useMutation({
@@ -77,7 +69,7 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
 
         <nav className="space-y-2 mt-8">
           {isUserHost && <CreateEditRoomFormDialog />}
-          <div ref={myRoomsDashboardRef}>
+          <div id="room">
             <Button
               variant="ghost"
               className="w-full justify-start font-medium"
@@ -90,7 +82,7 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
             </Button>
           </div>
 
-          <div ref={archiveRef}>
+          <div id="archive">
             <Button
               variant="ghost"
               className="w-full justify-start font-medium"
@@ -106,19 +98,6 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
           <ThemeChangeToggle />
 
           <TourLauncher onToggleSidebar={onToggleSidebar} />
-
-          <div ref={archiveRef}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start font-medium"
-              asChild
-            >
-              <Link to="/archived">
-                <FolderInput className="mr-2 h-4 w-4" />
-                Export data
-              </Link>
-            </Button>
-          </div>
         </nav>
 
         <div className="mt-auto flex justify-between cursor-pointer">

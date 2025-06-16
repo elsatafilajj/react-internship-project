@@ -21,7 +21,7 @@ export const ActivityPanel = () => {
 
   useEffect(() => {
     if (isFetched && data) {
-      setActivities(data.data);
+      setActivities(data?.data);
     }
   }, [data, isFetched]);
 

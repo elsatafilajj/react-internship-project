@@ -12,6 +12,7 @@ export async function apiRequest<D = object, R = unknown>({
   data,
   headers,
   params,
+  responseType = 'json',
 }: AxiosRequestOptions<D>) {
   return await Axios.request<D, AxiosResponse<R>>({
     url: `${Config.apiUrl}/${url}`,
@@ -19,5 +20,6 @@ export async function apiRequest<D = object, R = unknown>({
     data,
     headers,
     params,
+    responseType
   });
 }
