@@ -172,7 +172,7 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
                   handleNoteContentChange(e);
                 }}
                 placeholder="Type in your idea..."
-                className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
+                className="resize-none p-2 w-full tracking-wide h-full max-h-[220px] overflow-auto bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
                 aria-label="Note input"
               />
               <div className="flex justify-between items-center px-1 mt-1">

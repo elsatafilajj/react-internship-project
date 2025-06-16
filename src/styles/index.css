@@ -154,7 +154,7 @@
   .bg-dot-grid {
     background-color: #f9fafb;
     background-image: radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 0);
-    background-size: 10px 10px;
+    background-size: 16px 16px;
     background-repeat: repeat;
   }
   .bg-dot-grid-colored {

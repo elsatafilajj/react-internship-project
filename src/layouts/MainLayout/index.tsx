@@ -17,6 +17,7 @@ export const MainLayout = () => {
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
             onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+            setSideBarToggle={setSidebarOpen}
           />
 
           <div className="">

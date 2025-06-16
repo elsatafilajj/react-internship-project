@@ -17,9 +17,10 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   onToggleSidebar: () => void;
+  setSideBarToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
+export const Sidebar = ({ isOpen, onClose, onToggleSidebar, setSideBarToggle }: SidebarProps) => {
   const { logout } = useAuthContext();
 
   const { roomId } = useParams<{ roomId: string }>();
@@ -97,7 +98,7 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
 
           <ThemeChangeToggle />
 
-          <TourLauncher onToggleSidebar={onToggleSidebar} />
+          <TourLauncher setSideBarToggle={setSideBarToggle} onToggleSidebar={onToggleSidebar} />
         </nav>
 
         <div className="mt-auto flex justify-between cursor-pointer">
