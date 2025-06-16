@@ -88,7 +88,6 @@ export const ExportDataFormDialog = () => {
   });
 
   return (
-    <div id="export">
       <Dialog>
         <DialogTrigger asChild>
           <Button
@@ -144,7 +143,6 @@ export const ExportDataFormDialog = () => {
             </DialogFooter>
           </form>
         </DialogContent>
-      </Dialog>
-    </div>
+    </Dialog>
   );
 };

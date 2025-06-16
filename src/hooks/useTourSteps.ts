@@ -63,10 +63,6 @@ export const useTourSteps = () => {
     ...(hasEnteredRoom
       ? [
           {
-            element: document.getElementById('export'),
-            intro: `Need to ${isRoomActive ? 'save' : 'review'} your work? Export your notes in various formats like JSON, CSV, XML, or PDF.`,
-          },
-          {
             element: document.getElementById('participants'),
             intro: isRoomActive
               ? isHost
@@ -82,12 +78,15 @@ export const useTourSteps = () => {
           },
         ]
       : []),
-    ...(hasEnteredRoom && isHost
+    ...(hasEnteredRoom
       ? [
           {
             element: document.getElementById('room-actions'),
-            intro:
-              'As the host, you can manage room settings, archive, or delete it.',
+            intro: isRoomActive ?
+            isHost?
+              'As the host, you can manage the room, archive, edit or delete it. And export notes.' :
+              'Here you can export your notes, and leave the room.'
+              : 'This room is locked, so you can’t make changes or export notes anymore. But you can still review everything that was created here.',
           },
         ]
       : []),
