@@ -32,13 +32,13 @@ export const TourLauncher = ({ onToggleSidebar, setSideBarToggle }: TourLauncher
       intro.onchange(() => {
         const currentStep = intro._currentStep;
 
-        if (currentStep === 2 || currentStep === 9) {
+        if (currentStep === 2 || currentStep === 8) {
           onToggleSidebar();
         }
       });
 
       intro.start();
-    }, 1000);
+    }, 300);
   };
 
   useEffect(() => {
@@ -48,6 +48,7 @@ export const TourLauncher = ({ onToggleSidebar, setSideBarToggle }: TourLauncher
     ) {
       setTimeout(() => {
         startTour();
+        setSideBarToggle(false)
         localStorage.setItem('has-started-initial-tour', 'true');
         setSideBarToggle(false)
       }, 1000);
