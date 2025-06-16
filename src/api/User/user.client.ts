@@ -1,3 +1,5 @@
+import { ErrorResponseData } from '@/types/ErrorResponse';
+
 import { apiRequest } from '../Api';
 import {
   LoginInput,
@@ -54,6 +56,12 @@ export const verifyEmail = async (data: SetVerifyEmailCode, email: string) =>
     method: 'POST',
     url: `auth/verify-email/${email}`,
     data,
+  });
+
+export const resendVerificationEmail = async (email: string) =>
+  apiRequest<{ email: string }, ErrorResponseData>({
+    method: 'POST',
+    url: `auth/resend-verification/${email}`,
   });
 
 export const editProfile = async (data: Partial<User>) => {
