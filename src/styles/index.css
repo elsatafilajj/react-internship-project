@@ -45,6 +45,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-tool-palette: var(--tool-palette);
   --color-name: var(--name);
+  --color-red: var(--red);
 }
 
 :root {
@@ -91,6 +92,7 @@
   --sidebar-ring: oklch(0.723 0.219 149.579);
   --tool-palette: oklch(0.931 0 0);
   --name: oklch(0.6031 0.1344 160.92);
+  --red: oklch(0.65 0.2 20);
 }
 
 .dark {
