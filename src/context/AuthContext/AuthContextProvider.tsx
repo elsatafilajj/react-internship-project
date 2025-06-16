@@ -33,7 +33,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         }
 
         const response = await getUserDetails();
-        setUser(response.data);
+        setUser(response?.data);
       } catch {
         localStorage.removeItem('accessToken');
       } finally {

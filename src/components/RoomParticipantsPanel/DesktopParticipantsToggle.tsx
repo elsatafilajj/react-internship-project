@@ -42,7 +42,7 @@ export const DesktopParticipantsToggle = () => {
             )}
             {participants &&
               participants.data &&
-              participants?.data.slice(0, 4).map((participant, index) => (
+              participants?.data?.slice(0, 4).map((participant, index) => (
                 <div
                   className={`relative h-8 w-8 rounded-full text-sm font-medium -ml-1 border-2 border-card flex items-center justify-center shadow ${
                     avatarColors[index % avatarColors.length]
@@ -60,8 +60,8 @@ export const DesktopParticipantsToggle = () => {
             {participants && participants.data && (
               <div className="flex flex-col items-center ml-2 -mt-1.5 hover:animate-in">
                 <p className="text-xs text-muted-foreground">
-                  {participants?.data.length > 3 &&
-                    `+ ${participants?.data.length - 3}`}
+                  {participants?.data?.length > 3 &&
+                    `+ ${participants?.data?.length - 3}`}
                 </p>
               </div>
             )}

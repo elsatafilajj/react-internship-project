@@ -30,7 +30,7 @@ export const VerifyEmailForm = () => {
     mutationFn: ({ data, email }) => verifyEmail(data, email),
 
     onSuccess: (data) => {
-      const { user, accessToken, refreshToken } = data.data;
+      const { user, accessToken, refreshToken } = data?.data;
 
       setAuthState({
         user,

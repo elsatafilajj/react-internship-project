@@ -68,7 +68,7 @@ export const DroppableRoom = ({
 
   useEffect(() => {
     if (isFetched && data) {
-      setNotes(data.data);
+      setNotes(data?.data);
     }
   }, [data, isFetched]);
 
@@ -109,7 +109,7 @@ export const DroppableRoom = ({
 
   useEffect(() => {
     if (isFetched && data) {
-      setNotes(data.data);
+      setNotes(data?.data);
     }
   }, [data, isFetched]);
 

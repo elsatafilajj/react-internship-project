@@ -41,7 +41,7 @@ export const ExportDataFormDialog = () => {
       return { data: response, fileType };
     },
     onSuccess: ({ data, fileType }) => {
-      const blob = new Blob([data.data as string], {
+      const blob = new Blob([data?.data as string], {
         type:
           fileType === 'csv'
             ? 'text/csv'
@@ -65,7 +65,7 @@ export const ExportDataFormDialog = () => {
       let errorMessage = 'Failed to export data. Please try again later.';
 
       if (error instanceof AxiosError && error.response) {
-        const data = error.response.data;
+        const data = error.response?.data;
 
         if (data instanceof Blob) {
           try {

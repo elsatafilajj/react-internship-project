@@ -19,7 +19,7 @@ export const JoinRoom = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });
-      navigate(`/rooms/${data.data.room.uuid}`);
+      navigate(`/rooms/${data?.data?.room.uuid}`);
     },
   });
 

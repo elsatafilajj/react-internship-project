@@ -25,7 +25,7 @@ export const EditProfileForm = () => {
     mutationFn: editProfile,
     onSuccess: async () => {
       const updatedUser = await getUserDetails();
-      setAuthState({ user: updatedUser.data });
+      setAuthState({ user: updatedUser?.data });
       toast.success('Your profile has been updated!');
     },
     onError: (error) => {

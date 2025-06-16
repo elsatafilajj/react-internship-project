@@ -9,7 +9,7 @@ export const ArchivedRooms = () => {
 
   const { data: archivedRooms } = useGetAllArchivedRoomsQuery();
 
-  const hasRooms = archivedRooms?.data.length;
+  const hasRooms = archivedRooms?.data?.length;
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-background to-secondary px-6 py-12 text-gray-800">
@@ -24,7 +24,7 @@ export const ArchivedRooms = () => {
 
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 w-full px-4">
           {hasRooms ? (
-            archivedRooms?.data.map((roomData) => (
+            archivedRooms?.data?.map((roomData) => (
               <div
                 key={roomData.room.uuid}
                 className="transform hover:scale-105 transition-transform duration-300 animate-fade-in-up"

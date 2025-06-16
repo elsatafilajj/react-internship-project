@@ -40,7 +40,7 @@ export const ForgotPasswordForm = () => {
         formikHelpers.resetForm();
       } catch (error) {
         if (error instanceof AxiosError) {
-          const errorMessage = error.response?.data.message as AxiosError<
+          const errorMessage = error.response?.data?.message as AxiosError<
             ErrorResponseData['message']
           >;
 
