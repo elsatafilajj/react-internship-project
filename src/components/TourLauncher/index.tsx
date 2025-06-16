@@ -8,19 +8,20 @@ import { TourStep, useTourSteps } from '@/hooks/useTourSteps';
 
 interface TourLauncherProps {
   onToggleSidebar: () => void;
+  setSideBarToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
+export const TourLauncher = ({ onToggleSidebar, setSideBarToggle }: TourLauncherProps) => {
   const { isUserNewlyCreated } = useAuthContext();
 
-  const tourSteps: TourStep[] = useTourSteps();
+  const getTourSteps: () => TourStep[] = useTourSteps();
 
   const startTour = () => {
     setTimeout(() => {
       const intro = introJs();
 
       intro.setOptions({
-        steps: tourSteps,
+        steps: getTourSteps(),
         tooltipClass: 'custom-intro-tooltip',
         overlayOpacity: 0,
         highlightClass: 'bg-primary/20 shadow-none',
@@ -35,8 +36,9 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
           onToggleSidebar();
         }
       });
+
       intro.start();
-    }, 1500);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -47,7 +49,8 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
       setTimeout(() => {
         startTour();
         localStorage.setItem('has-started-initial-tour', 'true');
-      }, 1500);
+        setSideBarToggle(false)
+      }, 1000);
     }
   }, [isUserNewlyCreated]);
 
