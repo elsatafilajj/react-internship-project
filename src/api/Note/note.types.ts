@@ -8,6 +8,7 @@ type NoteColor =
   | 'note-background-blue'
   | 'note-background-red'
   | string;
+  
 export interface NoteItem {
   uuid: string;
   createdAt: string;
@@ -39,5 +40,5 @@ export interface UpdateNoteInput {
 
 export interface ExportNotesInput {
   roomId: Room['uuid'];
-  fileType: 'json' | 'csv' | 'xml' | 'pdf';
+  fileType: 'json' | 'csv' | 'pdf';
 }
