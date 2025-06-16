@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import toast from 'react-hot-toast';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
@@ -18,6 +18,17 @@ export const Room = () => {
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
   const roomId = useParams<{ roomId: string }>();
   const socket = useMemo(() => getSocket(), []);
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!roomId || !roomId.roomId) return;  
+    const roomIdString = roomId.roomId.toLocaleString();
+    const uuidRegex = new RegExp(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/); 
+    const isUuidValid = uuidRegex.test(roomIdString)
+    if(!isUuidValid)
+      navigate('/rooms')
+  }, [roomId]);
 
   useEffect(() => {
     if (!roomId) return;
