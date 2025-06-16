@@ -20,10 +20,10 @@ export const useTourSteps = () => {
 
   const { user } = useAuthContext();
   const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
-  const roomHost = users?.data.find((user) => user.role === 'host');
+  const roomHost = users?.data?.find((user) => user.role === 'host');
   const isHost = roomHost?.uuid === user?.uuid;
 
-  return [
+  const getSteps: TourStep[] = [
     {
       title: 'Welcome to your Stuck Tour!',
       intro:
@@ -117,4 +117,5 @@ export const useTourSteps = () => {
         ]
       : []),
   ];
+  return getSteps;
 };

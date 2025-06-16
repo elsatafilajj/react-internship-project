@@ -31,25 +31,23 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
       intro.onchange(() => {
         const currentStep = intro._currentStep;
 
-        if (!isUserNewlyCreated && currentStep === 0) {
-          onToggleSidebar();
-        }
-
-        if (currentStep === 0) {
-          onToggleSidebar();
-        }
-
         if (currentStep === 2 || currentStep === 9) {
           onToggleSidebar();
         }
       });
       intro.start();
-    }, 1000);
+    }, 1500);
   };
 
   useEffect(() => {
-    if (isUserNewlyCreated) {
-      startTour();
+    if (
+      isUserNewlyCreated &&
+      localStorage.getItem('has-started-initial-tour') !== 'true'
+    ) {
+      setTimeout(() => {
+        startTour();
+        localStorage.setItem('has-started-initial-tour', 'true');
+      }, 1500);
     }
   }, [isUserNewlyCreated]);
 
@@ -59,7 +57,10 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
         variant="ghost"
         className="cursor-pointer hover:bg-muted w-full flex justify-start gap-4
       items-center"
-        onClick={startTour}
+        onClick={() => {
+          startTour();
+          onToggleSidebar();
+        }}
       >
         <Binoculars className="stroke-foreground" />
         <p>Stuck Tour</p>

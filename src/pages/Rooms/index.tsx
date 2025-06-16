@@ -25,7 +25,7 @@ export const Rooms = () => {
       </p>
     );
 
-  const hasRooms = rooms?.data.length;
+  const hasRooms = rooms?.data?.length;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary px-6 py-12 text-gray-800">
