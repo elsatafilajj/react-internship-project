@@ -7,6 +7,7 @@ import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { queryKeys } from '@/constants/queryKeys';
+import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
 
@@ -65,17 +66,17 @@ export const RoomParticipantsPanel = () => {
               roomHost.uuid === user?.uuid &&
               participant.uuid !== user.uuid && (
                 <Button
-                  variant="destructiveSecondary"
                   size="sm"
+                  variant="destructiveSecondary"
                   onClick={() => {
                     removeUserFromRoomMutation.mutateAsync(participant.uuid);
-                    socket.emit('rooms/remove', {
+                    socket.emit(socketEvents.RemoveUser, {
                       roomId,
                       userId: participant.uuid,
                     });
                   }}
                 >
-                  Kick
+                  kick
                 </Button>
               )}
           </div>

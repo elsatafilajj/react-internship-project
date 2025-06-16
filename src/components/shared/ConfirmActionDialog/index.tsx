@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface ConfirmActionDialogProps {
-  triggerButtonName: string;
+  triggerButtonName: string | JSX.Element;
   title?: string;
   message?: string;
   onConfirm: () => void;

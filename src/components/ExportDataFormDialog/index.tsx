@@ -96,7 +96,7 @@ export const ExportDataFormDialog = () => {
             variant="ghost"
           >
             <FolderInput className="mr-2 h-4 w-4" />
-            Export data
+            Export
           </Button>
         </DialogTrigger>
 
