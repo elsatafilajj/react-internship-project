@@ -6,6 +6,16 @@ import { RoomParticipantsPanel } from '@/components/RoomParticipantsPanel';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 
+const avatarColors = [
+  'bg-red-200',
+  'bg-green-200',
+  'bg-blue-200',
+  'bg-yellow-200',
+  'bg-purple-200',
+  'bg-pink-200',
+  'bg-orange-200',
+];
+
 export const DesktopParticipantsToggle = () => {
   const { roomId } = useParams<{ roomId: string }>();
 
@@ -32,15 +42,17 @@ export const DesktopParticipantsToggle = () => {
             )}
             {participants &&
               participants.data &&
-              participants?.data.slice(0, 3).map((participant) => (
+              participants?.data.slice(0, 4).map((participant, index) => (
                 <div
-                  className="relative h-8 w-8 rounded-full bg-card-revert  text-sm font-medium -ml-1.5 border-2 border-card flex items-center justify-center shadow"
+                  className={`relative h-8 w-8 rounded-full text-sm font-medium -ml-1 border-2 border-card flex items-center justify-center shadow ${
+                    avatarColors[index % avatarColors.length]
+                  }`}
                   key={participant.uuid}
                 >
                   {roomHost?.uuid === participant.uuid && (
                     <Crown className="absolute h-3 -top-2.5 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
-                  <p className="text-card capitalize">
+                  <p className="text-black capitalize">
                     {participant.firstname[0]}
                   </p>
                 </div>

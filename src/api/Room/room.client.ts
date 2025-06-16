@@ -8,6 +8,7 @@ import {
   RoomWithRole,
   InviteRoomCodeRepsonse,
   RoomJoinedResponse,
+  LeaveRoomResponse,
 } from './room.types';
 
 export const getAllRooms = async () =>
@@ -68,7 +69,7 @@ export const joinRoom = async (code: string) =>
   });
 
 export const leaveRoom = async (roomId: string) =>
-  apiRequest<undefined, Room>({
+  apiRequest<undefined, LeaveRoomResponse>({
     method: 'POST',
-    url: `rooms/leave/${roomId}`,
+    url: `rooms/${roomId}/leave`,
   });

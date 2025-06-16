@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import { LeaveRoom } from '@/components/LeaveRoom';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
@@ -73,6 +74,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         {hasEnteredRoom && <DesktopParticipantsToggle />}
 
         {hasEnteredRoom && <ShareLinkAlertDialog />}
+
+        {hasEnteredRoom && <LeaveRoom />}
 
         {hasEnteredRoom && isUserHost && <RoomActionsDropDown />}
 
