@@ -14,7 +14,6 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
 
@@ -24,7 +23,6 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { roomId } = useParams<{ roomId: string }>();
-  const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
 
   const hasEnteredRoom = useHasEnteredRoom();
 
@@ -42,7 +40,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
     <header className="sticky top-0 z-30 w-full flex items-center justify-between gap-4 px-4 py-2 border-b bg-secondary shadow-sm">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-          <div ref={toggleSidebarIconRef}>
+          <div id="sidebar">
             <PanelLeft className="h-5 w-5 text-muted-foreground" />
           </div>
         </Button>
@@ -57,7 +55,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           <div
             className={cn(
               'px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm',
-              room?.data?.isActive ? 'bg-green-500' : 'bg-red-500',
+              room?.data?.isActive ? 'bg-primary' : 'bg-destructive',
             )}
           >
             {room?.data?.isActive ? 'Active Room' : 'Archived Room'}
@@ -78,7 +76,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
         <Tooltip>
           <TooltipTrigger className="rounded-full hover:ring-2 hover:ring-muted">
-            <div ref={profileRef} className="p-1">
+            <div id="profile" className="p-1">
               <CircleUser
                 strokeWidth={1.5}
                 size={32}

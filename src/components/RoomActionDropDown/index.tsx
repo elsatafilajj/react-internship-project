@@ -17,14 +17,11 @@ import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 import { cn } from '@/lib/utils';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const socket = getSocket();
-
-  const { roomActionsRef } = useTourRefsContext();
 
   const { data } = useGetRoomByIdQuery(roomId || '');
 
@@ -57,7 +54,8 @@ export const RoomActionsDropDown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div ref={roomActionsRef}
+        <div
+          id="room-actions"
           className={cn(
             'rounded',
             data?.data?.isActive === false

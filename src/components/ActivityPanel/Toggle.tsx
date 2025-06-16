@@ -3,10 +3,8 @@ import { History } from 'lucide-react';
 import { ActivityPanel } from '@/components/ActivityPanel';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ActivityPanelToggle = () => {
-  const { activityRef } = useTourRefsContext();
 
   return (
     <Sheet>
@@ -16,7 +14,7 @@ export const ActivityPanelToggle = () => {
           size="icon"
           className="group fixed top-[75px] right-5 z-50 bg-card border border-gray-300 text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200"
         >
-          <div className="p-2" ref={activityRef}>
+          <div className="p-2" id="activity">
             <History className="h-5 w-5" />
           </div>
 

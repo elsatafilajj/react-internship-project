@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { TourStep, useTourSteps } from '@/hooks/useTourSteps';
 
 interface TourLauncherProps {
@@ -13,8 +12,6 @@ interface TourLauncherProps {
 
 export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   const { isUserNewlyCreated } = useAuthContext();
-
-  const { tourRef } = useTourRefsContext();
 
   const tourSteps: TourStep[] = useTourSteps();
 
@@ -35,19 +32,19 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
         const currentStep = intro._currentStep;
 
         if (!isUserNewlyCreated && currentStep === 0) {
-            onToggleSidebar();
+          onToggleSidebar();
         }
 
-         if (currentStep === 0) {
-            onToggleSidebar();
+        if (currentStep === 0) {
+          onToggleSidebar();
         }
 
-        if (currentStep === 0 || currentStep === 2 || currentStep === 9) {
+        if (currentStep === 2 || currentStep === 9) {
           onToggleSidebar();
         }
       });
       intro.start();
-    }, 700);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -57,9 +54,13 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
   }, [isUserNewlyCreated]);
 
   return (
-    <div ref={tourRef}>
-      <Button variant="ghost"  className="cursor-pointer hover:bg-muted w-full flex justify-start gap-4
-      items-center" onClick={startTour}>
+    <div id="tour">
+      <Button
+        variant="ghost"
+        className="cursor-pointer hover:bg-muted w-full flex justify-start gap-4
+      items-center"
+        onClick={startTour}
+      >
         <Binoculars className="stroke-foreground" />
         <p>Stuck Tour</p>
       </Button>

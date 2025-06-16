@@ -13,7 +13,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 
 interface ToolPaletteProps {
@@ -24,7 +23,6 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
   const { zoomIn, zoomOut } = useControls();
 
   const stickyNoteRef = useRef<HTMLDivElement>(null);
-  const { noteDragRef } = useTourRefsContext();
   const { roomId } = useParams<{ roomId: string }>();
   const { data } = useGetRoomByIdQuery(roomId || '');
 
@@ -76,7 +74,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
               onMouseUp={() => !isDragDisabled && setTransformDisabled(false)}
             >
               <div ref={stickyNoteRef}>
-                <div ref={noteDragRef}>
+                <div id="note">
                   <Button
                     size="icon"
                     disabled={isDragDisabled}

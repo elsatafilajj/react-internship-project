@@ -20,11 +20,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Config } from '@/constants/config';
 import { queryKeys } from '@/constants/queryKeys';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
 
 export const ShareLinkAlertDialog = () => {
   const [code, setCode] = useState('');
-  const { shareLinkRef } = useTourRefsContext();
 
   const queryClient = useQueryClient();
   const { roomId } = useParams<{ roomId: string }>();
@@ -53,7 +51,7 @@ export const ShareLinkAlertDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div ref={shareLinkRef}>
+        <div id="share">
           <Button
             className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]"
             disabled={data?.data?.isActive === false}
