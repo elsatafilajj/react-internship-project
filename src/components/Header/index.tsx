@@ -2,8 +2,6 @@ import { CircleUser, PanelLeft } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
-import { LeaveRoom } from '@/components/LeaveRoom';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
@@ -14,7 +12,6 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
-import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
 
@@ -30,12 +27,6 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { data: room } = useGetRoomByIdQuery(roomId || '');
 
   const navigate = useNavigate();
-
-  const { user } = useAuthContext();
-  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
-
-  const roomHost = users?.data?.find((user) => user.role === 'host');
-  const isUserHost = roomHost?.uuid === user?.uuid;
 
   return (
     <header className="sticky top-0 z-30 w-full flex items-center justify-between gap-4 px-4 py-2 border-b bg-secondary shadow-sm">
@@ -56,7 +47,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           <div
             className={cn(
               'px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm',
-              room?.data?.isActive ? 'bg-primary' : 'bg-destructive',
+              room?.data?.isActive ? 'bg-green-500' : 'bg-destructive',
             )}
           >
             {room?.data?.isActive ? 'Active Room' : 'Archived Room'}
@@ -73,9 +64,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
         {hasEnteredRoom && <ShareLinkAlertDialog />}
 
-        {hasEnteredRoom && <LeaveRoom />}
-
-        {hasEnteredRoom && isUserHost && <RoomActionsDropDown />}
+        {hasEnteredRoom && <RoomActionsDropDown />}
 
         <Tooltip>
           <TooltipTrigger className="rounded-full hover:ring-2 hover:ring-muted">

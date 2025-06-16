@@ -158,7 +158,7 @@ export const DroppableRoom = ({
       }
     });
 
-    socket.on('rooms/joined', ({ userId }) => {
+    socket.on(socketEvents.UserJoined, ({ userId }) => {
       console.log(userId, `joined the room`);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getUsers(),
@@ -172,7 +172,7 @@ export const DroppableRoom = ({
       }
     });
 
-    socket.on('rooms/leftP', ({ userId }) => {
+    socket.on(socketEvents.RoomLeftP, ({ userId }) => {
       console.log(`${userId.id} left the room`);
 
       queryClient.invalidateQueries({

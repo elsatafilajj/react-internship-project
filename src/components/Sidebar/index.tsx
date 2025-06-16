@@ -6,14 +6,12 @@ import { Link, useParams } from 'react-router-dom';
 import { logout as apiLogout } from '@/api/User/user.client';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
-import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
 import { TourLauncher } from '@/components/TourLauncher';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
-import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -26,7 +24,6 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
 
   const { roomId } = useParams<{ roomId: string }>();
 
-  const hasEnteredRoom = useHasEnteredRoom();
   const { user } = useAuthContext();
   const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
 
@@ -101,8 +98,6 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar }: SidebarProps) => {
           <ThemeChangeToggle />
 
           <TourLauncher onToggleSidebar={onToggleSidebar} />
-
-          {hasEnteredRoom && <ExportDataFormDialog />}
         </nav>
 
         <div className="mt-auto flex justify-between cursor-pointer">

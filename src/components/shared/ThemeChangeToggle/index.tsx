@@ -19,14 +19,15 @@ export function ThemeChangeToggle() {
         variant={'ghost'}
         aria-label="Toggle Theme"
       >
-        {theme === 'light' ? (
+        {theme === 'dark' ? (
           <>
-            <Moon />
+            <Sun />
             <p>Light Mode</p>
           </>
         ) : (
           <>
-            <Sun />
+            <Moon />
+
             <p>Dark Mode</p>
           </>
         )}
