@@ -175,9 +175,21 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
                 className="resize-none p-2 w-full tracking-wide h-full bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
                 aria-label="Note input"
               />
-              <span className="text-muted-foreground brightness-50 -mt-10 ml-1 tracking-wide text-xs self-start">
-                {author?.firstName || 'Unknown'}
-              </span>
+              <div className="flex justify-between items-center px-1 mt-1">
+                <span className="text-muted-foreground brightness-50 tracking-wide text-xs">
+                  {author?.firstName || 'Unknown'}
+                </span>
+
+                {(note.totalVotes ?? 0) > 0 && (
+                  <span
+                    className="text-[11px] font-medium text-yellow-800 bg-yellow-100 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1"
+                    title="Total votes"
+                  >
+                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-300" />
+                    {note.totalVotes}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
