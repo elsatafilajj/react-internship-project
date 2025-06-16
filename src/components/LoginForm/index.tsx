@@ -25,9 +25,9 @@ export const LoginForm = () => {
     onSuccess: (data) => {
       toast.success('Login successful!');
       setAuthState({
-        user: data.data.user,
-        accessToken: data.data.accessToken,
-        refreshToken: data.data.refreshToken,
+        user: data?.data?.user,
+        accessToken: data?.data?.accessToken,
+        refreshToken: data?.data?.refreshToken,
       });
     },
   });
@@ -44,7 +44,7 @@ export const LoginForm = () => {
         formikHelpers.resetForm();
       } catch (error) {
         if (error instanceof AxiosError) {
-          const errorMessage = error.response?.data.message as AxiosError<
+          const errorMessage = error.response?.data?.message as AxiosError<
             ErrorResponseData['message']
           >;
 

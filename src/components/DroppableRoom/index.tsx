@@ -47,20 +47,28 @@ export const DroppableRoom = ({
 
   useEffect(() => {
     if (!error) return;
-
     const axiosError = error as AxiosError<ErrorResponseData>;
 
-    if (axiosError.response?.status === 403) {
+    const status = axiosError?.response?.status;
+
+    if (!status) return;
+
+    if ([403, 404, 500].includes(status)) {
       const message =
         axiosError.response?.data?.message ?? 'You were removed from this room';
       toast.error(message);
       navigate('/rooms');
+    } else if (status >= 400 && status < 600) {
+      const message =
+        axiosError.response?.data?.message ??
+        'Something went wrong. Please try again.';
+      toast.error(message);
     }
-  }, [error]);
+  }, [error, navigate]);
 
   useEffect(() => {
     if (isFetched && data) {
-      setNotes(data.data);
+      setNotes(data?.data);
     }
   }, [data, isFetched]);
 
@@ -101,7 +109,7 @@ export const DroppableRoom = ({
 
   useEffect(() => {
     if (isFetched && data) {
-      setNotes(data.data);
+      setNotes(data?.data);
     }
   }, [data, isFetched]);
 
@@ -150,11 +158,26 @@ export const DroppableRoom = ({
       }
     });
 
+    socket.on(socketEvents.UserJoined, ({ userId }) => {
+      console.log(userId, `joined the room`);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getUsers(),
+      });
+    });
+
     socket.on(socketEvents.UserRemove, ({ userId }) => {
       if (userId === user?.uuid) {
         toast.error("You've been removed from this room.");
         navigate('/rooms');
       }
+    });
+
+    socket.on(socketEvents.RoomLeftP, ({ userId }) => {
+      console.log(`${userId.id} left the room`);
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getUsers(),
+      });
     });
 
     return () => {
@@ -165,6 +188,7 @@ export const DroppableRoom = ({
       socket.off(socketEvents.DeletedNote);
       socket.off(socketEvents.ArchivedRoom);
       socket.off(socketEvents.UserRemove);
+      socket.off('rooms/leftP');
     };
   }, []);
 

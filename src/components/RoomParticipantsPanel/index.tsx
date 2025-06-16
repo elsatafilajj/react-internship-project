@@ -7,7 +7,9 @@ import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { queryKeys } from '@/constants/queryKeys';
+import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { getSocket } from '@/helpers/socket';
 
 export const RoomParticipantsPanel = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -27,6 +29,7 @@ export const RoomParticipantsPanel = () => {
   });
 
   const roomHost = participants?.data?.find((user) => user.role === 'host');
+  const socket = getSocket();
 
   return (
     <div className="flex flex-col items-center gap-2 mt-1 p-3">
@@ -63,13 +66,17 @@ export const RoomParticipantsPanel = () => {
               roomHost.uuid === user?.uuid &&
               participant.uuid !== user.uuid && (
                 <Button
-                  variant="destructiveSecondary"
                   size="sm"
-                  onClick={() =>
-                    removeUserFromRoomMutation.mutateAsync(participant.uuid)
-                  }
+                  variant="destructiveSecondary"
+                  onClick={() => {
+                    removeUserFromRoomMutation.mutateAsync(participant.uuid);
+                    socket.emit(socketEvents.RemoveUser, {
+                      roomId,
+                      userId: participant.uuid,
+                    });
+                  }}
                 >
-                  Kick
+                  kick
                 </Button>
               )}
           </div>

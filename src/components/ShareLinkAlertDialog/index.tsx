@@ -34,7 +34,7 @@ export const ShareLinkAlertDialog = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });
-      setCode(data.data.inviteCode);
+      setCode(data?.data?.inviteCode);
     },
   });
 

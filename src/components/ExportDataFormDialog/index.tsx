@@ -41,16 +41,16 @@ export const ExportDataFormDialog = () => {
       return { data: response, fileType };
     },
     onSuccess: ({ data, fileType }) => {
-      const blob = new Blob([data.data as string], {
+      console.log(data)
+      const blob = new Blob([data?.data as string], {
         type:
           fileType === 'csv'
             ? 'text/csv'
-            : fileType === 'xml'
-              ? 'application/xml'
-              : fileType === 'pdf'
-                ? 'application/pdf'
-                : 'application/json',
+            : fileType === 'pdf'
+              ? 'application/pdf'
+              : 'application/json',
       });
+
 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -65,7 +65,7 @@ export const ExportDataFormDialog = () => {
       let errorMessage = 'Failed to export data. Please try again later.';
 
       if (error instanceof AxiosError && error.response) {
-        const data = error.response.data;
+        const data = error.response?.data;
 
         if (data instanceof Blob) {
           try {
@@ -96,7 +96,7 @@ export const ExportDataFormDialog = () => {
             variant="ghost"
           >
             <FolderInput className="mr-2 h-4 w-4" />
-            Export data
+            Export
           </Button>
         </DialogTrigger>
 
@@ -120,8 +120,7 @@ export const ExportDataFormDialog = () => {
                 <SelectGroup>
                   <SelectLabel>File Format</SelectLabel>
                   <SelectItem value="csv">CSV</SelectItem>
-                  <SelectItem value="json">JSON</SelectItem>
-                  <SelectItem value="xml">XML</SelectItem>
+                  <SelectItem defaultChecked value="json">JSON</SelectItem>
                   <SelectItem value="pdf">PDF</SelectItem>
                 </SelectGroup>
               </SelectContent>

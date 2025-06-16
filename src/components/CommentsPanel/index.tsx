@@ -85,7 +85,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
 
   useEffect(() => {
     if (isFetched && data) {
-      setComments(data.data);
+      setComments(data?.data);
     }
   }, [data, isFetched]);
 
