@@ -9,7 +9,9 @@ export const useGetAllNotesFromRoomQuery = (
   roomId: string,
   options?: UseQueryOptions<AxiosResponse<NoteItem[]>>,
 ) => {
-  const uuidRegex = new RegExp(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/); 
+  const uuidRegex = new RegExp(
+    /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
+  );
   return useQuery<AxiosResponse<NoteItem[]>>({
     queryKey: queryKeys.getNotesByRoomId(roomId),
     queryFn: () => getAllNotesFromRoom(roomId),
@@ -20,13 +22,13 @@ export const useGetAllNotesFromRoomQuery = (
 
 export const useGetNoteByIdQuery = (
   roomId: string,
-  noteId: string,
+
   options?: UseQueryOptions<AxiosResponse<NoteItem[]>>,
 ) => {
   return useQuery<AxiosResponse<NoteItem[]>>({
-    queryKey: queryKeys.getSingleNote(roomId, noteId),
+    queryKey: queryKeys.getSingleNote(roomId),
     queryFn: () => getAllNotesFromRoom(roomId),
-    enabled: !!roomId && !!noteId,
+    enabled: !!roomId,
     ...options,
   });
 };

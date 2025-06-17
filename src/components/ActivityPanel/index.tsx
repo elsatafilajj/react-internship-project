@@ -6,6 +6,7 @@ import { useControls } from 'react-zoom-pan-pinch';
 
 import { useGetAllActivitiesForRoom } from '@/api/Activities/activities.queries';
 import { ActivityResponse } from '@/api/Activities/activitites.types';
+import { useGetNoteByIdQuery } from '@/api/Note/notes.queries';
 import { socketEvents } from '@/constants/socketEvents';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { getFormattedDate } from '@/helpers/getFormattedDate';
@@ -18,6 +19,7 @@ export const ActivityPanel = () => {
   const socket = getSocket();
   const { scrollToNote } = useNoteScrollContext();
   const { zoomOut } = useControls();
+  const { data: note } = useGetNoteByIdQuery(roomId || '');
 
   useEffect(() => {
     if (isFetched && data) {
@@ -42,6 +44,12 @@ export const ActivityPanel = () => {
     }
     zoomOut();
   };
+  const sortedActivities = data?.data
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
 
   return (
     <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[90vh] rounded-md overflow-hidden shadow-md border">
@@ -54,7 +62,7 @@ export const ActivityPanel = () => {
             No activities yet
           </p>
         ) : (
-          activities?.map((activity) => (
+          sortedActivities?.map((activity) => (
             <div
               key={activity.uuid}
               className="text-sm text-foreground flex justify-between items-start gap-2 border rounded-md p-3 shadow-sm bg-muted cursor-pointer"
@@ -65,6 +73,7 @@ export const ActivityPanel = () => {
                   {activity?.user?.firstName} {activity.activityType} a{' '}
                   {activity.resourceType}
                 </span>
+                <span>{note?.data.map((not) => not.content)}</span>
                 <span className="text-[10px] text-muted-foreground">
                   {getFormattedDate(new Date(activity.createdAt || ''), {
                     day: '2-digit',
