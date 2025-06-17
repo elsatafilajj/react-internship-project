@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CircleUserRound, Crown } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
 import { removeUserFromRoom } from '@/api/Room/room.client';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import { avatarColors } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { queryKeys } from '@/constants/queryKeys';
@@ -42,21 +43,26 @@ export const RoomParticipantsPanel = () => {
       </div>
       {participants &&
         participants.data &&
-        participants?.data.map((participant) => (
+        participants?.data.map((participant, index) => (
           <div
             key={participant.uuid}
             className="flex items-center justify-between px-5 py-3 border bg-muted shadow-sm rounded-md w-full"
           >
             <div className="flex gap-5 items-center">
               <div>
-                {participant.role === 'host' && (
-                  <Crown className="absolute top-16 left-7 w-3.5 -rotate-40 hover:animate-caret-blink " />
-                )}
-                <CircleUserRound
-                  className="relative w-8"
-                  strokeWidth={1.3}
-                  size={30}
-                />
+                <div
+                  className={`relative h-10 w-10 rounded-full text-sm font-medium -ml-1 border-2 border-card flex items-center justify-center shadow ${
+                    avatarColors[index % avatarColors.length]
+                  }`}
+                  key={participant.uuid}
+                >
+                  {roomHost?.uuid === participant.uuid && (
+                    <Crown className="absolute h-3 -top-2.5 -left-3 -rotate-40 hover:animate-caret-blink" />
+                  )}
+                  <p className="text-black capitalize">
+                    {participant.firstname[0] + participant.lastname[0]}
+                  </p>
+                </div>
               </div>
               <p className="text-sm tracking-wider">
                 {participant.firstname} {participant.lastname}
