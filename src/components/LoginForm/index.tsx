@@ -100,12 +100,6 @@ export const LoginForm = () => {
         />
 
         <div className="flex text-sm flex-col space-y-5 items-center justify-between">
-          <Link
-            to={RouteNames.ForgotPassword}
-            className="font-medium text-foreground underline"
-          >
-            Forgot your password?
-          </Link>
           <Button
             type="submit"
             className="w-full"
@@ -113,6 +107,13 @@ export const LoginForm = () => {
           >
             Log In
           </Button>
+
+          <Link
+            to={RouteNames.ForgotPassword}
+            className="font-medium text-foreground underline"
+          >
+            Forgot your password?
+          </Link>
 
           <p className="text-foreground">
             Dont have an account?{' '}
