@@ -5,5 +5,6 @@ export const VerifyEmailSchema = object().shape({
     .matches(/^\d+$/, 'Verification code must contain only numbers')
     .min(6, 'Verification code must be 6 digits')
     .max(6, 'Verification code must be 6 digits')
-    .required('Verification code is required'),
+    .required('Verification code is required')
+    .trim(),
 });
