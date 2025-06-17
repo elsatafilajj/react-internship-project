@@ -194,7 +194,7 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
           </div>
 
           {isWinner && (
-            <div className="absolute top-2 right-1 z-30 rotate-[50deg] scale-110 pointer-events-none">
+            <div className="absolute top-2 right-1 rotate-[50deg] scale-110 pointer-events-none">
               <div className="text-3xl select-none">
                 <Crown className="rotate-[-20deg] w-6 h-6 text-yellow-100 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)] pointer-events-none select-none" />
               </div>
