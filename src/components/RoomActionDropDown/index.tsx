@@ -20,12 +20,9 @@ import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
-import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
 
 export const RoomActionsDropDown = () => {
-  const hasEnteredRoom = useHasEnteredRoom();
-
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const socket = getSocket();
@@ -111,8 +108,10 @@ export const RoomActionsDropDown = () => {
             onConfirm={handleDelete}
           />
         )}
-        {hasEnteredRoom && <ExportDataFormDialog />}
-        {hasEnteredRoom && !isUserHost && (
+
+        <ExportDataFormDialog />
+
+        {!isUserHost && (
           <DropdownMenuItem>
             <LeaveRoom />
           </DropdownMenuItem>
