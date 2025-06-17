@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 import { editProfile, getUserDetails } from '@/api/User/user.client';
@@ -14,9 +15,11 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { capitalize } from '@/helpers/capitalize';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { EditProfileSchema } from '@/schemas/EditProfileSchema';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const EditProfileForm = () => {
   const { user, setAuthState } = useAuthContext();
@@ -27,9 +30,6 @@ export const EditProfileForm = () => {
       const updatedUser = await getUserDetails();
       setAuthState({ user: updatedUser?.data });
       toast.success('Your profile has been updated!');
-    },
-    onError: (error) => {
-      toast.error(error.message);
     },
   });
 
@@ -47,7 +47,20 @@ export const EditProfileForm = () => {
         await editProfileMutation.mutateAsync(values);
         formikHelpers.resetForm();
       } catch (error) {
-        console.error('Edit Profile failed!', error);
+        if (error instanceof AxiosError) {
+          const errorMessage = error.response?.data?.message as AxiosError<
+            ErrorResponseData['message']
+          >;
+
+          let capitalizedError;
+          if (Array.isArray(errorMessage)) {
+            capitalizedError = capitalize(errorMessage[0]);
+          } else {
+            capitalizedError = capitalize(errorMessage.toLocaleString());
+          }
+
+          formikHelpers.setFieldError('email', capitalizedError);
+        }
       }
     },
   });
