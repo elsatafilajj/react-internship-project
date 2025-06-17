@@ -2,6 +2,7 @@ import { CircleUser, PanelLeft } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
@@ -60,11 +61,17 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       )}
 
       <div className="flex items-center gap-2">
+        {!room?.data?.isActive && hasEnteredRoom && (
+          <Button size="sm" variant="ghost">
+            <ExportDataFormDialog />
+          </Button>
+        )}
+
         {hasEnteredRoom && <DesktopParticipantsToggle />}
 
         {hasEnteredRoom && <ShareLinkAlertDialog />}
 
-        {hasEnteredRoom && <RoomActionsDropDown />}
+        {hasEnteredRoom && room?.data?.isActive && <RoomActionsDropDown />}
 
         <Tooltip>
           <TooltipTrigger className="rounded-full hover:ring-2 hover:ring-muted">
