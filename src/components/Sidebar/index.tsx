@@ -77,7 +77,7 @@ export const Sidebar = ({
         </button>
 
         <nav className="space-y-2 mt-8">
-          {isUserHost && <CreateEditRoomFormDialog />}
+          {isUserHost && hasEnteredRoom && <CreateEditRoomFormDialog />}
           {!hasEnteredRoom && <CreateEditRoomFormDialog />}
 
           <div id="room">
