@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { TourStep, useTourSteps } from '@/hooks/useTourSteps';
 
 interface TourLauncherProps {
@@ -11,8 +12,13 @@ interface TourLauncherProps {
   setSideBarToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const TourLauncher = ({ onToggleSidebar, setSideBarToggle }: TourLauncherProps) => {
+export const TourLauncher = ({
+  onToggleSidebar,
+  setSideBarToggle,
+}: TourLauncherProps) => {
   const { isUserNewlyCreated } = useAuthContext();
+
+  const hasEnteredRoom = useHasEnteredRoom();
 
   const getTourSteps: () => TourStep[] = useTourSteps();
 
@@ -32,7 +38,7 @@ export const TourLauncher = ({ onToggleSidebar, setSideBarToggle }: TourLauncher
       intro.onchange(() => {
         const currentStep = intro._currentStep;
 
-        if (currentStep === 2 || currentStep === 8) {
+        if ((currentStep === 3 || currentStep === 9) && !hasEnteredRoom) {
           onToggleSidebar();
         }
       });
@@ -48,9 +54,9 @@ export const TourLauncher = ({ onToggleSidebar, setSideBarToggle }: TourLauncher
     ) {
       setTimeout(() => {
         startTour();
-        setSideBarToggle(false)
+        setSideBarToggle(false);
         localStorage.setItem('has-started-initial-tour', 'true');
-        setSideBarToggle(false)
+        setSideBarToggle(false);
       }, 1000);
     }
   }, [isUserNewlyCreated]);

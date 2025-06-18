@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { removeUserFromRoom } from '@/api/Room/room.client';
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
-import { avatarColors } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
+import { avatarColors } from '@/components/RoomParticipantsPanel/ParticipantsToggle';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { queryKeys } from '@/constants/queryKeys';

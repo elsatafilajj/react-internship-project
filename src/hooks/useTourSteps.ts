@@ -23,70 +23,108 @@ export const useTourSteps = () => {
   const roomHost = users?.data?.find((user) => user.role === 'host');
   const isHost = roomHost?.uuid === user?.uuid;
 
+  console.log(document.getElementById('participants-mobile'));
+
   const getSteps = (): TourStep[] => [
     {
-      title: 'Welcome to your Stuck Tour!',
-      intro:
-        'Let’s take a quick tour of Stuck — your space for collaboration, brainstorming, and creative problem-solving!',
+      title: !hasEnteredRoom ? 'Welcome to your Stuck Tour!' : '',
+      intro: !hasEnteredRoom
+        ? 'Let’s take a quick tour of Stuck — your space for collaboration, brainstorming, and creative problem-solving!'
+        : "Let's take a further step into your room tour",
     },
-    {
-      element: document.getElementById('sidebar'),
-      intro: 'Here you can find more and navigate through the application!',
-    },
-    { intro: 'Then in the sidebar' },
-    {
-      element: document.getElementById('create-edit-room'),
-      intro: hasEnteredRoom
-        ? isHost
-          ? 'Edit your room’s title here to keep things organized and clear.'
-          : 'Only the host can edit the room title. If you need to change it, ask the host to do so.'
-        : 'You can create a brand new room. Just click here!',
-    },
-    {
-      element: document.getElementById('room'),
-      intro:
-        'Here’s where you’ll find all the rooms you’ve joined — your creative hubs!',
-    },
-    {
-      element: document.getElementById('archive'),
-      intro: 'Archived rooms live here — nothing’s ever truly lost!',
-    },
-    {
-      element: document.getElementById('theme'),
-      intro:
-        'Customize your experience by toggling between light and dark themes.',
-    },
-    {
-      element: document.getElementById('tour'),
-      intro: 'Need a refresher later? Restart the tour anytime from here.',
-    },
-    ...(hasEnteredRoom
+    ...(!hasEnteredRoom
       ? [
           {
-            element: document.getElementById('participants'),
-            intro: isRoomActive
-              ? isHost
-                ? 'See and manage all participants here — you can even remove someone if needed.'
-                : 'Here’s the list of everyone in this room. If you want someone to be removed from the room ask the host to do so!'
-              : 'This is the list of everyone who participated. Since this room is locked, no new members can join or leave.',
+            intro: 'Here you can manage all of your rooms',
+            element: document.getElementById('rooms'),
           },
           {
-            element: document.getElementById('share'),
-            intro: isRoomActive
-              ? 'Invite others to collaborate by sharing this room’s link.'
-              : 'This room is no longer active, so sharing is disabled. But you can revisit what was built here anytime.',
+            element: document.getElementById('sidebar'),
+            intro:
+              'Here you can find more and navigate through the application!',
+          },
+          { intro: 'Then in the sidebar' },
+          {
+            element: document.getElementById('create-edit-room'),
+            intro: hasEnteredRoom
+              ? isHost
+                ? 'Edit your room’s title here to keep things organized and clear.'
+                : 'Only the host can edit the room title. If you need to change it, ask the host to do so.'
+              : 'You can create a brand new room. Just click here!',
+          },
+          {
+            element: document.getElementById('room'),
+            intro:
+              'Here’s where you’ll find all the rooms you’ve joined — your creative hubs!',
+          },
+          {
+            element: document.getElementById('archive'),
+            intro: 'Archived rooms live here — nothing’s ever truly lost!',
+          },
+          {
+            element: document.getElementById('theme'),
+            intro:
+              'Customize your experience by toggling between light and dark themes.',
+          },
+          {
+            element: document.getElementById('tour'),
+            intro:
+              'Want to find out more? Restart the tour anytime from here on any page!',
           },
         ]
       : []),
     ...(hasEnteredRoom
       ? [
           {
+            element: document.getElementById('note'),
+            intro: isRoomActive
+              ? 'Drag this icon to create a new note and keep the ideas flowing!'
+              : 'Notes can’t be created in a locked room — but you can still browse and reflect on what was discussed.',
+          },
+          {
+            element: document.getElementById('zoom-in'),
+            intro: 'Click here to zoom in, in a centered manner!',
+          },
+          {
+            element: document.getElementById('zoom-out'),
+            intro: 'And click here to zoom back out.',
+          },
+          ...(!isRoomActive
+            ? [
+                {
+                  intro:
+                    'Here you can still export the notes of your archived room in different formats.',
+                  element: document.getElementById('archived-export'),
+                },
+              ]
+            : []),
+          {
+            element: document.getElementById('participants'),
+            intro: isRoomActive
+              ? isHost
+                ? 'See and manage all participants here — you can even kick someone if needed.'
+                : 'Here’s the list of everyone in this room. If you want someone to be kicked from the room ask the host to do so!'
+              : 'This is the list of everyone who participated. Since this room is locked, no new members can join or leave.',
+          },
+          ...(isRoomActive
+            ? [
+                {
+                  element: document.getElementById('share'),
+                  intro: isRoomActive
+                    ? 'Invite others to collaborate by sharing this room’s link.'
+                    : 'This room is no longer active, so sharing is disabled. But you can revisit what was built here anytime.',
+                },
+              ]
+            : []),
+        ]
+      : []),
+    ...(hasEnteredRoom && isRoomActive
+      ? [
+          {
             element: document.getElementById('room-actions'),
-            intro: isRoomActive ?
-            isHost?
-              'As the host, you can manage the room, archive, edit or delete it. And export notes.' :
-              'Here you can export your notes, and leave the room.'
-              : 'This room is locked, so you can’t make changes or export notes anymore. But you can still review everything that was created here.',
+            intro: isHost
+              ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
+              : 'Here you can export your notes, and leave the room.',
           },
         ]
       : []),
@@ -103,14 +141,8 @@ export const useTourSteps = () => {
               : 'This room is locked — no more activities will occur, but you can review all past actions here.',
           },
           {
-            element: document.getElementById('note'),
             intro: isRoomActive
-              ? 'Drag this icon to create a new note and keep the ideas flowing!'
-              : 'Notes can’t be created in a locked room — but you can still browse and reflect on what was discussed.',
-          },
-          {
-            intro: isRoomActive
-              ? 'Feel free to move notes, change colors, vote on ideas, and share your thoughts.'
+              ? 'Feel free to move notes, change colors, vote on ideas, and share your thoughts. Enjoy!'
               : 'The room is in view-only mode now — all creativity that happened here is saved for your reference.',
           },
         ]

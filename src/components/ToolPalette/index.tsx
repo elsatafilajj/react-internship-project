@@ -40,21 +40,6 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
     }
   }, [isDragDisabled, drag]);
 
-  const tools = [
-    {
-      icon: ZoomInIcon,
-      label: 'Zoom in',
-      tip: 'Zoom in',
-      function: zoomIn,
-    },
-    {
-      icon: ZoomOutIcon,
-      label: 'Zoom out',
-      tip: 'Zoom out',
-      function: zoomOut,
-    },
-  ];
-
   return (
     <TooltipProvider>
       <div className="bg-secondary border border-muted-foreground/45 rounded-xl shadow-md px-4 py-3 flex items-center gap-4 w-fit">
@@ -93,26 +78,35 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
           <TooltipContent>Drag note</TooltipContent>
         </Tooltip>
 
-        {tools.map((tool, index) => (
-          <Tooltip key={index}>
-            <div className="flex flex-col items-center gap-1.5">
-              <TooltipTrigger>
-                <Button
-                  size="icon"
-                  disabled={isDragDisabled}
-                  onClick={() => !isDragDisabled && tool.function()}
-                  className={clsx(
-                    'transition hover:text-foreground bg-tool-palette text-foreground',
-                    isDragDisabled && 'disabled:cursor-not-allowed opacity-50',
-                  )}
-                >
-                  <tool.icon />
-                </Button>
-              </TooltipTrigger>
-            </div>
-            <TooltipContent>{tool.tip}</TooltipContent>
-          </Tooltip>
-        ))}
+        <Tooltip>
+          <div id="zoom-in" className="flex flex-col items-center gap-1.5">
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                onClick={() => zoomIn()}
+                className="transition hover:text-foreground bg-tool-palette text-foreground"
+              >
+                <ZoomInIcon />
+              </Button>
+            </TooltipTrigger>
+          </div>
+          <TooltipContent>Zoom in</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <div id="zoom-out" className="flex flex-col items-center gap-1.5">
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                onClick={() => zoomOut()}
+                className="transition hover:text-foreground bg-tool-palette text-foreground"
+              >
+                <ZoomOutIcon />
+              </Button>
+            </TooltipTrigger>
+          </div>
+          <TooltipContent>Zoom out</TooltipContent>
+        </Tooltip>
       </div>
     </TooltipProvider>
   );

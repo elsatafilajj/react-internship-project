@@ -12,6 +12,7 @@ import { ThemeChangeToggle } from '@/components/shared/ThemeChangeToggle';
 import { Button } from '@/components/ui/button';
 import { RouteNames } from '@/constants/routeNames';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -20,7 +21,12 @@ interface SidebarProps {
   setSideBarToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Sidebar = ({ isOpen, onClose, onToggleSidebar, setSideBarToggle }: SidebarProps) => {
+export const Sidebar = ({
+  isOpen,
+  onClose,
+  onToggleSidebar,
+  setSideBarToggle,
+}: SidebarProps) => {
   const { logout } = useAuthContext();
 
   const { roomId } = useParams<{ roomId: string }>();
@@ -30,6 +36,8 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar, setSideBarToggle }: 
 
   const roomHost = users?.data?.find((user) => user.role === 'host');
   const isUserHost = roomHost?.uuid === user?.uuid;
+
+  const hasEnteredRoom = useHasEnteredRoom();
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -70,6 +78,8 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar, setSideBarToggle }: 
 
         <nav className="space-y-2 mt-8">
           {isUserHost && <CreateEditRoomFormDialog />}
+          {!hasEnteredRoom && <CreateEditRoomFormDialog />}
+
           <div id="room">
             <Button
               variant="ghost"
@@ -98,7 +108,10 @@ export const Sidebar = ({ isOpen, onClose, onToggleSidebar, setSideBarToggle }: 
 
           <ThemeChangeToggle />
 
-          <TourLauncher setSideBarToggle={setSideBarToggle} onToggleSidebar={onToggleSidebar} />
+          <TourLauncher
+            setSideBarToggle={setSideBarToggle}
+            onToggleSidebar={onToggleSidebar}
+          />
         </nav>
 
         <div className="mt-auto flex justify-between cursor-pointer">

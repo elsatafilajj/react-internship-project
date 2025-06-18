@@ -41,7 +41,6 @@ export const ExportDataFormDialog = () => {
       return { data: response, fileType };
     },
     onSuccess: ({ data, fileType }) => {
-      console.log(data)
       const blob = new Blob([data?.data as string], {
         type:
           fileType === 'csv'
@@ -50,7 +49,6 @@ export const ExportDataFormDialog = () => {
               ? 'application/pdf'
               : 'application/json',
       });
-
 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -88,6 +86,7 @@ export const ExportDataFormDialog = () => {
   });
 
   return (
+    <div id="archived-export">
       <Dialog>
         <DialogTrigger asChild>
           <Button
@@ -119,7 +118,9 @@ export const ExportDataFormDialog = () => {
                 <SelectGroup>
                   <SelectLabel>File Format</SelectLabel>
                   <SelectItem value="csv">CSV</SelectItem>
-                  <SelectItem defaultChecked value="json">JSON</SelectItem>
+                  <SelectItem defaultChecked value="json">
+                    JSON
+                  </SelectItem>
                   <SelectItem value="pdf">PDF</SelectItem>
                 </SelectGroup>
               </SelectContent>
@@ -143,6 +144,7 @@ export const ExportDataFormDialog = () => {
             </DialogFooter>
           </form>
         </DialogContent>
-    </Dialog>
+      </Dialog>
+    </div>
   );
 };

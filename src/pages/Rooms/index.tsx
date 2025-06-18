@@ -41,7 +41,7 @@ export const Rooms = () => {
         </p>
       </div>
 
-      <div className="w-full xl:max-w-[1500px]">
+      <div id="rooms" className="w-full xl:max-w-[1500px]">
         <div className="flex justify-between">
           {' '}
           <h2 className="text-lg md:text-md font-semibold text-foreground  animate-fade-in flex items-center pl-4 gap-2">

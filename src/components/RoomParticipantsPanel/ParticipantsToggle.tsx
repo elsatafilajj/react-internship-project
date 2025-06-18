@@ -16,7 +16,7 @@ export const avatarColors = [
   'bg-orange-200',
 ];
 
-export const DesktopParticipantsToggle = () => {
+export const ParticipantsToggle = () => {
   const { roomId } = useParams<{ roomId: string }>();
 
   const { data: participants, isLoading } = useGetAllUsersByRoomQuery(
@@ -26,7 +26,7 @@ export const DesktopParticipantsToggle = () => {
   const roomHost = participants?.data?.find((user) => user.role === 'host');
 
   return (
-    <div id="participants" className="sm:flex hidden">
+    <div id="participants">
       <Sheet>
         <SheetTrigger asChild>
           <div className="-space-x-2 flex cursor-pointer">
@@ -44,19 +44,34 @@ export const DesktopParticipantsToggle = () => {
               participants.data &&
               participants?.data?.slice(0, 4).map((participant, index) => (
                 <div
-                  className={`relative h-10 w-10 rounded-full text-sm font-medium -ml-0.5 border-2 border-card flex items-center justify-center shadow ${
+                  className={`relative sm:flex hidden h-10 w-10 rounded-full text-sm font-medium -ml-0.5 border-2 border-card items-center justify-center shadow ${
                     avatarColors[index % avatarColors.length]
                   }`}
                   key={participant.uuid}
                 >
                   {roomHost?.uuid === participant.uuid && (
-                    <Crown className="absolute h-3 -top-2.5 -left-3 -rotate-40 hover:animate-caret-blink" />
+                    <Crown className="absolute h-3 -top-2 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
                   <p className="text-black capitalize">
                     {participant.firstname[0] + participant.lastname[0]}
                   </p>
                 </div>
               ))}
+            {
+              <div
+                className={`relative sm:hidden flex h-9 w-9 rounded-full text-sm font-medium -ml-0.5 border-2 border-card items-center justify-center shadow ${
+                  avatarColors[2]
+                }`}
+              >
+                <Crown className="absolute h-3 -top-2 -left-3 -rotate-40 hover:animate-caret-blink" />
+
+                <p className="text-black capitalize">
+                  {roomHost
+                    ? roomHost?.firstname[0] + roomHost?.lastname[0]
+                    : 'RH'}
+                </p>
+              </div>
+            }
             {participants && participants.data && (
               <div className="flex flex-col items-center ml-2 -mt-1.5 hover:animate-in">
                 <p className="text-xs text-muted-foreground">
@@ -68,7 +83,7 @@ export const DesktopParticipantsToggle = () => {
           </div>
         </SheetTrigger>
 
-        <SheetContent side="right" className="bg-card w-xs top-25 rounded-s-xl">
+        <SheetContent side="right" className="bg-card w-xs top-18 rounded-s-xl">
           <RoomParticipantsPanel />
         </SheetContent>
       </Sheet>

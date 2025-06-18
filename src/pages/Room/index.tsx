@@ -8,7 +8,6 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
-import { MobileParticipantsToggle } from '@/components/RoomParticipantsPanel/MobileParticipantsToggle';
 import { ToolPalette } from '@/components/ToolPalette';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
@@ -19,15 +18,16 @@ export const Room = () => {
   const roomId = useParams<{ roomId: string }>();
   const socket = useMemo(() => getSocket(), []);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!roomId || !roomId.roomId) return;  
+    if (!roomId || !roomId.roomId) return;
     const roomIdString = roomId.roomId.toLocaleString();
-    const uuidRegex = new RegExp(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/); 
-    const isUuidValid = uuidRegex.test(roomIdString)
-    if(!isUuidValid)
-      navigate('/rooms')
+    const uuidRegex = new RegExp(
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
+    );
+    const isUuidValid = uuidRegex.test(roomIdString);
+    if (!isUuidValid) navigate('/rooms');
   }, [roomId]);
 
   useEffect(() => {
@@ -61,16 +61,12 @@ export const Room = () => {
           />
         </TransformComponent>
 
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
           <ToolPalette setTransformDisabled={setTransformDisabled} />
         </div>
 
         <div className="fixed z-50">
           <ActivityPanelToggle />
-        </div>
-
-        <div className="fixed">
-          <MobileParticipantsToggle />
         </div>
       </TransformWrapper>
     </DndProvider>

@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
-import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
+import { ParticipantsToggle } from '@/components/RoomParticipantsPanel/ParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Logo } from '@/components/shared/Logo';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         </Button>
 
         <Link to="/" className="block">
-          <Logo className="drop-shadow-sm w-28" />
+          <Logo className="hidden sm:block drop-shadow-sm w-28" />
+          <Logo small className="block sm:hidden drop-shadow-sm w-8" />
         </Link>
       </div>
 
@@ -67,7 +68,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           </Button>
         )}
 
-        {hasEnteredRoom && <DesktopParticipantsToggle />}
+        {hasEnteredRoom && <ParticipantsToggle />}
 
         {hasEnteredRoom && <ShareLinkAlertDialog />}
 
