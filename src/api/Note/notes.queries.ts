@@ -22,13 +22,13 @@ export const useGetAllNotesFromRoomQuery = (
 
 export const useGetNoteByIdQuery = (
   roomId: string,
-
+  noteId: string,
   options?: UseQueryOptions<AxiosResponse<NoteItem[]>>,
 ) => {
   return useQuery<AxiosResponse<NoteItem[]>>({
-    queryKey: queryKeys.getSingleNote(roomId),
+    queryKey: queryKeys.getSingleNote(roomId, noteId),
     queryFn: () => getAllNotesFromRoom(roomId),
-    enabled: !!roomId,
+    enabled: !!roomId && !!noteId,
     ...options,
   });
 };

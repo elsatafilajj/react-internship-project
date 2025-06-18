@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { Circle, Crown, Star, X } from 'lucide-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { Circle, MessageSquare, Star, X } from 'lucide-react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
@@ -30,12 +30,6 @@ interface NoteProps {
   isReadOnly: boolean;
 }
 
-export type ErrorResponseData = {
-  statusCode: number;
-  message: string;
-  error: string;
-};
-
 const fillColors = [
   'note-background-green',
   'note-background-yellow',
@@ -53,6 +47,9 @@ const noteColorClassMap = {
 } as const;
 
 export const Note = ({ note, isReadOnly }: NoteProps) => {
+  const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
+  const [isResizing, setIsResizing] = useState(false);
+
   const socket = getSocket();
   const [isOpen, setIsOpen] = useState(false);
   const [hasUserEdited, setHasUserEdited] = useState(false);
@@ -64,26 +61,22 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
   const { uuid, content, author } = note;
   const { selectedNoteId } = useNoteScrollContext();
   const { data } = useGetAllNotesFromRoomQuery(roomId || '');
-
+  const noteRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAuthContext();
+
   const isUserVoter = note.noteVotes?.find(
     (item) => item.user.uuid === user?.uuid,
   );
-  const [hasVoted, setHasVoted] = useState<boolean | null>(
-    !!isUserVoter || null,
-  );
+  const [hasVoted, setHasVoted] = useState<boolean>(!!isUserVoter);
+
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
   useEffect(() => {
-    if (note.color) {
-      setLocalNoteColor(note.color);
-    }
+    if (note.color) setLocalNoteColor(note.color);
   }, [note.color]);
 
   useEffect(() => {
-    if (content) {
-      setNoteContent(content);
-    }
+    if (content) setNoteContent(content);
   }, [content]);
 
   useEffect(() => {
@@ -95,6 +88,29 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
       });
     }
   }, [debouncedContent]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing || !noteRef.current) return;
+      const rect = noteRef.current.getBoundingClientRect();
+      setNoteSize({
+        width: Math.max(300, e.clientX - rect.left),
+        height: Math.max(300, e.clientY - rect.top),
+      });
+    };
+
+    const handleMouseUp = () => setIsResizing(false);
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
@@ -112,21 +128,23 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
     });
   };
 
-  const handleVote = async () => {
+  const handleVote = () => {
     if (!uuid) return;
-    if (hasVoted && !!isUserVoter) {
+
+    if (hasVoted) {
       socket.emit(socketEvents.RemoveVote, {
         roomId,
-        noteId: note.uuid,
+        noteId: uuid,
       });
-      toast.success('You removed the vote! 🎉');
-    } else if (uuid) {
+      toast.success('Vote removed!');
+      setHasVoted(false);
+    } else {
       socket.emit(socketEvents.AddVote, {
         roomId,
-        noteId: note.uuid,
+        noteId: uuid,
       });
+      toast.success('Voted! 🎉');
       setHasVoted(true);
-      toast.success('You voted! 🎉');
     }
   };
 
@@ -137,124 +155,126 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
   if (!uuid) return null;
 
   const notes = data?.data ?? [];
-
-  const maxVotes = Math.max(...notes.map((note) => note.totalVotes ?? 0));
-
+  const maxVotes = Math.max(...notes.map((n) => n.totalVotes ?? 0));
   const isWinner = (note.totalVotes ?? 0) === maxVotes && maxVotes > 0;
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <div className="flex flex-col items-center">
+        <div className="relative flex flex-col items-center">
           <div
+            ref={noteRef}
             onClick={(e) => {
-              const tag = (e.target as HTMLElement).tagName.toLowerCase();
-              if (tag !== 'textarea') {
+              if (
+                (e.target as HTMLElement).tagName.toLowerCase() !== 'textarea'
+              ) {
                 setIsOpen(true);
               }
             }}
+            style={{
+              width: `${noteSize.width}px`,
+              height: `${noteSize.height}px`,
+            }}
             className={clsx(
-              'w-2xs h-70 relative shadow-sm overflow-hidden scroll-mt-24 transition-all duration-300 rounded-xs',
               noteColorClassMap[
                 localNoteColor as keyof typeof noteColorClassMap
               ],
+              'relative w-full border p-3 text-xs cursor-pointer flex flex-col justify-between',
               selectedNoteId === uuid &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               isWinner && 'ring-1 ring-yellow-400',
             )}
           >
-            <div className="flex flex-col justify-between relative h-full p-2 text-xs">
-              <textarea
-                readOnly={isReadOnly}
-                value={noteContent}
-                onChange={(e) => {
-                  if (isReadOnly) return;
-                  handleNoteContentChange(e);
-                }}
-                placeholder="Type in your idea..."
-                className="resize-none p-2 w-full tracking-wide h-full max-h-[220px] overflow-auto bg-transparent border-none outline-none text-sm text-muted-foreground brightness-25"
-                aria-label="Note input"
-              />
-              <div className="flex justify-between items-center px-1 mt-1">
-                <span className="text-muted-foreground brightness-50 tracking-wide text-xs">
-                  {author?.firstName || 'Unknown'}
+            <textarea
+              readOnly={isReadOnly}
+              value={noteContent}
+              onChange={handleNoteContentChange}
+              placeholder="Type in your idea..."
+              className="w-full resize-none h-full max-h-[250px] overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
+              aria-label="Note input"
+            />
+
+            <div className="flex justify-between items-center w-full">
+              <span className="text-gray-700 text-xs ml-[7px]">
+                {author?.firstName || 'Unknown'}
+              </span>
+
+              <div className="flex items-center gap-1 -mr-[15px]">
+                <span
+                  className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
+                  title="Total comments"
+                >
+                  <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
+                  3
                 </span>
 
                 {(note.totalVotes ?? 0) > 0 && (
                   <span
-                    className="text-[11px] font-medium text-yellow-800 bg-yellow-100 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1"
+                    className="text-[11px] font-medium text-yellow-800 bg-yellow-100 px-2 py-0.5 rounded-full flex items-center gap-1"
                     title="Total votes"
                   >
                     <Star className="w-3 h-3 text-yellow-500 fill-yellow-300" />
                     {note.totalVotes}
                   </span>
                 )}
+
+                <div
+                  className="cursor-se-resize w-5 h-5 text-xs mb-[1px]"
+                  onClick={() => setIsResizing(true)}
+                ></div>
               </div>
             </div>
           </div>
 
-          {isWinner && (
-            <div className="absolute top-2 right-1 rotate-[50deg] scale-110 pointer-events-none">
-              <div className="text-3xl select-none">
-                <Crown className="rotate-[-20deg] w-6 h-6 text-yellow-100 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)] pointer-events-none select-none" />
-              </div>
+          {/* Winner crown (floating, optional) */}
+          {/* {isWinner && (
+            <div className="absolute top-[8px] right-[8px] z-50">
+              <Crown className="w-6 h-6 text-yellow-400 drop-shadow-lg" />
             </div>
-          )}
+          )} */}
         </div>
       </PopoverTrigger>
 
-      <PopoverContent side="top" align="end" sideOffset={10}>
-        <div className="bg-popover flex items-center justify-around h-fit">
+      <PopoverContent side="top" align="center" sideOffset={10}>
+        <div className="flex items-center justify-center gap-3">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
                 <X
-                  strokeWidth={2.5}
-                  size={20}
                   className="cursor-pointer"
-                  onClick={() => {
-                    if (isReadOnly) return;
-                    handleDeleteNote(note.uuid || '');
-                  }}
+                  size={20}
+                  strokeWidth={2.5}
+                  onClick={() => !isReadOnly && handleDeleteNote(uuid)}
                 />
               </TooltipTrigger>
               <TooltipContent>Delete</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
-          <div className="flex gap-3 p-3">
-            {fillColors.map((noteColor, i) => (
-              <Circle
-                key={i}
-                style={{ fill: `var(--${noteColor})` }}
-                className={`w-4 h-4 cursor-pointer ${
-                  localNoteColor === noteColor
-                    ? 'ring-2 ring-primary rounded-full'
-                    : ''
-                }`}
-                strokeWidth={2.5}
-                onClick={() => {
-                  if (isReadOnly) return;
-                  handleNoteColorChange(noteColor);
-                }}
-              />
-            ))}
-          </div>
+          {fillColors.map((color) => (
+            <Circle
+              key={color}
+              className={clsx(
+                'w-4 h-4 cursor-pointer',
+                localNoteColor === color && 'ring-2 ring-primary rounded-full',
+              )}
+              strokeWidth={2.5}
+              style={{ fill: `var(--${color})` }}
+              onClick={() => !isReadOnly && handleNoteColorChange(color)}
+            />
+          ))}
 
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <div className="flex flex-col mr-1.5">
+                <div className="flex flex-col items-center">
                   <Toggle
                     size="sm"
                     variant="ghost"
                     className="cursor-pointer py-2"
-                    onClick={() => {
-                      if (isReadOnly) return;
-                      handleVote();
-                    }}
+                    onClick={() => !isReadOnly && handleVote()}
                   >
-                    {isUserVoter ? (
+                    {hasVoted ? (
                       <Star className="fill-foreground" />
                     ) : (
                       <Star strokeWidth={2.5} />
