@@ -42,6 +42,12 @@ export const ActivityPanel = () => {
     }
     zoomOut();
   };
+  const sortedActivities = data?.data
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
 
   return (
     <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[90vh] rounded-md overflow-hidden shadow-md border">
@@ -54,7 +60,7 @@ export const ActivityPanel = () => {
             No activities yet
           </p>
         ) : (
-          activities?.map((activity) => (
+          sortedActivities?.map((activity) => (
             <div
               key={activity.uuid}
               className="text-sm text-foreground flex justify-between items-start gap-2 border rounded-md p-3 shadow-sm bg-muted cursor-pointer"
