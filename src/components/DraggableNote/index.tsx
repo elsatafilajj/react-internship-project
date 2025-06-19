@@ -54,9 +54,12 @@ export const DraggableNote = ({
       }}
       onMouseDown={() => setTransformDisabled(true)}
       onDragEnd={() => setTransformDisabled(false)}
-      onMouseUp={() => setTransformDisabled(false)}
     >
-      <Note note={note} isReadOnly={isRoomArchived} />
+      <Note
+        note={note}
+        setTransformDisabled={setTransformDisabled}
+        isReadOnly={isRoomArchived}
+      />
     </div>
   );
 };

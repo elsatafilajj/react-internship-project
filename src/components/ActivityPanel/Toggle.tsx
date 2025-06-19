@@ -25,7 +25,7 @@ export const ActivityPanelToggle = () => {
 
       <SheetContent
         side="right"
-        className="w-80 top-18 rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
+        className="w-80 top-18 max-h-[92vh] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
       >
         <ActivityPanel />
       </SheetContent>

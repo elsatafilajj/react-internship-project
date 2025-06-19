@@ -26,6 +26,7 @@ import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
 
 interface NoteProps {
+  setTransformDisabled: (b: boolean) => void;
   note: Partial<NoteItem>;
   isReadOnly: boolean;
 }
@@ -46,7 +47,7 @@ const noteColorClassMap = {
   'note-background-red': `bg-note-background-red`,
 } as const;
 
-export const Note = ({ note, isReadOnly }: NoteProps) => {
+export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
   const [isResizing, setIsResizing] = useState(false);
 
@@ -236,45 +237,61 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
   const isWinner = (note.totalVotes ?? 0) === maxVotes && maxVotes > 0;
 
   return (
-    <>
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <div className="relative flex flex-col items-center">
-            <div
-              ref={noteRef}
-              onClick={(e) => {
-                if (
-                  (e.target as HTMLElement).tagName.toLowerCase() !== 'textarea'
-                ) {
-                  setIsOpen(true);
-                }
-              }}
-              style={{
-                width: `${noteSize.width}px`,
-                height: `${noteSize.height}px`,
-              }}
-              className={clsx(
-                noteColorClassMap[
-                  localNoteColor as keyof typeof noteColorClassMap
-                ],
-                'relative w-full border p-3 text-xs cursor-pointer flex flex-col justify-between',
-                selectedNoteId === uuid &&
-                  'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
-                isWinner && 'ring-1 ring-yellow-400',
-              )}
-            >
-              <textarea
-                ref={textareaRef}
-                value={noteContent}
-                onChange={handleNoteContentChange}
-                onKeyDown={handleEnterKey}
-                placeholder="Type in your idea..."
-                className="w-full resize-none h-full max-h-[250px] overflow-y-auto p-2 tracking-wide border-none outline-none text-sm text-black"
-              />
 
-              <div className="flex justify-between items-center w-full">
-                <span className="text-gray-700 text-xs ml-[7px]">
-                  {author?.firstName || 'Unknown'}
+    <>
+ 
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <div className="relative flex flex-col items-center">
+          <div
+            ref={noteRef}
+            onClick={(e) => {
+              if (
+                (e.target as HTMLElement).tagName.toLowerCase() !== 'textarea'
+              ) {
+                setIsOpen(true);
+              }
+            }}
+            style={{
+              width: `${noteSize.width}px`,
+              height: `${noteSize.height}px`,
+            }}
+            className={clsx(
+              noteColorClassMap[
+                localNoteColor as keyof typeof noteColorClassMap
+              ],
+              'relative w-full border p-3 text-xs cursor-move flex flex-col justify-between',
+              selectedNoteId === uuid &&
+                'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
+              isWinner && 'ring-1 ring-yellow-400',
+            )}
+          >
+            <textarea
+                 ref={textareaRef}
+              onClick={() => setTransformDisabled(false)}
+              onFocus={() => setTransformDisabled(true)}
+              onMouseOutCapture={() => setTransformDisabled(false)}
+              readOnly={isReadOnly}
+              value={noteContent}
+              onChange={handleNoteContentChange}
+              onKeyDown={handleEnterKey}
+              placeholder="Type in your idea..."
+              className="w-full resize-none h-full max-h-[250px] overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
+              aria-label="Note input"
+            />
+
+            <div className="flex justify-between items-center w-full">
+              <span className="text-gray-700 text-xs ml-[7px]">
+                {author?.firstName || 'Unknown'}
+              </span>
+
+              <div className="flex items-center gap-1 -mr-[15px]">
+                <span
+                  className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
+                  title="Total comments"
+                >
+                  <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
+                  3
                 </span>
 
                 <div className="flex items-center gap-1 -mr-[15px]">
