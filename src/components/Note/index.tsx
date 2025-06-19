@@ -237,9 +237,6 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const isWinner = (note.totalVotes ?? 0) === maxVotes && maxVotes > 0;
 
   return (
-
-    <>
- 
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <div className="relative flex flex-col items-center">
@@ -267,8 +264,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
           >
             <textarea
-                 ref={textareaRef}
-              onClick={() => setTransformDisabled(false)}
+              ref={textareaRef}
               onFocus={() => setTransformDisabled(true)}
               onMouseOutCapture={() => setTransformDisabled(false)}
               readOnly={isReadOnly}
@@ -286,14 +282,6 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               </span>
 
               <div className="flex items-center gap-1 -mr-[15px]">
-                <span
-                  className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
-                  title="Total comments"
-                >
-                  <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
-                  3
-                </span>
-
                 <div className="flex items-center gap-1 -mr-[15px]">
                   <span
                     className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
@@ -320,83 +308,82 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                 </div>
               </div>
             </div>
-
-            {isWinner && (
-              <div className="absolute -top-[19px] -left-[16px] z-50">
-                <Crown className="w-8 h-8 text-amber-300 fill-amber-200 drop-shadow-lg -rotate-37" />
-              </div>
-            )}
           </div>
-        </PopoverTrigger>
 
-        <PopoverContent side="top" align="center" sideOffset={10}>
-          <div className="flex items-center justify-center gap-3">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <X
-                    className="cursor-pointer"
-                    size={20}
-                    strokeWidth={2.5}
-                    onClick={() => !isReadOnly && handleDeleteNote(uuid)}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger
-                  onClick={toggleBulletOnCurrentLine}
+          {isWinner && (
+            <div className="absolute -top-[19px] -left-[16px] z-50">
+              <Crown className="w-8 h-8 text-amber-300 fill-amber-200 drop-shadow-lg -rotate-37" />
+            </div>
+          )}
+        </div>
+      </PopoverTrigger>
+
+      <PopoverContent side="top" align="center" sideOffset={10}>
+        <div className="flex items-center justify-center gap-3">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <X
                   className="cursor-pointer"
-                >
-                  <List className="h-5 w-5" />
-                </TooltipTrigger>
-                <TooltipContent>Bulleted list</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                  size={20}
+                  strokeWidth={2.5}
+                  onClick={() => !isReadOnly && handleDeleteNote(uuid)}
+                />
+              </TooltipTrigger>
+              <TooltipContent>Delete</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger
+                onClick={toggleBulletOnCurrentLine}
+                className="cursor-pointer"
+              >
+                <List className="h-5 w-5" />
+              </TooltipTrigger>
+              <TooltipContent>Bulleted list</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-            {fillColors.map((color) => (
-              <Circle
-                key={color}
-                className={clsx(
-                  'w-4 h-4 cursor-pointer',
-                  localNoteColor === color &&
-                    'ring-2 ring-primary rounded-full',
-                )}
-                strokeWidth={2.5}
-                style={{ fill: `var(--${color})` }}
-                onClick={() => !isReadOnly && handleNoteColorChange(color)}
-              />
-            ))}
+          {fillColors.map((color) => (
+            <Circle
+              key={color}
+              className={clsx(
+                'w-4 h-4 cursor-pointer',
+                localNoteColor === color && 'ring-2 ring-primary rounded-full',
+              )}
+              strokeWidth={2.5}
+              style={{ fill: `var(--${color})` }}
+              onClick={() => !isReadOnly && handleNoteColorChange(color)}
+            />
+          ))}
 
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="flex flex-col items-center">
-                    <Toggle
-                      size="sm"
-                      variant="ghost"
-                      className="cursor-pointer py-2"
-                      onClick={() => !isReadOnly && handleVote()}
-                    >
-                      {hasVoted ? (
-                        <Star className="fill-foreground" />
-                      ) : (
-                        <Star strokeWidth={2.5} />
-                      )}
-                    </Toggle>
-                    <p className="text-xs font-semibold">
-                      {note.totalVotes || 0}
-                    </p>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>Vote / Unvote</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className="flex flex-col items-center">
+                  <Toggle
+                    size="sm"
+                    variant="ghost"
+                    className="cursor-pointer py-2"
+                    onClick={() => !isReadOnly && handleVote()}
+                  >
+                    {hasVoted ? (
+                      <Star className="fill-foreground" />
+                    ) : (
+                      <Star strokeWidth={2.5} />
+                    )}
+                  </Toggle>
+                  <p className="text-xs font-semibold">
+                    {note.totalVotes || 0}
+                  </p>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>Vote / Unvote</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-            <PanelToggle noteId={uuid} />
-          </div>
-        </PopoverContent>
-      </Popover>
-    </>
+          <PanelToggle noteId={uuid} />
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
