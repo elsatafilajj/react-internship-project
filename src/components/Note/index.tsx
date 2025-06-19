@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Circle, MessageSquare, Star, X } from 'lucide-react';
+import { Circle, Crown, MessageSquare, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -219,19 +219,18 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
                 )}
 
                 <div
-                  className="cursor-se-resize w-5 h-5 text-xs mb-[1px]"
+                  className="cursor-se-resize w-5 h-5 text-xs -mb-[12px]"
                   onClick={() => setIsResizing(true)}
                 ></div>
               </div>
             </div>
           </div>
 
-          {/* Winner crown (floating, optional) */}
-          {/* {isWinner && (
-            <div className="absolute top-[8px] right-[8px] z-50">
-              <Crown className="w-6 h-6 text-yellow-400 drop-shadow-lg" />
+          {isWinner && (
+            <div className="absolute -top-[19px] -left-[16px] z-50">
+              <Crown className="w-8 h-8 text-amber-300 fill-amber-200 drop-shadow-lg -rotate-37" />
             </div>
-          )} */}
+          )}
         </div>
       </PopoverTrigger>
 
