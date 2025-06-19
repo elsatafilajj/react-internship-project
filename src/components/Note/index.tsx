@@ -180,13 +180,14 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               noteColorClassMap[
                 localNoteColor as keyof typeof noteColorClassMap
               ],
-              'relative w-full border p-3 text-xs cursor-pointer flex flex-col justify-between',
+              'relative w-full border p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === uuid &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               isWinner && 'ring-1 ring-yellow-400',
             )}
           >
             <textarea
+              onClick={() => setTransformDisabled(false)}
               onFocus={() => setTransformDisabled(true)}
               onMouseOutCapture={() => setTransformDisabled(false)}
               readOnly={isReadOnly}
