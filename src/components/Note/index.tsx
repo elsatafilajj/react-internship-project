@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Circle, Crown, MessageSquare, Star, X } from 'lucide-react';
+import { Circle, Crown, List, MessageSquare, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -68,6 +68,8 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const isUserVoter = note.noteVotes?.find(
     (item) => item.user.uuid === user?.uuid,
   );
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const [hasVoted, setHasVoted] = useState<boolean>(!!isUserVoter);
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
@@ -79,6 +81,81 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   useEffect(() => {
     if (content) setNoteContent(content);
   }, [content]);
+
+  const handleEnterKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key !== 'Enter') return;
+
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const { selectionStart } = textarea;
+    const text = noteContent;
+    const lines = text.split('\n');
+
+    let charCount = 0;
+    let lineIndex = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      if (charCount + lines[i].length + 1 > selectionStart) {
+        lineIndex = i;
+        break;
+      }
+      charCount += lines[i].length + 1;
+    }
+
+    const currentLine = lines[lineIndex];
+
+    if (currentLine.startsWith('• ')) {
+      e.preventDefault();
+
+      const before = text.substring(0, selectionStart);
+      const after = text.substring(selectionStart);
+
+      const updated = `${before}\n• ${after}`;
+      setNoteContent(updated);
+
+      setTimeout(() => {
+        const newPos = selectionStart + 3;
+        textarea.setSelectionRange(newPos, newPos);
+      }, 0);
+    }
+  };
+
+  const toggleBulletOnCurrentLine = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const { selectionStart } = textarea;
+    const text = noteContent;
+    const lines = text.split('\n');
+
+    let charCount = 0;
+    let lineIndex = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      if (charCount + lines[i].length + 1 > selectionStart) {
+        lineIndex = i;
+        break;
+      }
+      charCount += lines[i].length + 1;
+    }
+
+    const line = lines[lineIndex];
+
+    if (line.startsWith('• ')) {
+      lines[lineIndex] = line.replace(/^• /, '');
+    } else {
+      lines[lineIndex] = '• ' + line;
+    }
+
+    const updated = lines.join('\n');
+    setNoteContent(updated);
+
+    setTimeout(() => {
+      const pos = selectionStart + (line.startsWith('• ') ? -2 : 2);
+      textarea.setSelectionRange(pos, pos);
+    }, 0);
+  };
 
   useEffect(() => {
     if (hasUserEdited) {
@@ -187,12 +264,13 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
           >
             <textarea
-              onClick={() => setTransformDisabled(false)}
+              ref={textareaRef}
               onFocus={() => setTransformDisabled(true)}
               onMouseOutCapture={() => setTransformDisabled(false)}
               readOnly={isReadOnly}
               value={noteContent}
               onChange={handleNoteContentChange}
+              onKeyDown={handleEnterKey}
               placeholder="Type in your idea..."
               className="w-full resize-none h-full max-h-[250px] overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
               aria-label="Note input"
@@ -204,28 +282,30 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               </span>
 
               <div className="flex items-center gap-1 -mr-[15px]">
-                <span
-                  className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
-                  title="Total comments"
-                >
-                  <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
-                  3
-                </span>
-
-                {(note.totalVotes ?? 0) > 0 && (
+                <div className="flex items-center gap-1 -mr-[15px]">
                   <span
-                    className="text-[11px] font-medium text-yellow-800 bg-yellow-100 px-2 py-0.5 rounded-full flex items-center gap-1"
-                    title="Total votes"
+                    className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
+                    title="Total comments"
                   >
-                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-300" />
-                    {note.totalVotes}
+                    <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
+                    3
                   </span>
-                )}
 
-                <div
-                  className="cursor-se-resize w-5 h-5 text-xs -mb-[12px]"
-                  onClick={() => setIsResizing(true)}
-                ></div>
+                  {(note.totalVotes ?? 0) > 0 && (
+                    <span
+                      className="text-[11px] font-medium text-yellow-800 bg-yellow-100 px-2 py-0.5 rounded-full flex items-center gap-1"
+                      title="Total votes"
+                    >
+                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-300" />
+                      {note.totalVotes}
+                    </span>
+                  )}
+
+                  <div
+                    className="cursor-se-resize w-5 h-5 text-xs -mb-[12px]"
+                    onClick={() => setIsResizing(true)}
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
@@ -251,6 +331,15 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                 />
               </TooltipTrigger>
               <TooltipContent>Delete</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger
+                onClick={toggleBulletOnCurrentLine}
+                className="cursor-pointer"
+              >
+                <List className="h-5 w-5" />
+              </TooltipTrigger>
+              <TooltipContent>Bulleted list</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
