@@ -26,6 +26,7 @@ import { getSocket } from '@/helpers/socket';
 import { useDebounce } from '@/hooks/useDebounce';
 
 interface NoteProps {
+  setTransformDisabled: (b: boolean) => void;
   note: Partial<NoteItem>;
   isReadOnly: boolean;
 }
@@ -46,7 +47,7 @@ const noteColorClassMap = {
   'note-background-red': `bg-note-background-red`,
 } as const;
 
-export const Note = ({ note, isReadOnly }: NoteProps) => {
+export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
   const [isResizing, setIsResizing] = useState(false);
 
@@ -186,6 +187,8 @@ export const Note = ({ note, isReadOnly }: NoteProps) => {
             )}
           >
             <textarea
+              onFocus={() => setTransformDisabled(true)}
+              onMouseOutCapture={() => setTransformDisabled(false)}
               readOnly={isReadOnly}
               value={noteContent}
               onChange={handleNoteContentChange}

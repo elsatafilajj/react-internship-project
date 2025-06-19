@@ -83,7 +83,10 @@ export const ParticipantsToggle = () => {
           </div>
         </SheetTrigger>
 
-        <SheetContent side="right" className="bg-card w-xs top-18 rounded-s-xl">
+        <SheetContent
+          side="right"
+          className="bg-card w-xs top-18 max-h-[92vh] rounded-s-xl"
+        >
           <RoomParticipantsPanel />
         </SheetContent>
       </Sheet>
