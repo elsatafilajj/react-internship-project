@@ -22,6 +22,7 @@ export const DraggableNote = ({
 }: NoteProps) => {
   const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
+
   const { registerNoteRef } = useNoteScrollContext();
 
   const { isRoomArchived } = useRoomStatus();
