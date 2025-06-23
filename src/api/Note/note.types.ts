@@ -11,17 +11,13 @@ type NoteColor =
 
 export interface NoteItem {
   uuid: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  room: Room;
-  author: User;
   content: string;
   totalVotes: number;
   color: NoteColor;
   xAxis: number;
   yAxis: number;
-  noteVotes: { user: User }[];
+  firstName: User['firstName'];
+  lastName: User['lastName'];
 }
 
 export interface CreateNoteInput {
@@ -49,4 +45,8 @@ export interface AddVoteResponse {
   success: boolean;
   message: string;
   voteSwitched: boolean;
+}
+
+export interface WinnerNoteResponse {
+  uuid: string;
 }

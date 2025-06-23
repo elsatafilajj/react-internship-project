@@ -6,14 +6,22 @@ import {
   ExportNotesInput,
   AddVoteResponse,
   NoteVotesResponse,
+  WinnerNoteResponse,
 } from '@/api/Note/note.types';
+import { Room } from '@/api/Room/room.types';
 import { DeleteResponse } from '@/types/DeleteResponse';
 
-export const getAllNotesFromRoom = async (roomId: string) =>
+export const getAllNotesFromRoom = async (
+  roomId: string,
+  xMin: number,
+  yMin: number,
+  xMax: number,
+  yMax: number,
+) =>
   apiRequest<undefined, NoteItem[]>({
-    url: 'notes',
+    url: 'notes/viewport',
     method: 'GET',
-    params: { roomId },
+    params: { roomId, xMin, yMin, xMax, yMax },
   });
 
 export const getSingleNoteById = async (noteId: string) =>
@@ -64,4 +72,10 @@ export const exportNotes = async ({ roomId, fileType }: ExportNotesInput) =>
     method: 'GET',
     params: { roomId, fileType },
     responseType: 'blob',
+  });
+
+export const getRoomWinner = async (roomId: Room['uuid']) =>
+  apiRequest<undefined, WinnerNoteResponse[]>({
+    url: `notes/room/${roomId}/current-winner`,
+    method: 'GET',
   });

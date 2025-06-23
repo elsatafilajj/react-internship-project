@@ -3,7 +3,10 @@ import { AxiosError } from 'axios';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
-import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
+import {
+  useTransformContext,
+  type ReactZoomPanPinchRef,
+} from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
@@ -36,7 +39,29 @@ export const DroppableRoom = ({
 
   const { roomId } = useParams<{ roomId: string }>();
 
-  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
+  const transformContext = useTransformContext();
+
+  const bounds = useMemo(() => {
+    if (!transformContext.transformState) return null;
+
+    const { positionX, positionY, scale } = transformContext.transformState;
+
+    const padding = 100;
+    const xMin = Math.max(0, Math.floor(Math.abs(positionX) / scale) - padding);
+    const yMin = Math.max(0, Math.floor(Math.abs(positionY) / scale) - padding);
+    const xMax = Math.floor(xMin + window.innerWidth / scale) + padding;
+    const yMax = Math.floor(yMin + window.innerHeight / scale) + padding;
+
+    return { xMin, yMin, xMax, yMax };
+  }, [transformContext.transformState]);
+
+  const { data } = useGetAllNotesFromRoomQuery(
+    roomId || '',
+    bounds?.xMin ?? 0,
+    bounds?.yMin ?? 0,
+    bounds?.xMax ?? 0,
+    bounds?.yMax ?? 0,
+  );
 
   const socket = useMemo(() => getSocket(), []);
 
@@ -67,10 +92,10 @@ export const DroppableRoom = ({
   }, [error, navigate]);
 
   useEffect(() => {
-    if (isFetched && data) {
+    if (data && data.data) {
       setNotes(data?.data);
     }
-  }, [data, isFetched]);
+  }, [data]);
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
@@ -108,10 +133,10 @@ export const DroppableRoom = ({
   });
 
   useEffect(() => {
-    if (isFetched && data) {
+    if (data && data.data) {
       setNotes(data?.data);
     }
-  }, [data, isFetched]);
+  }, [data]);
 
   useEffect(() => {
     if (!socket) return;
@@ -127,28 +152,46 @@ export const DroppableRoom = ({
         ),
       );
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getSingleNote(roomId || '', updatedNote.uuid),
       });
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
       console.log('new vote', newVote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getNotesByRoomId(
+          roomId || '',
+          bounds?.xMin,
+          bounds?.yMin,
+          bounds?.xMax,
+          bounds?.yMax,
+        ),
       });
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
       console.log('removed note', removedVote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getNotesByRoomId(
+          roomId || '',
+          bounds?.xMin,
+          bounds?.yMin,
+          bounds?.xMax,
+          bounds?.yMax,
+        ),
       });
     });
 
     socket.on(socketEvents.DeletedNote, (deletedNote) => {
       console.log('note deleted', deletedNote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getNotesByRoomId(
+          roomId || '',
+          bounds?.xMin,
+          bounds?.yMin,
+          bounds?.xMax,
+          bounds?.yMax,
+        ),
       });
     });
 

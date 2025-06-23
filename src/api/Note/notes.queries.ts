@@ -1,6 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 import { useParams } from 'react-router-dom';
+import { useTransformContext } from 'react-zoom-pan-pinch';
 
 import {
   getAllNotesFromRoom,
@@ -12,15 +13,32 @@ import { queryKeys } from '@/constants/queryKeys';
 
 export const useGetAllNotesFromRoomQuery = (
   roomId: string,
+  xMin: number,
+  yMin: number,
+  xMax: number,
+  yMax: number,
   options?: UseQueryOptions<AxiosResponse<NoteItem[]>>,
 ) => {
-  const uuidRegex = new RegExp(
-    /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
-  );
+  const transformContext = useTransformContext();
+
+  const uuidRegex =
+    /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+
   return useQuery<AxiosResponse<NoteItem[]>>({
-    queryKey: queryKeys.getNotesByRoomId(roomId),
-    queryFn: () => getAllNotesFromRoom(roomId),
-    enabled: !!roomId && uuidRegex.test(roomId),
+    queryKey: queryKeys.getNotesByRoomId(roomId, xMin, yMin, xMax, yMax),
+    queryFn: () => {
+      return getAllNotesFromRoom(roomId, xMin, yMin, xMax, yMax);
+    },
+    enabled:
+      !!roomId &&
+      uuidRegex.test(roomId) &&
+      xMax > xMin &&
+      yMax > yMin &&
+      xMin >= 0 &&
+      yMin >= 0 &&
+      !!transformContext &&
+      (options?.enabled ?? true),
+    staleTime: 1000,
     ...options,
   });
 };
@@ -47,7 +65,7 @@ export const useGetNoteVotesQuery = (
   );
   const { roomId } = useParams<{ roomId: string }>();
   return useQuery<AxiosResponse<NoteVotesResponse[]>>({
-    queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+    queryKey: queryKeys.getSingleNote(roomId || '', noteId),
     queryFn: () => getNoteVotes(noteId),
     enabled: !!roomId && uuidRegex.test(roomId),
     ...options,

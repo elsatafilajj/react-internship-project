@@ -1,14 +1,13 @@
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Circle, Crown, List, MessageSquare, Star, X } from 'lucide-react';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
+import { getRoomWinner } from '@/api/Note/note.client';
 import { NoteItem } from '@/api/Note/note.types';
-import {
-  useGetAllNotesFromRoomQuery,
-  useGetNoteVotesQuery,
-} from '@/api/Note/notes.queries';
+import { useGetNoteVotesQuery } from '@/api/Note/notes.queries';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
@@ -22,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
@@ -54,7 +54,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
   const [isResizing, setIsResizing] = useState(false);
 
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
   const [isOpen, setIsOpen] = useState(false);
   const [hasUserEdited, setHasUserEdited] = useState(false);
   const [localNoteColor, setLocalNoteColor] = useState<string>(
@@ -62,14 +62,21 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   );
   const { roomId } = useParams<{ roomId: string }>();
   const [noteContent, setNoteContent] = useState('');
-  const { uuid, content, author } = note;
+  const { uuid, content, firstName, lastName } = note;
   const { selectedNoteId } = useNoteScrollContext();
-  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
+
   const noteRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAuthContext();
 
   const { data: noteVotes } = useGetNoteVotesQuery(uuid || '');
 
+  const { data: winnerNote } = useQuery({
+    queryKey: queryKeys.getSingleNote(uuid || '', roomId || ''),
+    queryFn: () => getRoomWinner(roomId || ''),
+    enabled: !!roomId,
+  });
+
+  const isWinner = winnerNote?.data.find((noteUuid) => noteUuid.uuid === uuid);
   const isUserVoter = noteVotes?.data?.find(
     (voter) => voter.uuid === user?.uuid,
   );
@@ -237,10 +244,6 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
   if (!uuid) return null;
 
-  const notes = data?.data ?? [];
-  const maxVotes = Math.max(...notes.map((n) => n.totalVotes ?? 0));
-  const isWinner = (note.totalVotes ?? 0) === maxVotes && maxVotes > 0;
-
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -265,7 +268,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               'relative w-full border p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === uuid &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
-              isWinner && 'ring-1 ring-yellow-400',
+              !!isWinner && 'ring-1 ring-yellow-400',
             )}
           >
             <textarea
@@ -283,7 +286,8 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
             <div className="flex justify-between items-center w-full">
               <span className="text-gray-700 text-xs ml-[7px]">
-                {author?.firstName || 'Unknown'}
+                {(firstName && lastName && `${firstName} ${lastName[0]}.`) ||
+                  'Unknown'}
               </span>
 
               <div className="flex items-center gap-1 -mr-[15px]">
@@ -315,7 +319,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             </div>
           </div>
 
-          {isWinner && (
+          {!!isWinner && (
             <div className="absolute -top-[19px] -left-[16px] z-50">
               <Crown className="w-8 h-8 text-amber-300 fill-amber-200 drop-shadow-lg -rotate-37" />
             </div>
