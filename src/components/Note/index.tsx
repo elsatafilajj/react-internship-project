@@ -278,7 +278,9 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
             <div className="flex justify-between items-center w-full">
               <span className="text-gray-700 text-xs ml-[7px]">
-                {author?.firstName || 'Unknown'} {author?.lastName || 'Unknown'}
+                {author?.firstName && author?.lastName
+                  ? `${author.firstName} ${author.lastName}`
+                  : author?.firstName || author?.lastName || 'Unknown'}
               </span>
 
               <div className="flex items-center gap-1 -mr-[15px]">
