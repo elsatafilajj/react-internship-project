@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { EllipsisVertical } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -26,7 +27,7 @@ export const CommentsActionsDropDown = ({
   commentId,
   onEdit,
 }: Props) => {
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
   const queryClient = useQueryClient();
 
   const handleDelete = () => {

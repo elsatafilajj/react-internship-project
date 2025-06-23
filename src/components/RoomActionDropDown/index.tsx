@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { Archive, EllipsisVertical, Trash2 } from 'lucide-react';
+import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -25,7 +26,7 @@ import { cn } from '@/lib/utils';
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
 
   const { data } = useGetRoomByIdQuery(roomId || '');
 

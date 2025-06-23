@@ -8,7 +8,7 @@ type NoteColor =
   | 'note-background-blue'
   | 'note-background-red'
   | string;
-  
+
 export interface NoteItem {
   uuid: string;
   createdAt: string;
@@ -41,4 +41,12 @@ export interface UpdateNoteInput {
 export interface ExportNotesInput {
   roomId: Room['uuid'];
   fileType: 'json' | 'csv' | 'pdf';
+}
+
+export type NoteVotesResponse = Pick<User, 'uuid' | 'firstName' | 'lastName'>;
+
+export interface AddVoteResponse {
+  success: boolean;
+  message: string;
+  voteSwitched: boolean;
 }

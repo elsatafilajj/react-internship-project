@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Crown } from 'lucide-react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { removeUserFromRoom } from '@/api/Room/room.client';
@@ -30,7 +31,7 @@ export const RoomParticipantsPanel = () => {
   });
 
   const roomHost = participants?.data?.find((user) => user.role === 'host');
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
 
   return (
     <div className="flex flex-col items-center gap-2 mt-1 p-3">

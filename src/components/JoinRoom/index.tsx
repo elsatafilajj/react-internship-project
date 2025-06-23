@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { joinRoom } from '@/api/Room/room.client';
@@ -11,7 +11,7 @@ export const JoinRoom = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const { code } = useParams();
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
 
   const joinRoomMutation = useMutation({
     mutationFn: (code: string) => joinRoom(code),

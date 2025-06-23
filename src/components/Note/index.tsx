@@ -5,7 +5,10 @@ import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 import { NoteItem } from '@/api/Note/note.types';
-import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
+import {
+  useGetAllNotesFromRoomQuery,
+  useGetNoteVotesQuery,
+} from '@/api/Note/notes.queries';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
@@ -65,8 +68,10 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const noteRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAuthContext();
 
-  const isUserVoter = note.noteVotes?.find(
-    (item) => item.user.uuid === user?.uuid,
+  const { data: noteVotes } = useGetNoteVotesQuery(uuid || '');
+
+  const isUserVoter = noteVotes?.data?.find(
+    (voter) => voter.uuid === user?.uuid,
   );
   const [hasVoted, setHasVoted] = useState<boolean>(!!isUserVoter);
 

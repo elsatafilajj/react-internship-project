@@ -23,8 +23,6 @@ export const useTourSteps = () => {
   const roomHost = users?.data?.find((user) => user.role === 'host');
   const isHost = roomHost?.uuid === user?.uuid;
 
-  console.log(document.getElementById('participants-mobile'));
-
   const getSteps = (): TourStep[] => [
     {
       title: !hasEnteredRoom ? 'Welcome to your Stuck Tour!' : '',
