@@ -47,12 +47,12 @@ export const ConfirmActionDialog = ({
             {message || 'This action cannot be undone.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel className="bg-white w-[100px] border hover:bg-gray-100 cursor-pointer">
+        <AlertDialogFooter className=" w-full">
+          <AlertDialogCancel className="bg-gray-100 border hover:bg-gray-100 cursor-pointer w-full md:w-[100px]">
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            className="w-[100px] cursor-pointer"
+            className="w-full md:w-[100px] cursor-pointer"
             onClick={onConfirm}
           >
             Continue

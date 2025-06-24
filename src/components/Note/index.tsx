@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
+import { useGetAllCommentsQuery } from '@/api/Comments/comments.queries';
 import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
@@ -63,8 +64,11 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const { roomId } = useParams<{ roomId: string }>();
   const { uuid, content, author } = note;
   const { selectedNoteId } = useNoteScrollContext();
-  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
   const socket = getSocket();
+
+  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
+
+  const { data: comment } = useGetAllCommentsQuery(note.uuid || '');
 
   const isUserVoter = note.noteVotes?.find(
     (item) => item.user.uuid === user?.uuid,
@@ -277,7 +281,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             />
 
             <div className="flex justify-between items-center w-full">
-              <span className="text-gray-700 text-xs ml-[7px]">
+              <span className="text-gray-700  text-xs ml-[7px]">
                 {author?.firstName && author?.lastName
                   ? `${author.firstName} ${author.lastName}`
                   : author?.firstName || author?.lastName || 'Unknown'}
@@ -285,13 +289,14 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
               <div className="flex items-center gap-1 -mr-[15px]">
                 <div className="flex items-center gap-1 -mr-[15px]">
-                  <span
-                    className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
-                    title="Total comments"
-                  >
-                    <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
-                    3
-                  </span>
+                  {comment?.data && comment?.data?.length !== 0 && (
+                    <span
+                      className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-100 "
+                      title="This note has comments"
+                    >
+                      <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
+                    </span>
+                  )}
 
                   {(note.totalVotes ?? 0) > 0 && (
                     <span
