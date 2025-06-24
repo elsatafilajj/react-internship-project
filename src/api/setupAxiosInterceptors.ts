@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 
 import { refreshTokenApi } from '@/api/User/user.client';
 import { AuthContextType } from '@/context/AuthContext/AuthContext';
+import { updateSocketAuth } from '@/helpers/socket';
 
 type FailedRequest = {
   resolve: (token: string) => void;
@@ -75,6 +76,8 @@ export const setupAxiosInterceptors = (
             accessToken: response.data.accessToken,
             refreshToken: response.data.refreshToken,
           });
+
+          updateSocketAuth(response.data.accessToken);
 
           processQueue(null, response.data.accessToken);
 

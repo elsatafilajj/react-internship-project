@@ -8,29 +8,36 @@ export const getSocket = (): Socket => {
   if (socket) return socket;
 
   const token = localStorage.getItem('accessToken');
+  if (!token) throw new Error('No access token found');
 
-  if (!token) {
-    throw new Error('No access token has found');
-  }
-
-  socket = io(`${Config.socketUrl}`, {
+  socket = io(Config.socketUrl, {
     transports: ['websocket'],
     auth: {
       Authorization: `Bearer ${token}`,
     },
+    autoConnect: true,
+    reconnection: true,
+    reconnectionAttempts: 3,
   });
 
   socket.on('connect', () => {
-    console.log('socket connected');
+    console.log('[socket] connected');
   });
 
   socket.on('connect_error', (error) => {
-    console.log('connection error', error.message);
+    console.log('[socket] connect error:', error.message);
   });
 
   socket.on('disconnect', (reason) => {
-    console.log('disconnected', reason);
+    console.log('[socket] disconnected:', reason);
   });
 
   return socket;
+};
+
+export const updateSocketAuth = (newToken: string) => {
+  if (socket) {
+    socket.auth = { Authorization: `Bearer ${newToken}` };
+    socket.connect();
+  }
 };
