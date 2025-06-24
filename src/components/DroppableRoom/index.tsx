@@ -188,7 +188,7 @@ export const DroppableRoom = ({
       socket.off(socketEvents.DeletedNote);
       socket.off(socketEvents.ArchivedRoom);
       socket.off(socketEvents.UserRemove);
-      socket.off('rooms/leftP');
+      socket.off(socketEvents.RoomLeftP);
     };
   }, []);
 

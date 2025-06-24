@@ -51,24 +51,24 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
   const [isResizing, setIsResizing] = useState(false);
 
-  const socket = getSocket();
   const [isOpen, setIsOpen] = useState(false);
   const [hasUserEdited, setHasUserEdited] = useState(false);
   const [localNoteColor, setLocalNoteColor] = useState<string>(
     note.color || 'note-background-green',
   );
-  const { roomId } = useParams<{ roomId: string }>();
   const [noteContent, setNoteContent] = useState('');
+  const noteRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { user } = useAuthContext();
+  const { roomId } = useParams<{ roomId: string }>();
   const { uuid, content, author } = note;
   const { selectedNoteId } = useNoteScrollContext();
   const { data } = useGetAllNotesFromRoomQuery(roomId || '');
-  const noteRef = useRef<HTMLDivElement | null>(null);
-  const { user } = useAuthContext();
+  const socket = getSocket();
 
   const isUserVoter = note.noteVotes?.find(
     (item) => item.user.uuid === user?.uuid,
   );
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [hasVoted, setHasVoted] = useState<boolean>(!!isUserVoter);
 
@@ -272,13 +272,15 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               onChange={handleNoteContentChange}
               onKeyDown={handleEnterKey}
               placeholder="Type in your idea..."
-              className="w-full resize-none h-full max-h-[250px] overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
+              className="w-full resize-none h-full overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
               aria-label="Note input"
             />
 
             <div className="flex justify-between items-center w-full">
               <span className="text-gray-700 text-xs ml-[7px]">
-                {author?.firstName || 'Unknown'}
+                {author?.firstName && author?.lastName
+                  ? `${author.firstName} ${author.lastName}`
+                  : author?.firstName || author?.lastName || 'Unknown'}
               </span>
 
               <div className="flex items-center gap-1 -mr-[15px]">
@@ -302,7 +304,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                   )}
 
                   <div
-                    className="cursor-se-resize w-5 h-5 text-xs -mb-[12px]"
+                    className="cursor-se-resize w-5 h-5 text-xs -mb-[10px] mr-1"
                     onClick={() => setIsResizing(true)}
                   ></div>
                 </div>
