@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { login } from '@/api/User/user.client';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import { ErrorResponseData } from '@/types/ErrorResponse';
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { setAuthState } = useAuthContext();
+  const navigate = useNavigate();
 
   const loginMutation = useMutation({
     mutationFn: login,
@@ -29,6 +30,14 @@ export const LoginForm = () => {
         accessToken: data?.data?.accessToken,
         refreshToken: data?.data?.refreshToken,
       });
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
+
+      if (redirectUrl) {
+        localStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirectUrl;
+      } else {
+        navigate('/rooms');
+      }
     },
   });
 
