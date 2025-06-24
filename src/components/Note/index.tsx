@@ -1,13 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Circle, Crown, List, MessageSquare, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
-import { getRoomWinner } from '@/api/Note/note.client';
 import { NoteItem } from '@/api/Note/note.types';
-import { useGetNoteVotesQuery } from '@/api/Note/notes.queries';
+import {
+  useGetNoteByIdQuery,
+  useGetNoteVotesQuery,
+  useGetWinnerNotes,
+} from '@/api/Note/notes.queries';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
@@ -51,38 +54,47 @@ const noteColorClassMap = {
 } as const;
 
 export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
+  const socket = useMemo(() => getSocket(), []);
+  const { roomId } = useParams<{ roomId: string }>();
+  const noteRef = useRef<HTMLDivElement | null>(null);
+
+  const queryClient = useQueryClient();
+
+  const { uuid, content, firstName, lastName } = note;
+
+  const { data: singleNote } = useGetNoteByIdQuery(uuid || '');
+  console.log(singleNote);
+
   const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
   const [isResizing, setIsResizing] = useState(false);
 
-  const socket = useMemo(() => getSocket(), []);
   const [isOpen, setIsOpen] = useState(false);
   const [hasUserEdited, setHasUserEdited] = useState(false);
+
   const [localNoteColor, setLocalNoteColor] = useState<string>(
     note.color || 'note-background-green',
   );
-  const { roomId } = useParams<{ roomId: string }>();
+
   const [noteContent, setNoteContent] = useState('');
-  const { uuid, content, firstName, lastName } = note;
   const { selectedNoteId } = useNoteScrollContext();
 
-  const noteRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAuthContext();
-
   const { data: noteVotes } = useGetNoteVotesQuery(uuid || '');
-
-  const { data: winnerNote } = useQuery({
-    queryKey: queryKeys.getSingleNote(uuid || '', roomId || ''),
-    queryFn: () => getRoomWinner(roomId || ''),
-    enabled: !!roomId,
-  });
-
-  const isWinner = winnerNote?.data.find((noteUuid) => noteUuid.uuid === uuid);
-  const isUserVoter = noteVotes?.data?.find(
-    (voter) => voter.uuid === user?.uuid,
+  const isUserVoter = Boolean(
+    noteVotes?.data?.find((voter) => voter.uuid === user?.uuid),
   );
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [hasVoted, setHasVoted] = useState<boolean | null>(
+    !!isUserVoter || null,
+  );
 
-  const [hasVoted, setHasVoted] = useState<boolean>(!!isUserVoter);
+  const totalVotes = noteVotes?.data?.length ?? 0;
+
+  const { data: winnerNote } = useGetWinnerNotes(roomId || '');
+  const isWinner = Boolean(
+    winnerNote?.data?.find((note) => note.uuid === uuid),
+  );
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
@@ -228,6 +240,9 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
       });
       toast.success('Vote removed!');
       setHasVoted(false);
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.getNoteVotes(uuid), queryKeys.getSingleNote(uuid)],
+      });
     } else {
       socket.emit(socketEvents.AddVote, {
         roomId,
@@ -235,6 +250,9 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
       });
       toast.success('Voted! 🎉');
       setHasVoted(true);
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.getNoteVotes(uuid), queryKeys.getSingleNote(uuid)],
+      });
     }
   };
 
@@ -300,13 +318,13 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                     3
                   </span>
 
-                  {(note.totalVotes ?? 0) > 0 && (
+                  {noteVotes && totalVotes > 0 && (
                     <span
                       className="text-[11px] font-medium text-yellow-800 bg-yellow-100 px-2 py-0.5 rounded-full flex items-center gap-1"
                       title="Total votes"
                     >
                       <Star className="w-3 h-3 text-yellow-500 fill-yellow-300" />
-                      {note.totalVotes}
+                      {totalVotes}
                     </span>
                   )}
 
@@ -376,13 +394,13 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                     onClick={() => !isReadOnly && handleVote()}
                   >
                     {hasVoted ? (
-                      <Star className="fill-foreground" />
+                      <Star className="fill-foreground stroke-1" />
                     ) : (
                       <Star strokeWidth={2.5} />
                     )}
                   </Toggle>
                   <p className="text-xs font-semibold">
-                    {note.totalVotes || 0}
+                    {noteVotes && totalVotes}
                   </p>
                 </div>
               </TooltipTrigger>

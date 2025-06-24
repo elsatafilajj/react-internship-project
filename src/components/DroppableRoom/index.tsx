@@ -1,12 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { AxiosError, AxiosResponse } from 'axios';
+import { useEffect, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  useTransformContext,
-  type ReactZoomPanPinchRef,
-} from 'react-zoom-pan-pinch';
+import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
@@ -19,6 +16,7 @@ import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 import { useRoomStatus } from '@/hooks/useRoomStatus';
+import { useViewportBounds } from '@/hooks/useViewportBounds';
 import { ErrorResponseData } from '@/types/ErrorResponse';
 
 interface DroppableRoomProps {
@@ -30,30 +28,13 @@ export const DroppableRoom = ({
   transformRef,
   setTransformDisabled,
 }: DroppableRoomProps) => {
+  const queryClient = useQueryClient();
   const roomRef = useRef<HTMLDivElement | null>(null);
 
   const { user } = useAuthContext();
-  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
-
-  const queryClient = useQueryClient();
-
   const { roomId } = useParams<{ roomId: string }>();
 
-  const transformContext = useTransformContext();
-
-  const bounds = useMemo(() => {
-    if (!transformContext.transformState) return null;
-
-    const { positionX, positionY, scale } = transformContext.transformState;
-
-    const padding = 100;
-    const xMin = Math.max(0, Math.floor(Math.abs(positionX) / scale) - padding);
-    const yMin = Math.max(0, Math.floor(Math.abs(positionY) / scale) - padding);
-    const xMax = Math.floor(xMin + window.innerWidth / scale) + padding;
-    const yMax = Math.floor(yMin + window.innerHeight / scale) + padding;
-
-    return { xMin, yMin, xMax, yMax };
-  }, [transformContext.transformState]);
+  const bounds = useViewportBounds();
 
   const { data } = useGetAllNotesFromRoomQuery(
     roomId || '',
@@ -80,7 +61,8 @@ export const DroppableRoom = ({
 
     if ([403, 404, 500].includes(status)) {
       const message =
-        axiosError.response?.data?.message ?? 'You were removed from this room';
+        axiosError.response?.data?.message ??
+        'You were removed from this room.';
       toast.error(message);
       navigate('/rooms');
     } else if (status >= 400 && status < 600) {
@@ -92,22 +74,30 @@ export const DroppableRoom = ({
   }, [error, navigate]);
 
   useEffect(() => {
-    if (data && data.data) {
-      setNotes(data?.data);
+    if (
+      roomId &&
+      bounds?.xMin !== undefined &&
+      bounds?.yMin !== undefined &&
+      bounds?.xMax !== undefined &&
+      bounds?.yMax !== undefined
+    ) {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(
+          roomId,
+          bounds.xMin,
+          bounds.yMin,
+          bounds.xMax,
+          bounds.yMax,
+        ),
+      });
     }
-  }, [data]);
+  }, [bounds?.previousScale]);
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
     roomRef,
     transformRef,
     onDrop: (x, y, uuid) => {
-      setNotes((prevNotes) =>
-        prevNotes.map((note) =>
-          note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
-        ),
-      );
-
       socket.emit(socketEvents.UpdateNote, {
         roomId,
         noteId: uuid,
@@ -123,6 +113,7 @@ export const DroppableRoom = ({
     type: DragNoteTypes.NewNote,
     roomRef,
     transformRef,
+
     onDrop: (x, y) => {
       socket.emit(socketEvents.CreateNote, {
         roomId,
@@ -133,65 +124,68 @@ export const DroppableRoom = ({
   });
 
   useEffect(() => {
-    if (data && data.data) {
-      setNotes(data?.data);
-    }
-  }, [data]);
-
-  useEffect(() => {
     if (!socket) return;
 
     socket.on(socketEvents.CreatedNote, (newNote) => {
       console.log('new note', newNote);
-      setNotes((prev) => [...(prev || []), newNote]);
-    });
-    socket.on(socketEvents.UpdatedNote, (updatedNote) => {
-      setNotes((prev) =>
-        prev.map((note) =>
-          note.uuid === updatedNote.uuid ? { ...note, ...updatedNote } : note,
-        ),
-      );
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleNote(roomId || '', updatedNote.uuid),
+        queryKey: queryKeys.getSingleNote(newNote.uuid || ''),
       });
     });
 
-    socket.on(socketEvents.AddedVote, (newVote) => {
-      console.log('new vote', newVote);
+    socket.on(socketEvents.UpdatedNote, (updatedNote) => {
+      console.log('updated note: ', updatedNote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(
+        queryKey: queryKeys.getSingleNote(updatedNote.uuid),
+      });
+
+      queryClient.setQueryData(
+        queryKeys.getNotesByRoomId(
           roomId || '',
           bounds?.xMin,
           bounds?.yMin,
           bounds?.xMax,
           bounds?.yMax,
         ),
+        (oldData: AxiosResponse<NoteItem[]> | undefined) => {
+          if (!oldData) return;
+
+          const updatedNotes = oldData.data.map((note) =>
+            note.uuid === updatedNote.uuid ? { ...note, ...updatedNote } : note,
+          );
+
+          return {
+            ...oldData,
+            data: updatedNotes,
+          };
+        },
+      );
+    });
+
+    socket.on(socketEvents.AddedVote, (newVote) => {
+      console.log('new vote', newVote);
+      queryClient.invalidateQueries({
+        queryKey: [
+          queryKeys.getNoteVotes(newVote.switchedFrom),
+          queryKeys.getNoteVotes(newVote.addedTo),
+        ],
       });
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
       console.log('removed note', removedVote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(
-          roomId || '',
-          bounds?.xMin,
-          bounds?.yMin,
-          bounds?.xMax,
-          bounds?.yMax,
-        ),
+        queryKey: [
+          queryKeys.getNoteVotes(removedVote.switchedFrom),
+          queryKeys.getNoteVotes(removedVote.addedTo),
+        ],
       });
     });
 
     socket.on(socketEvents.DeletedNote, (deletedNote) => {
       console.log('note deleted', deletedNote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(
-          roomId || '',
-          bounds?.xMin,
-          bounds?.yMin,
-          bounds?.xMax,
-          bounds?.yMax,
-        ),
+        queryKey: queryKeys.getSingleNote(deletedNote.uuid),
       });
     });
 
@@ -204,7 +198,7 @@ export const DroppableRoom = ({
     socket.on(socketEvents.UserJoined, ({ userId }) => {
       console.log(userId, `joined the room`);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getUsers(),
+        queryKey: queryKeys.getSingleUser(userId),
       });
     });
 
@@ -213,13 +207,16 @@ export const DroppableRoom = ({
         toast.error("You've been removed from this room.");
         navigate('/rooms');
       }
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleUser(userId),
+      });
     });
 
     socket.on(socketEvents.RoomLeftP, ({ userId }) => {
       console.log(`${userId.id} left the room`);
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getUsers(),
+        queryKey: queryKeys.getSingleUser(userId.id),
       });
     });
 
@@ -242,17 +239,19 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-[5000px] h-[2813px] relative bg-dot-grid overflow-hidden   p-8 rounded-lg"
+      className="w-[5000px] h-[2813px] relative bg-dot-grid overflow-hidden p-8 rounded-lg"
     >
-      {notes?.map((note: Partial<NoteItem>) => (
-        <DraggableNote
-          key={note.uuid}
-          note={note}
-          setTransformDisabled={setTransformDisabled}
-          transformRef={transformRef}
-          isReadOnly={isRoomArchived}
-        />
-      ))}
+      {data &&
+        data.data &&
+        data.data?.map((note: Partial<NoteItem>) => (
+          <DraggableNote
+            key={note.uuid}
+            note={note}
+            setTransformDisabled={setTransformDisabled}
+            transformRef={transformRef}
+            isReadOnly={isRoomArchived}
+          />
+        ))}
     </div>
   );
 };

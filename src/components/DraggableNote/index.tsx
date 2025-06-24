@@ -1,9 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, RefObject, useRef } from 'react';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { Note } from '@/components/Note';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
+import { queryKeys } from '@/constants/queryKeys';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
 import { useNoteDrag } from '@/hooks/useNoteDrag';
 import { useRoomStatus } from '@/hooks/useRoomStatus';
@@ -23,6 +25,8 @@ export const DraggableNote = ({
   const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
   const { registerNoteRef } = useNoteScrollContext();
+
+  const queryClient = useQueryClient();
 
   const { isRoomArchived } = useRoomStatus();
 
@@ -53,7 +57,13 @@ export const DraggableNote = ({
         zIndex: isDragging ? 'auto' : 10,
       }}
       onMouseDown={() => setTransformDisabled(true)}
-      onDragEnd={() => setTransformDisabled(false)}
+      onDragEnd={() => {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getSingleNote(uuid || ''),
+        });
+
+        setTransformDisabled(false);
+      }}
     >
       <Note
         note={note}

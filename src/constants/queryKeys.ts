@@ -1,9 +1,11 @@
+import { NoteItem } from '@/api/Note/note.types';
+
 export const queryKeys = {
   getUsers: () => ['users'],
-  getSingleUser: (id: string) => ['user', id],
+  getSingleUser: (userId: string) => ['users', userId],
 
   getRooms: () => ['rooms'],
-  getSingleRoom: (id: string) => ['room', id],
+  getSingleRoom: (id: string) => ['rooms', id],
   getArchivedRooms: () => ['archivedRooms'],
 
   getNotesByRoomId: (
@@ -13,7 +15,9 @@ export const queryKeys = {
     xMax: number | undefined,
     yMax: number | undefined,
   ) => ['notes', roomId, xMin, yMin, xMax, yMax],
-  getSingleNote: (noteId: string, roomId: string) => ['note', noteId, roomId],
+  getSingleNote: (noteId: string) => ['notes', noteId],
+
+  getNoteVotes: (noteId: NoteItem['uuid']) => ['votes', noteId],
 
   getCommentsByNoteId: (noteId: string) => ['comments', noteId],
 

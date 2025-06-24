@@ -15,18 +15,17 @@ import { getSocket } from '@/helpers/socket';
 export const Room = () => {
   const [transformDisabled, setTransformDisabled] = useState(false);
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
-  const roomId = useParams<{ roomId: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
   const socket = useMemo(() => getSocket(), []);
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!roomId || !roomId.roomId) return;
-    const roomIdString = roomId.roomId.toLocaleString();
+    if (!roomId) return;
     const uuidRegex = new RegExp(
       /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
     );
-    const isUuidValid = uuidRegex.test(roomIdString);
+
+    const isUuidValid = uuidRegex.test(roomId);
     if (!isUuidValid) navigate('/rooms');
   }, [roomId]);
 
@@ -51,7 +50,6 @@ export const Room = () => {
         ref={transformRef}
         disabled={transformDisabled}
         disablePadding={true}
-        centerOnInit={true}
         panning={{ velocityDisabled: true }}
       >
         <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>

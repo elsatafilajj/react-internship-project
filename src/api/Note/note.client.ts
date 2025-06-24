@@ -74,7 +74,7 @@ export const exportNotes = async ({ roomId, fileType }: ExportNotesInput) =>
     responseType: 'blob',
   });
 
-export const getRoomWinner = async (roomId: Room['uuid']) =>
+export const getWinnerNotes = async (roomId: Room['uuid']) =>
   apiRequest<undefined, WinnerNoteResponse[]>({
     url: `notes/room/${roomId}/current-winner`,
     method: 'GET',
