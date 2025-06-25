@@ -22,7 +22,6 @@ export const useTourSteps = () => {
 
   const { user } = useAuthContext();
   const { data: roomHost } = useGetRoomHostQuery(roomId || '');
-  console.log(roomHost, 'room hosti specifik');
   const isHost = roomHost?.data?.uuid === user?.uuid;
 
   const getSteps = (): TourStep[] => [
