@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom';
 
-import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import {
+  useGetRoomByIdQuery,
+  useGetRoomHostQuery,
+} from '@/api/Room/room.queries';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
@@ -19,11 +21,9 @@ export const useTourSteps = () => {
   const isRoomActive = data?.data?.isActive;
 
   const { user } = useAuthContext();
-  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
-  const roomHost = users?.data?.find((user) => user.role === 'host');
-  const isHost = roomHost?.uuid === user?.uuid;
-
-  console.log(document.getElementById('participants-mobile'));
+  const { data: roomHost } = useGetRoomHostQuery(roomId || '');
+  console.log(roomHost, 'room hosti specifik');
+  const isHost = roomHost?.data?.uuid === user?.uuid;
 
   const getSteps = (): TourStep[] => [
     {
