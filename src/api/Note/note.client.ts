@@ -11,14 +11,14 @@ import {
 import { Room } from '@/api/Room/room.types';
 import { DeleteResponse } from '@/types/DeleteResponse';
 
-export const getAllNotesFromRoom = async (
+export const getAllNoteIdsFromRoom = async (
   roomId: string,
   xMin: number,
   yMin: number,
   xMax: number,
   yMax: number,
 ) =>
-  apiRequest<undefined, NoteItem[]>({
+  apiRequest<undefined, Pick<NoteItem, 'uuid' | 'xAxis' | 'yAxis'>[]>({
     url: 'notes/viewport',
     method: 'GET',
     params: { roomId, xMin, yMin, xMax, yMax },

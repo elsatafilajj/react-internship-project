@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Circle, Crown, List, MessageSquare, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
@@ -24,7 +23,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
@@ -33,7 +31,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 
 interface NoteProps {
   setTransformDisabled: (b: boolean) => void;
-  note: Partial<NoteItem>;
+  noteId: NoteItem['uuid'] | undefined;
   isReadOnly: boolean;
 }
 
@@ -53,17 +51,17 @@ const noteColorClassMap = {
   'note-background-red': `bg-note-background-red`,
 } as const;
 
-export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
+export const Note = ({
+  noteId,
+  isReadOnly,
+  setTransformDisabled,
+}: NoteProps) => {
   const socket = useMemo(() => getSocket(), []);
   const { roomId } = useParams<{ roomId: string }>();
   const noteRef = useRef<HTMLDivElement | null>(null);
 
-  const queryClient = useQueryClient();
-
-  const { uuid, content, firstName, lastName } = note;
-
-  const { data: singleNote } = useGetNoteByIdQuery(uuid || '');
-  console.log(singleNote);
+  const { data: singleNote } = useGetNoteByIdQuery(noteId || '');
+  const noteItem = singleNote?.data;
 
   const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
   const [isResizing, setIsResizing] = useState(false);
@@ -72,14 +70,14 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const [hasUserEdited, setHasUserEdited] = useState(false);
 
   const [localNoteColor, setLocalNoteColor] = useState<string>(
-    note.color || 'note-background-green',
+    noteItem?.color || 'note-background-green',
   );
 
   const [noteContent, setNoteContent] = useState('');
   const { selectedNoteId } = useNoteScrollContext();
 
   const { user } = useAuthContext();
-  const { data: noteVotes } = useGetNoteVotesQuery(uuid || '');
+  const { data: noteVotes } = useGetNoteVotesQuery(noteId || '');
   const isUserVoter = Boolean(
     noteVotes?.data?.find((voter) => voter.uuid === user?.uuid),
   );
@@ -91,7 +89,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
   const { data: winnerNote } = useGetWinnerNotes(roomId || '');
   const isWinner = Boolean(
-    winnerNote?.data?.find((note) => note.uuid === uuid),
+    winnerNote?.data?.find((note) => note.uuid === noteId),
   );
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -99,12 +97,14 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
   useEffect(() => {
-    if (note.color) setLocalNoteColor(note.color);
-  }, [note.color]);
+    if (noteItem?.color) setLocalNoteColor(noteItem?.color);
+  }, [noteItem?.color]);
 
   useEffect(() => {
-    if (content) setNoteContent(content);
-  }, [content]);
+    if (noteItem?.content != null && !hasUserEdited) {
+      setNoteContent(noteItem.content);
+    }
+  }, [noteItem?.content]);
 
   const handleEnterKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key !== 'Enter') return;
@@ -185,7 +185,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
     if (hasUserEdited) {
       socket.emit(socketEvents.UpdateNote, {
         roomId,
-        noteId: uuid,
+        noteId: noteId,
         updates: { content: debouncedContent },
       });
     }
@@ -221,46 +221,43 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
   const handleNoteColorChange = (noteColor: string) => {
     setLocalNoteColor(noteColor);
-    if (!uuid) return;
+    if (!noteId) return;
 
     socket.emit(socketEvents.UpdateNote, {
       roomId,
-      noteId: uuid,
+      noteId: noteId,
       updates: { color: noteColor },
     });
   };
 
   const handleVote = () => {
-    if (!uuid) return;
+    if (!noteId) return;
 
     if (hasVoted) {
       socket.emit(socketEvents.RemoveVote, {
-        roomId,
-        noteId: uuid,
+        roomId: roomId,
+        noteId: noteId,
       });
       toast.success('Vote removed!');
       setHasVoted(false);
-      queryClient.invalidateQueries({
-        queryKey: [queryKeys.getNoteVotes(uuid), queryKeys.getSingleNote(uuid)],
-      });
     } else {
       socket.emit(socketEvents.AddVote, {
-        roomId,
-        noteId: uuid,
+        roomId: roomId,
+        noteId: noteId,
       });
       toast.success('Voted! 🎉');
       setHasVoted(true);
-      queryClient.invalidateQueries({
-        queryKey: [queryKeys.getNoteVotes(uuid), queryKeys.getSingleNote(uuid)],
-      });
     }
   };
 
   const handleDeleteNote = (noteId: string) => {
+    console.log(noteId);
+    console.log(roomId);
     socket.emit(socketEvents.DeleteNote, { roomId, noteId });
+    console.log('delete event sent');
   };
 
-  if (!uuid) return null;
+  if (!noteId) return null;
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -284,7 +281,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                 localNoteColor as keyof typeof noteColorClassMap
               ],
               'relative w-full border p-3 text-xs cursor-move flex flex-col justify-between',
-              selectedNoteId === uuid &&
+              selectedNoteId === noteId &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               !!isWinner && 'ring-1 ring-yellow-400',
             )}
@@ -304,7 +301,9 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
             <div className="flex justify-between items-center w-full">
               <span className="text-gray-700 text-xs ml-[7px]">
-                {(firstName && lastName && `${firstName} ${lastName[0]}.`) ||
+                {(noteItem &&
+                  noteItem.lastName &&
+                  `${noteItem.firstName} ${noteItem.lastName[0]}.`) ||
                   'Unknown'}
               </span>
 
@@ -354,7 +353,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                   className="cursor-pointer"
                   size={20}
                   strokeWidth={2.5}
-                  onClick={() => !isReadOnly && handleDeleteNote(uuid)}
+                  onClick={() => !isReadOnly && handleDeleteNote(noteId)}
                 />
               </TooltipTrigger>
               <TooltipContent>Delete</TooltipContent>
@@ -408,7 +407,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             </Tooltip>
           </TooltipProvider>
 
-          <PanelToggle noteId={uuid} />
+          <PanelToggle noteId={noteId} />
         </div>
       </PopoverContent>
     </Popover>

@@ -66,7 +66,7 @@ export const DraggableNote = ({
       }}
     >
       <Note
-        note={note}
+        noteId={note.uuid}
         setTransformDisabled={setTransformDisabled}
         isReadOnly={isRoomArchived}
       />

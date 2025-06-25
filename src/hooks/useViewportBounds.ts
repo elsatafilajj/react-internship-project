@@ -9,18 +9,11 @@ export const useViewportBounds = () => {
     const { positionX, positionY, scale, previousScale } =
       transformContext.transformState;
 
-    const padding = 500;
-    let xMin = Math.max(0, Math.floor(Math.abs(positionX) / scale) - padding);
-    let yMin = Math.max(0, Math.floor(Math.abs(positionY) / scale) - padding);
-    let xMax = Math.floor(xMin + window.innerWidth / scale) + padding;
-    let yMax = Math.floor(yMin + window.innerHeight / scale) + padding;
+    const xMin = Math.max(0, Math.floor(Math.abs(positionX) / scale));
+    const yMin = Math.max(0, Math.floor(Math.abs(positionY) / scale));
+    const xMax = Math.floor(xMin + window.innerWidth / scale);
+    const yMax = Math.floor(yMin + window.innerHeight / scale);
 
-    if (scale === 0.5) {
-      xMin += padding;
-      yMin += padding;
-      xMax -= padding;
-      yMax -= padding;
-    }
     return { xMin, yMin, xMax, yMax, previousScale };
   }, [transformContext?.transformState?.previousScale]);
 };

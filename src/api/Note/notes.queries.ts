@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useTransformContext } from 'react-zoom-pan-pinch';
 
 import {
-  getAllNotesFromRoom,
+  getAllNoteIdsFromRoom,
   getNoteVotes,
   getSingleNoteById,
   getWinnerNotes,
@@ -17,20 +17,22 @@ import { queryKeys } from '@/constants/queryKeys';
 const uuidRegex =
   /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
 
-export const useGetAllNotesFromRoomQuery = (
+export const useGetAllNoteIdsFromRoomQuery = (
   roomId: string,
   xMin: number,
   yMin: number,
   xMax: number,
   yMax: number,
-  options?: UseQueryOptions<AxiosResponse<NoteItem[]>>,
+  options?: UseQueryOptions<
+    AxiosResponse<Pick<NoteItem, 'uuid' | 'xAxis' | 'yAxis'>[]>
+  >,
 ) => {
   const transformContext = useTransformContext();
 
-  return useQuery<AxiosResponse<NoteItem[]>>({
-    queryKey: queryKeys.getNotesByRoomId(roomId, xMin, yMin, xMax, yMax),
+  return useQuery<AxiosResponse<Pick<NoteItem, 'uuid' | 'xAxis' | 'yAxis'>[]>>({
+    queryKey: queryKeys.getNoteIdsByRoomId(roomId, xMin, yMin, xMax, yMax),
     queryFn: () => {
-      return getAllNotesFromRoom(roomId, xMin, yMin, xMax, yMax);
+      return getAllNoteIdsFromRoom(roomId, xMin, yMin, xMax, yMax);
     },
     enabled:
       !!roomId &&
@@ -76,7 +78,7 @@ export const useGetWinnerNotes = (
   options?: UseQueryOptions<AxiosResponse<WinnerNoteResponse[]>>,
 ) => {
   return useQuery<AxiosResponse<WinnerNoteResponse[]>>({
-    queryKey: queryKeys.getNotesByRoomId(roomId || '', 0, 0, 4999, 2799),
+    queryKey: queryKeys.getNoteIdsByRoomId(roomId || '', 0, 0, 4999, 2799),
     queryFn: () => getWinnerNotes(roomId || ''),
     enabled: !!roomId && uuidRegex.test(roomId),
     ...options,

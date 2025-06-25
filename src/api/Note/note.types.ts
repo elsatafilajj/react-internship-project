@@ -16,6 +16,7 @@ export interface NoteItem {
   color: NoteColor;
   xAxis: number;
   yAxis: number;
+  room: Room['uuid'];
   firstName: User['firstName'];
   lastName: User['lastName'];
 }

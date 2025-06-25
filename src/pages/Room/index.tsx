@@ -32,7 +32,9 @@ export const Room = () => {
   useEffect(() => {
     if (!roomId) return;
 
-    socket.emit(socketEvents.JoinRoom, roomId);
+    console.log(roomId);
+
+    socket.emit(socketEvents.JoinRoom, { roomId });
     toast.success('You joined the room');
 
     return () => {

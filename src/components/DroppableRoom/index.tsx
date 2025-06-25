@@ -1,12 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { useEffect, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
-import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
+import { useGetAllNoteIdsFromRoomQuery } from '@/api/Note/notes.queries';
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
@@ -36,7 +36,7 @@ export const DroppableRoom = ({
 
   const bounds = useViewportBounds();
 
-  const { data } = useGetAllNotesFromRoomQuery(
+  const { data } = useGetAllNoteIdsFromRoomQuery(
     roomId || '',
     bounds?.xMin ?? 0,
     bounds?.yMin ?? 0,
@@ -82,7 +82,7 @@ export const DroppableRoom = ({
       bounds?.yMax !== undefined
     ) {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(
+        queryKey: queryKeys.getNoteIdsByRoomId(
           roomId,
           bounds.xMin,
           bounds.yMin,
@@ -126,66 +126,98 @@ export const DroppableRoom = ({
   useEffect(() => {
     if (!socket) return;
 
+    // DONE
     socket.on(socketEvents.CreatedNote, (newNote) => {
       console.log('new note', newNote);
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleNote(newNote.uuid || ''),
+      queryClient.setQueryData(queryKeys.getSingleNote(newNote.uuid), () => {
+        return newNote;
       });
-    });
-
-    socket.on(socketEvents.UpdatedNote, (updatedNote) => {
-      console.log('updated note: ', updatedNote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleNote(updatedNote.uuid),
-      });
-
-      queryClient.setQueryData(
-        queryKeys.getNotesByRoomId(
+        queryKey: queryKeys.getNoteIdsByRoomId(
           roomId || '',
           bounds?.xMin,
           bounds?.yMin,
           bounds?.xMax,
           bounds?.yMax,
         ),
-        (oldData: AxiosResponse<NoteItem[]> | undefined) => {
-          if (!oldData) return;
+      });
+    });
 
-          const updatedNotes = oldData.data.map((note) =>
-            note.uuid === updatedNote.uuid ? { ...note, ...updatedNote } : note,
-          );
+    // DONE
+    socket.on(socketEvents.UpdatedNote, (updatedNote) => {
+      console.log('updated note: ', updatedNote);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(updatedNote.uuid),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteIdsByRoomId(
+          roomId || '',
+          bounds?.xMin,
+          bounds?.yMin,
+          bounds?.xMax,
+          bounds?.yMax,
+        ),
+      });
+    });
 
-          return {
-            ...oldData,
-            data: updatedNotes,
-          };
-        },
-      );
+    // DONE
+    socket.on(socketEvents.DeletedNote, (deletedNote) => {
+      queryClient.removeQueries({
+        queryKey: queryKeys.getSingleNote(deletedNote.resourceId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteIdsByRoomId(
+          roomId || '',
+          bounds?.xMin,
+          bounds?.yMin,
+          bounds?.xMax,
+          bounds?.yMax,
+        ),
+      });
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
       console.log('new vote', newVote);
       queryClient.invalidateQueries({
-        queryKey: [
-          queryKeys.getNoteVotes(newVote.switchedFrom),
-          queryKeys.getNoteVotes(newVote.addedTo),
-        ],
+        queryKey: queryKeys.getNoteIdsByRoomId(
+          roomId || '',
+          bounds?.xMin,
+          bounds?.yMin,
+          bounds?.xMax,
+          bounds?.yMax,
+        ),
+      });
+      [newVote.switchedFrom, newVote.addedTo].forEach((id) => {
+        console.log('Id from add vote listener', id);
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getNoteVotes(id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getSingleNote(id),
+        });
       });
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
       console.log('removed note', removedVote);
-      queryClient.invalidateQueries({
-        queryKey: [
-          queryKeys.getNoteVotes(removedVote.switchedFrom),
-          queryKeys.getNoteVotes(removedVote.addedTo),
-        ],
-      });
-    });
 
-    socket.on(socketEvents.DeletedNote, (deletedNote) => {
-      console.log('note deleted', deletedNote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleNote(deletedNote.uuid),
+        queryKey: queryKeys.getNoteIdsByRoomId(
+          roomId || '',
+          bounds?.xMin,
+          bounds?.yMin,
+          bounds?.xMax,
+          bounds?.yMax,
+        ),
+      });
+      [removedVote.switchedFrom, removedVote.addedTo].forEach((id) => {
+        console.log('Id from remove vote listener', id);
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getNoteVotes(id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.getSingleNote(id),
+        });
       });
     });
 
