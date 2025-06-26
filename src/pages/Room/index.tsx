@@ -33,8 +33,6 @@ export const Room = () => {
     if (!isUuidValid) navigate('/rooms');
   }, [roomId]);
 
-  console.log('roomId from localStorage:', localStorage.getItem('lastRoomId'));
-
   useEffect(() => {
     if (!roomId) return;
 
