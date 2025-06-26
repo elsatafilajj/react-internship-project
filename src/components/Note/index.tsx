@@ -65,6 +65,11 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const { uuid, content, author } = note;
   const { selectedNoteId } = useNoteScrollContext();
   const socket = getSocket();
+  const [editingUsers, setEditingUsers] = useState<Record<string, string>>({});
+
+  const { data } = useGetAllNotesFromRoomQuery(roomId || '');
+
+  const { data: comment } = useGetAllCommentsQuery(note.uuid || '');
 
   const { data } = useGetAllNotesFromRoomQuery(roomId || '');
 
@@ -194,6 +199,47 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
     };
   }, [isResizing]);
 
+  useEffect(() => {
+    const handleStart = ({
+      noteId,
+      userId,
+      firstName,
+    }: {
+      roomId: string;
+      noteId: string;
+      userId: string;
+      firstName: string;
+    }) => {
+      if (noteId === uuid && userId !== user?.uuid) {
+        setEditingUsers((prev) => ({ ...prev, [userId]: firstName }));
+      }
+    };
+
+    const handleStop = ({
+      noteId,
+      userId,
+    }: {
+      noteId: string;
+      userId: string;
+    }) => {
+      if (noteId === uuid && userId !== user?.uuid) {
+        setEditingUsers((prev) => {
+          const copy = { ...prev };
+          delete copy[userId];
+          return copy;
+        });
+      }
+    };
+
+    socket.on(socketEvents.NotesEditingStarted, handleStart);
+    socket.on(socketEvents.NotesEditingStoped, handleStop);
+
+    return () => {
+      socket.off(socketEvents.NotesEditingStarted, handleStart);
+      socket.off(socketEvents.NotesEditingStoped, handleStop);
+    };
+  }, []);
+
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
     setHasUserEdited(true);
@@ -268,8 +314,24 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
           >
             <textarea
+              onFocus={() => {
+                setTransformDisabled(true);
+
+                socket.emit(socketEvents.NotesEditingStart, {
+                  roomId,
+                  noteId: note.uuid,
+                  userId: user?.uuid,
+                  firstName: user?.firstName,
+                });
+              }}
+              onBlur={() => {
+                socket.emit(socketEvents.NotesEditingStop, {
+                  roomId,
+                  noteId: note.uuid,
+                  userId: user?.uuid,
+                });
+              }}
               ref={textareaRef}
-              onFocus={() => setTransformDisabled(true)}
               onMouseOutCapture={() => setTransformDisabled(false)}
               readOnly={isReadOnly}
               value={noteContent}
@@ -279,6 +341,11 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               className="w-full resize-none h-full overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
               aria-label="Note input"
             />
+            {Object.values(editingUsers).length > 0 && (
+              <div className="absolute top-1 right-2 text-[10px] text-gray-500 italic z-30 bg-white/70 px-1 rounded shadow-sm">
+                {Object.values(editingUsers).join(', ')} is editing...
+              </div>
+            )}
 
             <div className="flex justify-between items-center w-full">
               <span className="text-gray-700  text-xs ml-[7px]">
