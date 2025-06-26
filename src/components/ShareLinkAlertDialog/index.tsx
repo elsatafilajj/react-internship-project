@@ -54,7 +54,7 @@ export const ShareLinkAlertDialog = () => {
         <div id="share">
           {data?.data?.isActive && (
             <Button
-              className="bg-primary text-black px-3 sm:px-4 hover:opacity-90  hover:text-foreground w-fit sm:w-[100px]"
+              className="bg-primary text-black px-3 sm:px-4 -gap-1 hover:opacity-90  hover:text-foreground w-fit sm:w-[90px]"
               onClick={handleShareLinkClick}
             >
               <Share2 className="mr-0 sm:mr-2 h-4 w-4" />

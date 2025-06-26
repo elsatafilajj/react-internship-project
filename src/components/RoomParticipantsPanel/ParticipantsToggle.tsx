@@ -44,7 +44,7 @@ export const ParticipantsToggle = () => {
               participants.data &&
               participants?.data?.slice(0, 4).map((participant, index) => (
                 <div
-                  className={`relative sm:flex hidden h-10 w-10 rounded-full text-sm font-medium -ml-0.5 border-2 border-card items-center justify-center shadow ${
+                  className={`relative sm:flex hidden h-8.5  w-8.5 rounded-full text-sm font-medium -ml-0.5 border-2 border-card items-center justify-center shadow ${
                     avatarColors[index % avatarColors.length]
                   }`}
                   key={participant.uuid}
