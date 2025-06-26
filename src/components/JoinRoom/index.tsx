@@ -33,6 +33,9 @@ export const JoinRoom = () => {
 
     joinRoomMutation.mutateAsync(code);
     socket.emit('rooms/join', { roomId });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getSingleRoom(roomId || ''),
+    });
 
     queryClient.invalidateQueries({
       queryKey: queryKeys.getUsers(),
