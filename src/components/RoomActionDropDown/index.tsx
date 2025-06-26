@@ -4,8 +4,10 @@ import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { deleteRoom } from '@/api/Room/room.client';
-import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import {
+  useGetRoomByIdQuery,
+  useGetRoomHostQuery,
+} from '@/api/Room/room.queries';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
 import { LeaveRoom } from '@/components/LeaveRoom';
@@ -30,10 +32,9 @@ export const RoomActionsDropDown = () => {
   const { data } = useGetRoomByIdQuery(roomId || '');
 
   const { user } = useAuthContext();
-  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
 
-  const roomHost = users?.data?.find((user) => user.role === 'host');
-  const isUserHost = roomHost?.uuid === user?.uuid;
+  const { data: roomHost } = useGetRoomHostQuery(roomId || '');
+  const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
   const deleteMutation = useMutation({
     mutationFn: (roomId: string) => deleteRoom(roomId),

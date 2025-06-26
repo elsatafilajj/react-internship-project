@@ -64,7 +64,7 @@ export const RegisterForm = () => {
   return (
     <>
       <div className="flex items-center flex-col justify-center">
-        <h1 className="text-3xl font-semibold leading-wide tracking-tight text-foreground md:text-4xl">
+        <h1 className="text-2xl font-semibold leading-wide tracking-tight text-foreground md:text-3xl">
           Create an account
         </h1>
       </div>
