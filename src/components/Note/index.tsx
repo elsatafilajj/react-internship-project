@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Circle, Crown, List, MessageSquare, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
@@ -19,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
@@ -65,7 +67,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   const { selectedNoteId } = useNoteScrollContext();
   const { data } = useGetAllNotesFromRoomQuery(roomId || '');
   const socket = getSocket();
-
+  const queryClient = useQueryClient();
   const isUserVoter = note.noteVotes?.find(
     (item) => item.user.uuid === user?.uuid,
   );
@@ -204,6 +206,9 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
       noteId: uuid,
       updates: { color: noteColor },
     });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+    });
   };
 
   const handleVote = () => {
@@ -216,6 +221,9 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
       });
       toast.success('Vote removed!');
       setHasVoted(false);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
     } else {
       socket.emit(socketEvents.AddVote, {
         roomId,
@@ -223,11 +231,17 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
       });
       toast.success('Voted! 🎉');
       setHasVoted(true);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
     }
   };
 
   const handleDeleteNote = (noteId: string) => {
     socket.emit(socketEvents.DeleteNote, { roomId, noteId });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+    });
   };
 
   if (!uuid) return null;
@@ -257,7 +271,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               noteColorClassMap[
                 localNoteColor as keyof typeof noteColorClassMap
               ],
-              'relative w-full border p-3 text-xs cursor-move flex flex-col justify-between',
+              'relative w-full p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === uuid &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               isWinner && 'ring-1 ring-yellow-400',

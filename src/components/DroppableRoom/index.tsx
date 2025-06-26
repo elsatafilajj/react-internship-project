@@ -91,6 +91,9 @@ export const DroppableRoom = ({
           yAxis: Math.floor(y),
         },
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
     },
   });
 
@@ -103,6 +106,9 @@ export const DroppableRoom = ({
         roomId,
         xAxis: Math.floor(x),
         yAxis: Math.floor(y),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
     },
   });
@@ -117,8 +123,10 @@ export const DroppableRoom = ({
     if (!socket) return;
 
     socket.on(socketEvents.CreatedNote, (newNote) => {
-      console.log('new note', newNote);
-      setNotes((prev) => [...(prev || []), newNote]);
+      setNotes((prevNotes) => [...prevNotes, newNote]);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
     });
     socket.on(socketEvents.UpdatedNote, (updatedNote) => {
       setNotes((prev) =>

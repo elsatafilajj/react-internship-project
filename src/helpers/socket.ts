@@ -20,24 +20,38 @@ export const getSocket = (): Socket => {
     reconnectionAttempts: 3,
   });
 
-  socket.on('connect', () => {
-    console.log('[socket] connected');
-  });
-
-  socket.on('connect_error', (error) => {
-    console.log('[socket] connect error:', error.message);
-  });
-
-  socket.on('disconnect', (reason) => {
-    console.log('[socket] disconnected:', reason);
-  });
-
   return socket;
 };
 
-export const updateSocketAuth = (newToken: string) => {
-  if (socket) {
-    socket.auth = { Authorization: `Bearer ${newToken}` };
-    socket.connect();
-  }
+export const updateSocketAuth = (newToken: string, roomId?: string) => {
+  if (!socket) return;
+
+  socket.removeAllListeners();
+  socket.disconnect();
+
+  socket.auth = { Authorization: `Bearer ${newToken}` };
+  socket.connect();
+
+  socket.on('connect', () => {
+    console.log('socket reconnected ');
+
+    const finalRoomId = roomId || localStorage.getItem('lastRoomId');
+    if (finalRoomId) {
+      socket?.emit('rooms/join', { roomId: finalRoomId });
+    } else {
+      console.warn('socket Room ID is missing during reconnect');
+    }
+    console.log(
+      'roomId from localStorage:',
+      localStorage.getItem('lastRoomId'),
+    );
+
+    socket?.on('noteCreated', (note) => {
+      console.log('socket new note received:', note);
+    });
+  });
+
+  socket.on('connect_error', (err) => {
+    console.log('socket error', err.message);
+  });
 };
