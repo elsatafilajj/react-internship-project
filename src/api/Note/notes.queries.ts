@@ -43,6 +43,7 @@ export const useGetAllNoteIdsFromRoomQuery = (
       yMin >= 0 &&
       !!transformContext &&
       (options?.enabled ?? true),
+    staleTime: 0,
     ...options,
   });
 };

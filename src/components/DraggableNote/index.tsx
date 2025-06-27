@@ -1,8 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, RefObject, useRef } from 'react';
+import { DragPreviewImage } from 'react-dnd';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
+import noteDragIcon from '@/assets/images/note-drag-icon.svg';
 import { Note } from '@/components/Note';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
@@ -34,7 +36,7 @@ export const DraggableNote = ({
     registerNoteRef(note.uuid || '', noteRef);
   }, [note.uuid, registerNoteRef]);
 
-  const [{ isDragging }, drag] = useNoteDrag({
+  const [{ isDragging }, drag, preview] = useNoteDrag({
     uuid,
     type: DragNoteTypes.Note,
     noteRef,
@@ -47,29 +49,32 @@ export const DraggableNote = ({
   drag(noteRef);
 
   return (
-    <div
-      ref={noteRef}
-      style={{
-        position: 'absolute',
-        left: xAxis,
-        top: yAxis,
-        opacity: isDragging ? 0 : 1,
-        zIndex: isDragging ? 'auto' : 10,
-      }}
-      onMouseDown={() => setTransformDisabled(true)}
-      onDragEnd={() => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.getSingleNote(uuid || ''),
-        });
+    <>
+      <DragPreviewImage connect={preview} src={noteDragIcon} />
+      <div
+        ref={noteRef}
+        style={{
+          position: 'absolute',
+          left: xAxis,
+          top: yAxis,
+          opacity: isDragging ? 0 : 1,
+          zIndex: isDragging ? 'auto' : 10,
+        }}
+        onMouseDown={() => setTransformDisabled(true)}
+        onDragEnd={() => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.getSingleNote(uuid || ''),
+          });
 
-        setTransformDisabled(false);
-      }}
-    >
-      <Note
-        noteId={note.uuid}
-        setTransformDisabled={setTransformDisabled}
-        isReadOnly={isRoomArchived}
-      />
-    </div>
+          setTransformDisabled(false);
+        }}
+      >
+        <Note
+          noteId={note.uuid}
+          setTransformDisabled={setTransformDisabled}
+          isReadOnly={isRoomArchived}
+        />
+      </div>
+    </>
   );
 };

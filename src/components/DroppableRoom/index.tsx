@@ -194,7 +194,7 @@ export const DroppableRoom = ({
         ),
       });
       queryClient.removeQueries({
-        queryKey: queryKeys.getNoteVotes(removedVote.switchedFrom),
+        queryKey: queryKeys.getNoteVotes(removedVote.removedFrom),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteVotes(removedVote.addedTo),

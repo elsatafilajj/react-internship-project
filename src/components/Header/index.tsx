@@ -61,7 +61,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   }, [isError, error, navigate]);
 
   return (
-    <header className="sticky top-0 z-30 w-full flex items-center justify-between gap-4 px-4 py-2 border-b bg-secondary shadow-sm">
+    <header className="sticky top-0 z-30 w-full flex items-center h-15 justify-between gap-4 px-4 py-2 border-b bg-secondary shadow-sm">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <div id="sidebar">
