@@ -220,7 +220,6 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
   useEffect(() => {
     if (noteVotes && user?.uuid) {
-      console.log(noteVotes);
       const userHasVoted = noteVotes.data?.some(
         (voter) => voter.uuid === user.uuid,
       );
@@ -344,7 +343,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
 
             <div className="flex justify-between items-center w-full">
-              <span className="text-s ml-[7px]">
+              <span className="text-s text-black/60 ml-[7px]">
                 {author?.firstName && author?.lastName
                   ? `${author.firstName} ${author.lastName}`
                   : author?.firstName || author?.lastName || 'Unknown'}
