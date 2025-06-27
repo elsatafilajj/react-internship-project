@@ -7,7 +7,10 @@ import { useParams } from 'react-router-dom';
 
 import { useGetAllCommentsQuery } from '@/api/Comments/comments.queries';
 import { NoteItem } from '@/api/Note/note.types';
-import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
+import {
+  useGetAllNotesFromRoomQuery,
+  useGetNoteVotesQuery,
+} from '@/api/Note/notes.queries';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
@@ -71,11 +74,13 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
   const { data: comment } = useGetAllCommentsQuery(note.uuid || '');
 
-  const isUserVoter = note.noteVotes?.find(
-    (item) => item.user.uuid === user?.uuid,
+  const { data: noteVotes } = useGetNoteVotesQuery(uuid || '');
+
+  const isUserVoter = Boolean(
+    noteVotes?.data?.find((voter) => voter.uuid === user?.uuid),
   );
 
-  const [hasVoted, setHasVoted] = useState<boolean>(!!isUserVoter);
+  const [hasVoted, setHasVoted] = useState<boolean>(isUserVoter);
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
@@ -212,6 +217,16 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
       socket.off(socketEvents.NotesEditingStoped, handleStop);
     };
   }, []);
+
+  useEffect(() => {
+    if (noteVotes && user?.uuid) {
+      console.log(noteVotes);
+      const userHasVoted = noteVotes.data?.some(
+        (voter) => voter.uuid === user.uuid,
+      );
+      setHasVoted(userHasVoted);
+    }
+  }, [noteVotes, user?.uuid]);
 
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);

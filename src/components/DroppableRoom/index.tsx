@@ -144,12 +144,21 @@ export const DroppableRoom = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(newVote.switchedFrom || ''),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(newVote.addedTo || ''),
+      });
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
       console.log('removed note', removedVote);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(removedVote.removedFrom || ''),
       });
     });
 
