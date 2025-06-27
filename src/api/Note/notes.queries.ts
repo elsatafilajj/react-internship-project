@@ -56,6 +56,7 @@ export const useGetNoteByIdQuery = (
     queryKey: queryKeys.getSingleNote(uuid),
     queryFn: () => getSingleNoteById(uuid),
     enabled: !!roomId && uuidRegex.test(roomId) && !!uuid,
+    staleTime: 0,
     ...options,
   });
 };
@@ -66,7 +67,7 @@ export const useGetNoteVotesQuery = (
 ) => {
   const { roomId } = useParams<{ roomId: string }>();
   return useQuery<AxiosResponse<NoteVotesResponse[]>>({
-    queryKey: [queryKeys.getNoteVotes(noteId)],
+    queryKey: queryKeys.getNoteVotes(noteId),
     queryFn: () => getNoteVotes(noteId),
     enabled: !!roomId && uuidRegex.test(roomId),
     ...options,
@@ -78,7 +79,7 @@ export const useGetWinnerNotes = (
   options?: UseQueryOptions<AxiosResponse<WinnerNoteResponse[]>>,
 ) => {
   return useQuery<AxiosResponse<WinnerNoteResponse[]>>({
-    queryKey: queryKeys.getNoteIdsByRoomId(roomId || '', 0, 0, 4999, 2799),
+    queryKey: queryKeys.getWinnerNotes(roomId || ''),
     queryFn: () => getWinnerNotes(roomId || ''),
     enabled: !!roomId && uuidRegex.test(roomId),
     ...options,

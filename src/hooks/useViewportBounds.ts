@@ -1,10 +1,19 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTransformContext } from 'react-zoom-pan-pinch';
 
 export const useViewportBounds = () => {
+  const [bounds, setBounds] = useState({
+    xMin: 0,
+    yMin: 0,
+    xMax: 4999,
+    yMax: 2799,
+    previousScale: 1,
+  });
+
   const transformContext = useTransformContext();
-  return useMemo(() => {
-    if (!transformContext.transformState) return null;
+
+  useMemo(() => {
+    if (!transformContext?.transformState) return;
 
     const { positionX, positionY, scale, previousScale } =
       transformContext.transformState;
@@ -14,6 +23,9 @@ export const useViewportBounds = () => {
     const xMax = Math.floor(xMin + window.innerWidth / scale);
     const yMax = Math.floor(yMin + window.innerHeight / scale);
 
-    return { xMin, yMin, xMax, yMax, previousScale };
+    const latestBounds = { xMin, yMin, xMax, yMax, previousScale };
+    setBounds(latestBounds);
   }, [transformContext?.transformState?.previousScale]);
+
+  return bounds;
 };

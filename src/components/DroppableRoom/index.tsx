@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { useEffect, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,7 +6,6 @@ import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNoteIdsFromRoomQuery } from '@/api/Note/notes.queries';
-import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
@@ -17,7 +15,6 @@ import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 import { useRoomStatus } from '@/hooks/useRoomStatus';
 import { useViewportBounds } from '@/hooks/useViewportBounds';
-import { ErrorResponseData } from '@/types/ErrorResponse';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
@@ -35,6 +32,7 @@ export const DroppableRoom = ({
   const { roomId } = useParams<{ roomId: string }>();
 
   const bounds = useViewportBounds();
+  const boundsRef = useRef(bounds);
 
   const { data } = useGetAllNoteIdsFromRoomQuery(
     roomId || '',
@@ -43,35 +41,6 @@ export const DroppableRoom = ({
     bounds?.xMax ?? 0,
     bounds?.yMax ?? 0,
   );
-
-  const socket = useMemo(() => getSocket(), []);
-
-  const navigate = useNavigate();
-  const { isRoomArchived } = useRoomStatus();
-
-  const { error } = useGetRoomByIdQuery(roomId || '');
-
-  useEffect(() => {
-    if (!error) return;
-    const axiosError = error as AxiosError<ErrorResponseData>;
-
-    const status = axiosError?.response?.status;
-
-    if (!status) return;
-
-    if ([403, 404, 500].includes(status)) {
-      const message =
-        axiosError.response?.data?.message ??
-        'You were removed from this room.';
-      toast.error(message);
-      navigate('/rooms');
-    } else if (status >= 400 && status < 600) {
-      const message =
-        axiosError.response?.data?.message ??
-        'Something went wrong. Please try again.';
-      toast.error(message);
-    }
-  }, [error, navigate]);
 
   useEffect(() => {
     if (
@@ -92,6 +61,15 @@ export const DroppableRoom = ({
       });
     }
   }, [bounds?.previousScale]);
+
+  useEffect(() => {
+    boundsRef.current = bounds;
+  }, [bounds]);
+
+  const socket = useMemo(() => getSocket(), []);
+
+  const navigate = useNavigate();
+  const { isRoomArchived } = useRoomStatus();
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
@@ -126,98 +104,109 @@ export const DroppableRoom = ({
   useEffect(() => {
     if (!socket) return;
 
-    // DONE
     socket.on(socketEvents.CreatedNote, (newNote) => {
-      console.log('new note', newNote);
+      const currentBounds = boundsRef.current;
       queryClient.setQueryData(queryKeys.getSingleNote(newNote.uuid), () => {
         return newNote;
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(
           roomId || '',
-          bounds?.xMin,
-          bounds?.yMin,
-          bounds?.xMax,
-          bounds?.yMax,
+          currentBounds?.xMin,
+          currentBounds?.yMin,
+          currentBounds?.xMax,
+          currentBounds?.yMax,
         ),
       });
     });
 
-    // DONE
     socket.on(socketEvents.UpdatedNote, (updatedNote) => {
-      console.log('updated note: ', updatedNote);
+      const currentBounds = boundsRef.current;
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleNote(updatedNote.uuid),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(
           roomId || '',
-          bounds?.xMin,
-          bounds?.yMin,
-          bounds?.xMax,
-          bounds?.yMax,
+          currentBounds?.xMin,
+          currentBounds?.yMin,
+          currentBounds?.xMax,
+          currentBounds?.yMax,
         ),
       });
     });
 
-    // DONE
     socket.on(socketEvents.DeletedNote, (deletedNote) => {
+      const currentBounds = boundsRef.current;
       queryClient.removeQueries({
         queryKey: queryKeys.getSingleNote(deletedNote.resourceId),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(
           roomId || '',
-          bounds?.xMin,
-          bounds?.yMin,
-          bounds?.xMax,
-          bounds?.yMax,
+          currentBounds?.xMin,
+          currentBounds?.yMin,
+          currentBounds?.xMax,
+          currentBounds?.yMax,
         ),
       });
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
-      console.log('new vote', newVote);
+      console.log('add vote', newVote);
+      const currentBounds = boundsRef.current;
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(
           roomId || '',
-          bounds?.xMin,
-          bounds?.yMin,
-          bounds?.xMax,
-          bounds?.yMax,
+          currentBounds?.xMin,
+          currentBounds?.yMin,
+          currentBounds?.xMax,
+          currentBounds?.yMax,
         ),
       });
-      [newVote.switchedFrom, newVote.addedTo].forEach((id) => {
-        console.log('Id from add vote listener', id);
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.getNoteVotes(id),
-        });
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.getSingleNote(id),
-        });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(newVote.switchedFrom),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(newVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(newVote.switchedFrom),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(newVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getWinnerNotes(roomId || ''),
       });
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
-      console.log('removed note', removedVote);
-
+      const currentBounds = boundsRef.current;
+      console.log(removedVote);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(
           roomId || '',
-          bounds?.xMin,
-          bounds?.yMin,
-          bounds?.xMax,
-          bounds?.yMax,
+          currentBounds?.xMin,
+          currentBounds?.yMin,
+          currentBounds?.xMax,
+          currentBounds?.yMax,
         ),
       });
-      [removedVote.switchedFrom, removedVote.addedTo].forEach((id) => {
-        console.log('Id from remove vote listener', id);
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.getNoteVotes(id),
-        });
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.getSingleNote(id),
-        });
+      queryClient.removeQueries({
+        queryKey: queryKeys.getNoteVotes(removedVote.switchedFrom),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(removedVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(removedVote.switchedFrom),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(removedVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getWinnerNotes(roomId || ''),
       });
     });
 
@@ -230,7 +219,7 @@ export const DroppableRoom = ({
     socket.on(socketEvents.UserJoined, ({ userId }) => {
       console.log(userId, `joined the room`);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleUser(userId),
+        queryKey: queryKeys.getUsers(),
       });
     });
 
@@ -240,7 +229,7 @@ export const DroppableRoom = ({
         navigate('/rooms');
       }
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleUser(userId),
+        queryKey: queryKeys.getUsers(),
       });
     });
 

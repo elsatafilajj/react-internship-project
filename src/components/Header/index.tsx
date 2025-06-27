@@ -1,4 +1,7 @@
+import { AxiosError } from 'axios';
 import { CircleUser, PanelLeft } from 'lucide-react';
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
@@ -15,6 +18,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -25,9 +29,36 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
   const hasEnteredRoom = useHasEnteredRoom();
 
-  const { data: room } = useGetRoomByIdQuery(roomId || '');
+  const {
+    data: room,
+    error,
+    isError,
+  } = useGetRoomByIdQuery(roomId || '', false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!error) return;
+
+    const axiosError = error as AxiosError<ErrorResponseData>;
+
+    const status = axiosError?.response?.status;
+
+    if (!status) return;
+
+    if ([403, 404, 500].includes(status)) {
+      const message =
+        axiosError.response?.data?.message ??
+        'You were removed from this room.';
+      toast.error(message);
+      navigate('/rooms');
+    } else if (status >= 400 && status < 600) {
+      const message =
+        axiosError.response?.data?.message ??
+        'Something went wrong. Please try again.';
+      toast.error(message);
+    }
+  }, [isError, error, navigate]);
 
   return (
     <header className="sticky top-0 z-30 w-full flex items-center justify-between gap-4 px-4 py-2 border-b bg-secondary shadow-sm">

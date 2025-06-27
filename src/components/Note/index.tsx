@@ -78,12 +78,12 @@ export const Note = ({
 
   const { user } = useAuthContext();
   const { data: noteVotes } = useGetNoteVotesQuery(noteId || '');
+
   const isUserVoter = Boolean(
     noteVotes?.data?.find((voter) => voter.uuid === user?.uuid),
   );
-  const [hasVoted, setHasVoted] = useState<boolean | null>(
-    !!isUserVoter || null,
-  );
+
+  const [hasVoted, setHasVoted] = useState<boolean>(isUserVoter);
 
   const totalVotes = noteVotes?.data?.length ?? 0;
 
@@ -214,6 +214,15 @@ export const Note = ({
     };
   }, [isResizing]);
 
+  useEffect(() => {
+    if (noteVotes && user?.uuid) {
+      const userHasVoted = noteVotes.data?.some(
+        (voter) => voter.uuid === user.uuid,
+      );
+      setHasVoted(userHasVoted);
+    }
+  }, [noteVotes, user?.uuid]);
+
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
     setHasUserEdited(true);
@@ -251,10 +260,7 @@ export const Note = ({
   };
 
   const handleDeleteNote = (noteId: string) => {
-    console.log(noteId);
-    console.log(roomId);
     socket.emit(socketEvents.DeleteNote, { roomId, noteId });
-    console.log('delete event sent');
   };
 
   if (!noteId) return null;
@@ -399,7 +405,7 @@ export const Note = ({
                     )}
                   </Toggle>
                   <p className="text-xs font-semibold">
-                    {noteVotes && totalVotes}
+                    {(noteVotes && totalVotes) || 0}
                   </p>
                 </div>
               </TooltipTrigger>
