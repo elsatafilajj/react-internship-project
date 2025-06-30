@@ -8,7 +8,7 @@ type NoteColor =
   | 'note-background-blue'
   | 'note-background-red'
   | string;
-  
+
 export interface NoteItem {
   uuid: string;
   createdAt: string;
@@ -37,6 +37,8 @@ export interface UpdateNoteInput {
   xAxis?: number;
   yAxis?: number;
 }
+
+export type NoteVotesResponse = Pick<User, 'uuid' | 'firstName' | 'lastName'>;
 
 export interface ExportNotesInput {
   roomId: Room['uuid'];

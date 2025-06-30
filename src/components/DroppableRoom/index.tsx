@@ -91,9 +91,6 @@ export const DroppableRoom = ({
           yAxis: Math.floor(y),
         },
       });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
-      });
     },
   });
 
@@ -106,9 +103,6 @@ export const DroppableRoom = ({
         roomId,
         xAxis: Math.floor(x),
         yAxis: Math.floor(y),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
     },
   });
@@ -123,11 +117,13 @@ export const DroppableRoom = ({
     if (!socket) return;
 
     socket.on(socketEvents.CreatedNote, (newNote) => {
+      console.log(newNote);
       setNotes((prevNotes) => [...prevNotes, newNote]);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
     });
+
     socket.on(socketEvents.UpdatedNote, (updatedNote) => {
       setNotes((prev) =>
         prev.map((note) =>
@@ -144,6 +140,12 @@ export const DroppableRoom = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(newVote.switchedFrom || ''),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(newVote.addedTo || ''),
+      });
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
@@ -151,12 +153,18 @@ export const DroppableRoom = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(removedVote.removedFrom || ''),
+      });
     });
 
     socket.on(socketEvents.DeletedNote, (deletedNote) => {
       console.log('note deleted', deletedNote);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+      });
+      queryClient.removeQueries({
+        queryKey: queryKeys.getNoteVotes(deletedNote.resourceId || ''),
       });
     });
 

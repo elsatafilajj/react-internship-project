@@ -1,7 +1,9 @@
 import { useEffect, RefObject, useRef } from 'react';
+import { DragPreviewImage } from 'react-dnd';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
+import noteDragIcon from '@/assets/images/note-drag-icon.svg';
 import { Note } from '@/components/Note';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
@@ -31,7 +33,7 @@ export const DraggableNote = ({
     registerNoteRef(note.uuid || '', noteRef);
   }, [note.uuid, registerNoteRef]);
 
-  const [{ isDragging }, drag] = useNoteDrag({
+  const [{ isDragging }, drag, preview] = useNoteDrag({
     uuid,
     type: DragNoteTypes.Note,
     noteRef,
@@ -44,23 +46,27 @@ export const DraggableNote = ({
   drag(noteRef);
 
   return (
-    <div
-      ref={noteRef}
-      style={{
-        position: 'absolute',
-        left: xAxis,
-        top: yAxis,
-        opacity: isDragging ? 0 : 1,
-        zIndex: isDragging ? 'auto' : 10,
-      }}
-      onMouseDown={() => setTransformDisabled(true)}
-      onDragEnd={() => setTransformDisabled(false)}
-    >
-      <Note
-        note={note}
-        setTransformDisabled={setTransformDisabled}
-        isReadOnly={isRoomArchived}
-      />
-    </div>
+    <>
+      <DragPreviewImage connect={preview} src={noteDragIcon} />
+
+      <div
+        ref={noteRef}
+        style={{
+          position: 'absolute',
+          left: xAxis,
+          top: yAxis,
+          opacity: isDragging ? 0 : 1,
+          zIndex: isDragging ? 'auto' : 10,
+        }}
+        onMouseDown={() => setTransformDisabled(true)}
+        onDragEnd={() => setTransformDisabled(false)}
+      >
+        <Note
+          note={note}
+          setTransformDisabled={setTransformDisabled}
+          isReadOnly={isRoomArchived}
+        />
+      </div>
+    </>
   );
 };

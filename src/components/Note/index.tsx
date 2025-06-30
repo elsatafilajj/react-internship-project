@@ -7,7 +7,10 @@ import { useParams } from 'react-router-dom';
 
 import { useGetAllCommentsQuery } from '@/api/Comments/comments.queries';
 import { NoteItem } from '@/api/Note/note.types';
-import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
+import {
+  useGetAllNotesFromRoomQuery,
+  useGetNoteVotesQuery,
+} from '@/api/Note/notes.queries';
 import { PanelToggle } from '@/components/CommentsPanel/PanelToggle';
 import {
   Popover,
@@ -74,11 +77,13 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
   const { data: comment } = useGetAllCommentsQuery(note.uuid || '');
 
-  const isUserVoter = note.noteVotes?.find(
-    (item) => item.user.uuid === user?.uuid,
+  const { data: noteVotes } = useGetNoteVotesQuery(uuid || '');
+
+  const isUserVoter = Boolean(
+    noteVotes?.data?.find((voter) => voter.uuid === user?.uuid),
   );
 
-  const [hasVoted, setHasVoted] = useState<boolean>(!!isUserVoter);
+  const [hasVoted, setHasVoted] = useState<boolean>(isUserVoter);
 
   const debouncedContent: string = useDebounce(noteContent, 1000);
 
@@ -239,6 +244,15 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (noteVotes && user?.uuid) {
+      const userHasVoted = noteVotes.data?.some(
+        (voter) => voter.uuid === user.uuid,
+      );
+      setHasVoted(userHasVoted);
+    }
+  }, [noteVotes, user?.uuid]);
+
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
     setHasUserEdited(true);
@@ -289,6 +303,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
     queryClient.invalidateQueries({
       queryKey: queryKeys.getNotesByRoomId(roomId || ''),
     });
+    setTransformDisabled(false);
   };
 
   if (!uuid) return null;
@@ -325,6 +340,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
           >
             <textarea
+              onMouseOver={() => setTransformDisabled(true)}
               onFocus={() => {
                 setTransformDisabled(true);
 
@@ -336,6 +352,8 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                 });
               }}
               onBlur={() => {
+                setTransformDisabled(false);
+
                 socket.emit(socketEvents.NotesEditingStop, {
                   roomId,
                   noteId: note.uuid,
@@ -359,7 +377,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
 
             <div className="flex justify-between items-center w-full">
-              <span className="text-gray-700  text-xs ml-[7px]">
+              <span className="text-s text-black/60 ml-[7px]">
                 {author?.firstName && author?.lastName
                   ? `${author.firstName} ${author.lastName}`
                   : author?.firstName || author?.lastName || 'Unknown'}

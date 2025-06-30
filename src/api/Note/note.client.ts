@@ -4,6 +4,7 @@ import {
   CreateNoteInput,
   UpdateNoteInput,
   ExportNotesInput,
+  NoteVotesResponse,
 } from '@/api/Note/note.types';
 import { DeleteResponse } from '@/types/DeleteResponse';
 
@@ -49,11 +50,17 @@ export const addVoteToNote = async (noteId: NoteItem['uuid']) =>
 export const removeVoteFromNote = async (noteId: NoteItem['uuid']) =>
   apiRequest({ url: `notes/${noteId}/vote`, method: 'DELETE' });
 
+export const getNoteVotes = async (noteId: NoteItem['uuid']) =>
+  apiRequest<undefined, NoteVotesResponse[]>({
+    url: `notes/votes`,
+    method: 'GET',
+    params: { noteId },
+  });
 
-export const exportNotes = async ({roomId, fileType}: ExportNotesInput) =>
+export const exportNotes = async ({ roomId, fileType }: ExportNotesInput) =>
   apiRequest<undefined>({
     url: 'notes/export',
     method: 'GET',
-    params: { roomId, fileType},
-    responseType: 'blob'
-  }); 
+    params: { roomId, fileType },
+    responseType: 'blob',
+  });

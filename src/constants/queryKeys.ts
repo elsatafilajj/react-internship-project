@@ -1,3 +1,5 @@
+import { NoteItem } from '@/api/Note/note.types';
+
 export const queryKeys = {
   getUsers: () => ['users'],
   getSingleUser: (id: string) => ['user', id],
@@ -9,6 +11,8 @@ export const queryKeys = {
 
   getNotesByRoomId: (roomId: string) => ['notes', roomId],
   getSingleNote: (noteId: string, roomId: string) => ['note', noteId, roomId],
+
+  getNoteVotes: (noteId: NoteItem['uuid']) => ['notes', 'votes', noteId],
 
   getCommentsByNoteId: (noteId: string) => ['comments', noteId],
 
