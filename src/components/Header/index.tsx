@@ -50,10 +50,9 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       toast.error(message);
     }
   }, [error, navigate]);
-
   return (
     <div className="absolute w-full">
-      <div className="fixed top-3 left-3 z-10 flex flex-wrap items-center gap-2 rounded-2xl bg-card px-4 py-2 shadow-md text-foreground max-w-full sm:max-w-[60%]">
+      <div className="fixed top-3 left-3 z-10 flex flex-wrap items-center gap-0.5 sm:gap-2 rounded-2xl bg-card sm:px-4 px-2.5 sm:py-0.5 py-2.5 shadow-md text-foreground max-w-full sm:max-w-[60%]">
         <Button
           variant="ghost"
           className="p-2 w-[32px]"
@@ -62,19 +61,21 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           <PanelLeft className="h-5 w-5 text-card-revert" />
         </Button>
 
-        <Link to="/" className="flex items-center space-x-2 min-w-fit">
+        <Link
+          to="/"
+          className="sm:flex hidden items-center space-x-2 min-w-fit"
+        >
           <Logo className="hidden sm:block w-20 drop-shadow-sm" />
-          <Logo small className="block sm:hidden w-8 drop-shadow-sm" />
         </Link>
 
         {hasEnteredRoom && (
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-sm truncate max-w-[120px] sm:max-w-[200px]">
+            <span className="sm:text-sm text-xs truncate max-w-[120px] sm:max-w-[200px]">
               {room?.data?.title}
             </span>
             <span
               className={cn(
-                'w-2.5 h-2.5 rounded-full shadow-md',
+                'w-2.5 h-2.5 rounded-full shadow-md hidden sm:flex',
                 room?.data?.isActive ? 'bg-green-400' : 'bg-red-400',
               )}
             />

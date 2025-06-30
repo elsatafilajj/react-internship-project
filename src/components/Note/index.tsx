@@ -367,7 +367,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               onChange={handleNoteContentChange}
               onKeyDown={handleEnterKey}
               placeholder="Type in your idea..."
-              className="w-full resize-none h-full overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
+              className="w-full resize-none h-full overflow-y-auto p-2 tracking-wide border-none outline-none text-lg text-black"
               aria-label="Note input"
             />
             {Object.values(editingUsers).length > 0 && (
