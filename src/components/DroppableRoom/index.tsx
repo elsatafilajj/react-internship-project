@@ -148,11 +148,9 @@ export const DroppableRoom = ({
       }
     });
 
-    socket.on(socketEvents.DeletedRoom, (deleted) => {
-      if (deleted.resourceId) {
-        toast.success('Room deleted successfully!');
-        navigate('/rooms');
-      }
+    socket.on(socketEvents.DeletedRoom, () => {
+      toast.success('Room deleted successfully!');
+      navigate('/rooms');
     });
 
     socket.on(socketEvents.UserJoined, ({ userId }) => {
@@ -184,6 +182,7 @@ export const DroppableRoom = ({
       socket.off(socketEvents.RemovedVote);
       socket.off(socketEvents.DeletedNote);
       socket.off(socketEvents.ArchivedRoom);
+      socket.off(socketEvents.DeletedRoom);
       socket.off(socketEvents.UserRemove);
       socket.off(socketEvents.RoomLeftP);
     };

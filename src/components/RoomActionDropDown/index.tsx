@@ -32,7 +32,7 @@ export const RoomActionsDropDown = () => {
   const { data: roomHost } = useGetRoomHostQuery(roomId || '');
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
-  const handleArchiveRoom = async () => {
+  const handleArchiveRoom = () => {
     socket.emit(socketEvents.ArchiveRoom, { roomId });
 
     setTimeout(() => {
@@ -40,7 +40,7 @@ export const RoomActionsDropDown = () => {
     }, 300);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     try {
       socket.emit(socketEvents.DeleteRoom, { roomId });
     } catch (error) {

@@ -68,6 +68,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           <Logo className="hidden sm:block w-20 drop-shadow-sm" />
         </Link>
 
+        {hasEnteredRoom && <hr className="bg-muted-foreground w-[1px] h-6" />}
+
         {hasEnteredRoom && (
           <div className="flex items-center gap-2 min-w-0">
             <span className="sm:text-sm text-xs truncate max-w-[120px] sm:max-w-[200px]">
