@@ -29,7 +29,7 @@ export const ParticipantsToggle = () => {
     <div id="participants">
       <Sheet>
         <SheetTrigger asChild>
-          <div className="-space-x-2 flex cursor-pointer">
+          <div className="-space-x-2 flex ml-3 cursor-pointer py-1.5">
             {isLoading && (
               <div className="flex -space-x-2">
                 {Array.from({ length: 3 }, (_, index) => (

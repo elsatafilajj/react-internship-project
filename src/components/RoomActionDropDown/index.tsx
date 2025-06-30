@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { Archive, EllipsisVertical, Trash2 } from 'lucide-react';
+import { Archive, Settings2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -74,7 +74,7 @@ export const RoomActionsDropDown = () => {
               : 'cursor-pointer hover:bg-muted',
           )}
         >
-          <EllipsisVertical />
+          <Settings2 className="w-5 h-5" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent

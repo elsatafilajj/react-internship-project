@@ -54,8 +54,9 @@ export const ShareLinkAlertDialog = () => {
         <div id="share">
           {data?.data?.isActive && (
             <Button
-              className="bg-primary text-black px-3 sm:px-4 -gap-1 hover:opacity-90  hover:text-foreground w-fit sm:w-[90px]"
+              className="bg-primary text-black px-3 sm:px-4 -gap-1 hover:opacity-90  hover:text-foreground w-fit sm:w-[75px]"
               onClick={handleShareLinkClick}
+              size="sm"
             >
               <Share2 className="mr-0 sm:mr-2 h-4 w-4" />
               <span className="hidden md:block">Share</span>
@@ -86,14 +87,14 @@ export const ShareLinkAlertDialog = () => {
             <Button
               type="submit"
               size="sm"
-              className="px-3 bg-card-revert border hover:bg-foreground transform hover:scale-110 transition-transform duration-200"
+              className="px-3 bg-card border hover:bg-card transform hover:scale-110 transition-transform duration-200"
               onClick={handleCopyLink}
             >
               <span className="sr-only">Copy</span>
-              <Copy className="text-card" />
+              <Copy className="text-card-revert" />
             </Button>
           </div>
-          <DialogFooter className="sm:justify-start ">
+          <DialogFooter className="sm:justify-start">
             <DialogClose asChild>
               <Button type="button" className="w-[100px]">
                 Close

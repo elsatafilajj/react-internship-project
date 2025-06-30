@@ -28,8 +28,8 @@ export const Rooms = () => {
   const hasRooms = rooms?.data?.length;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary px-6 py-12 text-gray-800">
-      <div className="text-center max-w-3xl mx-auto mb-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary px-6 py-25 text-gray-800">
+      <div className="text-center max-w-3xl mx-auto mb-12 ">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 flex items-center justify-center gap-3 animate-fade-in-down">
           <Sparkles className="text-name animate-bounce" size={32} />
           Welcome{' '}
