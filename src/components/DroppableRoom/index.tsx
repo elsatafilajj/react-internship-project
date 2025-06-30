@@ -148,8 +148,11 @@ export const DroppableRoom = ({
       }
     });
 
-    socket.on(socketEvents.DeletedRoom, () => {
-      toast.success('Room deleted successfully!');
+    socket.on(socketEvents.DeletedRoom, (deleted) => {
+      toast.success(deleted.message || 'Room deleted successfully!');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleRoom(roomId || ''),
+      });
       navigate('/rooms');
     });
 

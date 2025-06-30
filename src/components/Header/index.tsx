@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ParticipantsToggle } from '@/components/RoomParticipantsPanel/ParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
@@ -26,8 +25,10 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { roomId } = useParams<{ roomId: string }>();
+
   const hasEnteredRoom = useHasEnteredRoom();
   const { data: room, error } = useGetRoomByIdQuery(roomId || '', false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       toast.error(message);
     }
   }, [error, navigate]);
+
   return (
     <div className="absolute w-full">
       <div className="fixed top-3 left-3 z-10 flex flex-wrap items-center gap-0.5 sm:gap-2 rounded-2xl bg-card sm:px-4 px-2.5 sm:py-0.5 py-2.5 shadow-md text-foreground max-w-full sm:max-w-[60%]">
@@ -86,13 +88,11 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="fixed top-3 right-3 z-10 flex flex-wrap items-center gap-2 justify-end rounded-2xl bg-card px-3 py-1 shadow-md text-foreground max-w-full">
-        {!room?.data?.isActive && hasEnteredRoom && <ExportDataFormDialog />}
-
         {hasEnteredRoom && (
           <>
             <ParticipantsToggle />
             <ShareLinkAlertDialog />
-            {room?.data?.isActive && <RoomActionsDropDown />}
+            <RoomActionsDropDown />
           </>
         )}
 

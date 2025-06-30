@@ -1,6 +1,8 @@
+import { useMutation } from '@tanstack/react-query';
 import { Archive, Settings2, Trash2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { deleteRoom } from '@/api/Room/room.client';
 import {
   useGetRoomByIdQuery,
   useGetRoomHostQuery,
@@ -18,21 +20,25 @@ import {
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
-import { cn } from '@/lib/utils';
 
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const socket = getSocket();
 
-  const { data } = useGetRoomByIdQuery(roomId || '');
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
 
   const { user } = useAuthContext();
+
+  const deleteRoomMutation = useMutation({
+    mutationFn: () => deleteRoom(roomId || ''),
+    onSuccess: () => navigate('/rooms'),
+  });
 
   const { data: roomHost } = useGetRoomHostQuery(roomId || '');
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
-  const handleArchiveRoom = () => {
+  const handleArchiveRoom = async () => {
     socket.emit(socketEvents.ArchiveRoom, { roomId });
 
     setTimeout(() => {
@@ -40,9 +46,15 @@ export const RoomActionsDropDown = () => {
     }, 300);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     try {
-      socket.emit(socketEvents.DeleteRoom, { roomId });
+      if (!room?.data?.isActive) {
+        deleteRoomMutation.mutateAsync();
+      } else {
+        socket.emit(socketEvents.DeleteRoom, { roomId: roomId });
+      }
+
+      console.log(roomId);
     } catch (error) {
       console.error('Deletion failed', error);
     }
@@ -51,15 +63,7 @@ export const RoomActionsDropDown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div
-          id="room-actions"
-          className={cn(
-            'rounded',
-            data?.data?.isActive === false
-              ? 'cursor-not-allowed opacity-50 pointer-events-none'
-              : 'cursor-pointer hover:bg-muted',
-          )}
-        >
+        <div id="room-actions" className="rounded">
           <Settings2 className="w-5 h-5" />
         </div>
       </DropdownMenuTrigger>
@@ -67,8 +71,8 @@ export const RoomActionsDropDown = () => {
         sideOffset={10}
         className="flex flex-col gap-3 p-4 w-42 mt-4 mr-5"
       >
-        {isUserHost && <CreateEditRoomFormDialog />}
-        {isUserHost && (
+        {isUserHost && room?.data?.isActive && <CreateEditRoomFormDialog />}
+        {isUserHost && room?.data?.isActive && (
           <DropdownMenuItem
             onClick={handleArchiveRoom}
             className="gap-4 ml-0.5"
