@@ -51,6 +51,9 @@ const noteColorClassMap = {
 } as const;
 
 export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
+  const [noteSize, setNoteSize] = useState({ width: 300, height: 300 });
+  const [isResizing, setIsResizing] = useState(false);
+
   const [isOpen, setIsOpen] = useState(false);
   const [hasUserEdited, setHasUserEdited] = useState(false);
   const [localNoteColor, setLocalNoteColor] = useState<string>(
@@ -173,6 +176,29 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
   }, [debouncedContent]);
 
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing || !noteRef.current) return;
+      const rect = noteRef.current.getBoundingClientRect();
+      setNoteSize({
+        width: Math.max(300, e.clientX - rect.left),
+        height: Math.max(300, e.clientY - rect.top),
+      });
+    };
+
+    const handleMouseUp = () => setIsResizing(false);
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
+  useEffect(() => {
     const handleStart = ({
       noteId,
       userId,
@@ -284,11 +310,15 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                 setIsOpen(true);
               }
             }}
+            style={{
+              width: `${noteSize.width}px`,
+              height: `${noteSize.height}px`,
+            }}
             className={clsx(
               noteColorClassMap[
                 localNoteColor as keyof typeof noteColorClassMap
               ],
-              'relative w-[300px] h-[300px] p-3 text-xs cursor-move flex flex-col justify-between',
+              'relative w-full p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === uuid &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               isWinner && 'ring-1 ring-yellow-400',
@@ -319,7 +349,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               onChange={handleNoteContentChange}
               onKeyDown={handleEnterKey}
               placeholder="Type in your idea..."
-              className="w-full resize-none h-full overflow-y-auto p-2 tracking-wide  border-none outline-none text-lg text-black"
+              className="w-full resize-none h-full overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
               aria-label="Note input"
             />
             {Object.values(editingUsers).length > 0 && (
@@ -329,14 +359,14 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
 
             <div className="flex justify-between items-center w-full">
-              <span className="text-s ml-[7px]">
+              <span className="text-gray-700  text-xs ml-[7px]">
                 {author?.firstName && author?.lastName
                   ? `${author.firstName} ${author.lastName}`
                   : author?.firstName || author?.lastName || 'Unknown'}
               </span>
 
               <div className="flex items-center gap-1 -mr-[15px]">
-                <div className="flex items-center gap-1 mr-[15px]">
+                <div className="flex items-center gap-1 -mr-[15px]">
                   {comment?.data && comment?.data?.length !== 0 && (
                     <span
                       className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-100 "
@@ -355,6 +385,11 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                       {note.totalVotes}
                     </span>
                   )}
+
+                  <div
+                    className="cursor-se-resize w-5 h-5 text-xs -mb-[10px] mr-1"
+                    onClick={() => setIsResizing(true)}
+                  ></div>
                 </div>
               </div>
             </div>
