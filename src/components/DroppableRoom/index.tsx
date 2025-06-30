@@ -174,6 +174,13 @@ export const DroppableRoom = ({
       }
     });
 
+    socket.on(socketEvents.DeletedRoom, (deleted) => {
+      if (deleted.resourceId) {
+        toast.success('Room deleted successfully!');
+        navigate('/rooms');
+      }
+    });
+
     socket.on(socketEvents.UserJoined, ({ userId }) => {
       console.log(userId, `joined the room`);
       queryClient.invalidateQueries({

@@ -1,9 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
 import { Archive, Settings2, Trash2 } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { deleteRoom } from '@/api/Room/room.client';
 import {
   useGetRoomByIdQuery,
   useGetRoomHostQuery,
@@ -18,7 +15,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
@@ -36,17 +32,6 @@ export const RoomActionsDropDown = () => {
   const { data: roomHost } = useGetRoomHostQuery(roomId || '');
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
-  const deleteMutation = useMutation({
-    mutationFn: (roomId: string) => deleteRoom(roomId),
-    onSuccess: () => {
-      toast.success('Room deleted successfully!');
-      navigate(RouteNames.Rooms);
-    },
-    onError: () => {
-      toast.error('Room deletion failed.');
-    },
-  });
-
   const handleArchiveRoom = async () => {
     socket.emit(socketEvents.ArchiveRoom, { roomId });
 
@@ -54,9 +39,10 @@ export const RoomActionsDropDown = () => {
       navigate('/rooms/archived');
     }, 300);
   };
+
   const handleDelete = async () => {
     try {
-      await deleteMutation.mutateAsync(roomId || ' ');
+      socket.emit(socketEvents.DeleteRoom, { roomId });
     } catch (error) {
       console.error('Deletion failed', error);
     }
