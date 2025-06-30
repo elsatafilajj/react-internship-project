@@ -277,6 +277,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
     queryClient.invalidateQueries({
       queryKey: queryKeys.getNotesByRoomId(roomId || ''),
     });
+    setTransformDisabled(false);
   };
 
   if (!uuid) return null;
@@ -309,6 +310,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
           >
             <textarea
+              onMouseOver={() => setTransformDisabled(true)}
               onFocus={() => {
                 setTransformDisabled(true);
 
@@ -320,6 +322,8 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
                 });
               }}
               onBlur={() => {
+                setTransformDisabled(false);
+
                 socket.emit(socketEvents.NotesEditingStop, {
                   roomId,
                   noteId: note.uuid,
