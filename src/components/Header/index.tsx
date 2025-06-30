@@ -50,6 +50,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       toast.error(message);
     }
   }, [error, navigate]);
+
   return (
     <div className="absolute w-full">
       <div className="fixed top-3 left-3 z-10 flex flex-wrap items-center gap-0.5 sm:gap-2 rounded-2xl bg-card sm:px-4 px-2.5 sm:py-0.5 py-2.5 shadow-md text-foreground max-w-full sm:max-w-[60%]">
@@ -65,10 +66,12 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           to="/"
           className="sm:flex hidden items-center space-x-2 min-w-fit"
         >
-          <Logo className="hidden sm:block w-20 drop-shadow-sm" />
+          <Logo className="hidden sm:block w-23 drop-shadow-sm" />
         </Link>
 
-        {hasEnteredRoom && <hr className="bg-muted-foreground w-[1px] h-6" />}
+        {hasEnteredRoom && (
+          <hr className="bg-muted-foreground w-[1px] h-6 mr-1" />
+        )}
 
         {hasEnteredRoom && (
           <div className="flex items-center gap-2 min-w-0">
