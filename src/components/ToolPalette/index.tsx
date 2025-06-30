@@ -1,10 +1,12 @@
 import clsx from 'clsx';
 import { ZoomOutIcon, ZoomInIcon, FilePlus2 } from 'lucide-react';
 import { useRef, useEffect } from 'react';
+import { DragPreviewImage } from 'react-dnd';
 import { useParams } from 'react-router-dom';
 import { useControls } from 'react-zoom-pan-pinch';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import noteDragIcon from '@/assets/images/note-drag-icon-plus.svg';
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -28,7 +30,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
 
   const isDragDisabled = !data?.data?.isActive;
 
-  const [, drag] = useNoteDrag({
+  const [, drag, preview] = useNoteDrag({
     noteRef: stickyNoteRef,
     type: DragNoteTypes.NewNote,
     isNew: true,
@@ -69,6 +71,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
                         'disabled:cursor-not-allowed opacity-50',
                     )}
                   >
+                    <DragPreviewImage connect={preview} src={noteDragIcon} />
                     <FilePlus2 />
                   </Button>
                 </div>

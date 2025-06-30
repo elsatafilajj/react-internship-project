@@ -14,7 +14,7 @@ export const queryKeys = {
 
   getNoteVotes: (noteId: NoteItem['uuid']) => ['notes', 'votes', noteId],
 
-  getCommentsByNoteId: (noteId: string) => ['comments', noteId],
+  getCommentsByNoteId: (noteId: string) => ['notes', 'comments', noteId],
 
   getActivitiesForRoom: (roomId: string) => ['activities', roomId],
 };
