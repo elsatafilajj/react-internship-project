@@ -23,7 +23,7 @@ export const useGetAllRoomsQuery = (
 
 export const useGetRoomByIdQuery = (
   roomId: string,
-
+  shouldRetry?: boolean,
   options?: UseQueryOptions<AxiosResponse<Room>>,
 ) => {
   const uuidRegex = new RegExp(
@@ -31,6 +31,7 @@ export const useGetRoomByIdQuery = (
   );
   return useQuery<AxiosResponse<Room>>({
     queryKey: queryKeys.getSingleRoom(roomId),
+    retry: shouldRetry,
     queryFn: () => getRoomById(roomId),
     enabled: !!roomId && uuidRegex.test(roomId),
     ...options,

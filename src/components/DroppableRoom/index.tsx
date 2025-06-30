@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,7 +6,6 @@ import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
 import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
-import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
@@ -16,7 +14,6 @@ import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 import { useRoomStatus } from '@/hooks/useRoomStatus';
-import { ErrorResponseData } from '@/types/ErrorResponse';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
@@ -42,29 +39,6 @@ export const DroppableRoom = ({
 
   const navigate = useNavigate();
   const { isRoomArchived } = useRoomStatus();
-
-  const { error } = useGetRoomByIdQuery(roomId || '');
-
-  useEffect(() => {
-    if (!error) return;
-    const axiosError = error as AxiosError<ErrorResponseData>;
-
-    const status = axiosError?.response?.status;
-
-    if (!status) return;
-
-    if ([403, 404, 500].includes(status)) {
-      const message =
-        axiosError.response?.data?.message ?? 'You were removed from this room';
-      toast.error(message);
-      navigate('/rooms');
-    } else if (status >= 400 && status < 600) {
-      const message =
-        axiosError.response?.data?.message ??
-        'Something went wrong. Please try again.';
-      toast.error(message);
-    }
-  }, [error, navigate]);
 
   useEffect(() => {
     if (isFetched && data) {
