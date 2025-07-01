@@ -377,7 +377,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
 
             <div className="flex justify-between items-center w-full">
-              <span className="text-s text-black/60 ml-[7px]">
+              <span className="text-s capitalize text-black/60 ml-[7px]">
                 {author?.firstName && author?.lastName
                   ? `${author.firstName} ${author.lastName}`
                   : author?.firstName || author?.lastName || 'Unknown'}
