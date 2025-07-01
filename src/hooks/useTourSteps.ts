@@ -88,15 +88,15 @@ export const useTourSteps = () => {
             element: document.getElementById('zoom-out'),
             intro: 'And click here to zoom back out.',
           },
-          ...(!isRoomActive
-            ? [
-                {
-                  intro:
-                    'Here you can still export the notes of your archived room in different formats.',
-                  element: document.getElementById('archived-export'),
-                },
-              ]
-            : []),
+          // ...(!isRoomActive
+          //   ? [
+          //       {
+          //         intro:
+          //           'Here you can still export the notes of your archived room in different formats.',
+          //         element: document.getElementById('archived-export'),
+          //       },
+          //     ]
+          //   : []),
           {
             element: document.getElementById('participants'),
             intro: isRoomActive
@@ -117,13 +117,17 @@ export const useTourSteps = () => {
             : []),
         ]
       : []),
-    ...(hasEnteredRoom && isRoomActive
+    ...(hasEnteredRoom
       ? [
           {
             element: document.getElementById('room-actions'),
-            intro: isHost
-              ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
-              : 'Here you can export your notes, and leave the room.',
+            intro: isRoomActive
+              ? isHost
+                ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
+                : 'Here you can export your notes, and leave the room.'
+              : isHost
+                ? 'Since this is an archived room, you can only delete and export it.'
+                : 'Since this is an archived room, you can only export it or leave.',
           },
         ]
       : []),

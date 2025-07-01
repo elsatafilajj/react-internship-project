@@ -27,6 +27,7 @@ export const RoomActionsDropDown = () => {
   const socket = getSocket();
 
   const { data: room } = useGetRoomByIdQuery(roomId || '');
+  const isRoomActive = room?.data?.isActive;
 
   const { user } = useAuthContext();
 
@@ -48,7 +49,7 @@ export const RoomActionsDropDown = () => {
 
   const handleDelete = async () => {
     try {
-      if (!room?.data?.isActive) {
+      if (!isRoomActive) {
         deleteRoomMutation.mutateAsync();
       } else {
         socket.emit(socketEvents.DeleteRoom, { roomId: roomId });
@@ -71,8 +72,8 @@ export const RoomActionsDropDown = () => {
         sideOffset={10}
         className="flex flex-col gap-3 p-4 w-42 mt-4 mr-5"
       >
-        {isUserHost && room?.data?.isActive && <CreateEditRoomFormDialog />}
-        {isUserHost && room?.data?.isActive && (
+        {isUserHost && isRoomActive && <CreateEditRoomFormDialog />}
+        {isUserHost && isRoomActive && (
           <DropdownMenuItem
             onClick={handleArchiveRoom}
             className="gap-4 ml-0.5"
