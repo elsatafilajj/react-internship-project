@@ -88,15 +88,6 @@ export const useTourSteps = () => {
             element: document.getElementById('zoom-out'),
             intro: 'And click here to zoom back out.',
           },
-          // ...(!isRoomActive
-          //   ? [
-          //       {
-          //         intro:
-          //           'Here you can still export the notes of your archived room in different formats.',
-          //         element: document.getElementById('archived-export'),
-          //       },
-          //     ]
-          //   : []),
           {
             element: document.getElementById('participants'),
             intro: isRoomActive
