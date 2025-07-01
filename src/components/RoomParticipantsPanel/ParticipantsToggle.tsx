@@ -52,7 +52,7 @@ export const ParticipantsToggle = () => {
                   {roomHost?.uuid === participant.uuid && (
                     <Crown className="absolute h-3 -top-2 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
-                  <p className="text-black capitalize">
+                  <p className="text-black uppercase">
                     {participant.firstName[0] + participant.lastName[0]}
                   </p>
                 </div>
