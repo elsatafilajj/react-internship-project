@@ -94,7 +94,7 @@ export const useTourSteps = () => {
               ? isHost
                 ? 'See and manage all participants here — you can even kick someone if needed.'
                 : 'Here’s the list of everyone in this room. If you want someone to be kicked from the room ask the host to do so!'
-              : 'This is the list of everyone who participated. Since this room is locked, no new members can join or leave.',
+              : 'This is the list of everyone who participated. Since this room is locked, no new members can join.',
           },
           ...(isRoomActive
             ? [
@@ -117,8 +117,8 @@ export const useTourSteps = () => {
                 ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
                 : 'Here you can export your notes, and leave the room.'
               : isHost
-                ? 'Since this is an archived room, you can only delete and export it.'
-                : 'Since this is an archived room, you can only export it or leave.',
+                ? 'You can also only delete and export it.'
+                : 'You can also only export it or leave.',
           },
         ]
       : []),
@@ -137,7 +137,7 @@ export const useTourSteps = () => {
           {
             intro: isRoomActive
               ? 'Feel free to move notes, change colors, vote on ideas, and share your thoughts. Enjoy!'
-              : 'The room is in view-only mode now — all creativity that happened here is saved for your reference.',
+              : 'The room being in view-only mode now — all creativity that happened here is saved for your reference.',
           },
         ]
       : []),

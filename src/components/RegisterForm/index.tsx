@@ -41,6 +41,7 @@ export const RegisterForm = () => {
     onSubmit: async (values, formikHelpers) => {
       try {
         await registerMutation.mutateAsync(values);
+        localStorage.removeItem('has-started-initial-tour');
         formikHelpers.resetForm();
       } catch (error) {
         if (error instanceof AxiosError) {
