@@ -52,9 +52,9 @@ export const ParticipantsToggle = () => {
                   {roomHost?.uuid === participant.uuid && (
                     <Crown className="absolute h-3 -top-2 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
-                  {participant.firstname && participant.lastname && (
+                  {participant.firstName && participant.lastName && (
                     <p className="text-black capitalize">
-                      {participant?.firstname[0] + participant?.lastname[0]}
+                      {participant?.firstName[0] + participant?.lastName[0]}
                     </p>
                   )}
                 </div>
@@ -68,8 +68,8 @@ export const ParticipantsToggle = () => {
                 <Crown className="absolute h-3 -top-2 -left-3 -rotate-40 hover:animate-caret-blink" />
 
                 <p className="text-black capitalize">
-                  {roomHost && roomHost.firstname && roomHost.lastname
-                    ? roomHost.firstname[0] + roomHost.lastname[0]
+                  {roomHost && roomHost.firstName && roomHost.lastName
+                    ? roomHost.firstName[0] + roomHost.lastName[0]
                     : 'RH'}
                 </p>
               </div>

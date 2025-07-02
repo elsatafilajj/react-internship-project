@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 import { useEffect, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -50,7 +51,7 @@ export const DroppableRoom = ({
       bounds?.xMax !== undefined &&
       bounds?.yMax !== undefined
     ) {
-      queryClient.invalidateQueries({
+      queryClient.refetchQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(
           roomId,
           bounds.xMin,
@@ -60,7 +61,7 @@ export const DroppableRoom = ({
         ),
       });
     }
-  }, [bounds?.previousScale]);
+  }, [bounds?.scale, bounds?.xMin, bounds?.yMin]);
 
   useEffect(() => {
     boundsRef.current = bounds;
@@ -76,12 +77,46 @@ export const DroppableRoom = ({
     roomRef,
     transformRef,
     onDrop: (x, y, uuid) => {
+      const xAxis = Math.floor(x);
+      const yAxis = Math.floor(y);
+
+      const currentBounds = boundsRef.current;
+
+      queryClient.setQueryData(
+        queryKeys.getSingleNote(uuid || ''),
+        (oldData: AxiosResponse | undefined) => {
+          if (!oldData?.data) return oldData?.data;
+
+          return { ...oldData?.data, xAxis, yAxis };
+        },
+      );
+
+      queryClient.setQueryData(
+        queryKeys.getNoteIdsByRoomId(
+          roomId || '',
+          currentBounds.xMin,
+          currentBounds.yMin,
+          currentBounds.xMax,
+          currentBounds.yMax,
+        ),
+        (oldData: AxiosResponse | undefined) => {
+          if (!oldData?.data) return oldData?.data;
+
+          return {
+            ...oldData,
+            data: oldData?.data?.map((note: NoteItem) =>
+              note.uuid === uuid ? { ...note, xAxis, yAxis } : note,
+            ),
+          };
+        },
+      );
+
       socket.emit(socketEvents.UpdateNote, {
         roomId,
         noteId: uuid,
         updates: {
-          xAxis: Math.floor(x),
-          yAxis: Math.floor(y),
+          xAxis,
+          yAxis,
         },
       });
     },
@@ -121,6 +156,7 @@ export const DroppableRoom = ({
     });
 
     socket.on(socketEvents.UpdatedNote, (updatedNote) => {
+      console.log('socket response:', updatedNote);
       const currentBounds = boundsRef.current;
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleNote(updatedNote.uuid),

@@ -306,10 +306,10 @@ export const Note = ({
             />
 
             <div className="flex justify-between items-center w-full">
-              <span className="text-gray-700 text-xs ml-[7px]">
+              <span className="text-gray-700 text-xs ml-[7px] capitalize">
                 {(noteItem &&
                   noteItem.lastName &&
-                  `${noteItem.firstName} ${noteItem.lastName[0]}.`) ||
+                  `${noteItem.firstName} ${noteItem.lastName}`) ||
                   'Unknown'}
               </span>
 

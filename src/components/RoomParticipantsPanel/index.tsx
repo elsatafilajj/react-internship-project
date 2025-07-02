@@ -61,12 +61,12 @@ export const RoomParticipantsPanel = () => {
                     <Crown className="absolute h-3 -top-2.5 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
                   <p className="text-black capitalize">
-                    {participant.firstname[0] + participant.lastname[0]}
+                    {participant.firstName[0] + participant.lastName[0]}
                   </p>
                 </div>
               </div>
               <p className="text-sm tracking-wider">
-                {participant.firstname} {participant.lastname}
+                {participant.firstName} {participant.lastName}
               </p>
             </div>
             {roomHost &&

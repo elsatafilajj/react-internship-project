@@ -15,15 +15,6 @@ export interface User {
   role?: UserRole;
 }
 
-export interface UserInRoom {
-  uuid: string;
-  createdat: string;
-  email: string;
-  firstname: string;
-  lastname: string;
-  role?: UserRole;
-}
-
 export enum UserRole {
   Host = 'host',
   Participant = 'participant',
