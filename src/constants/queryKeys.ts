@@ -12,13 +12,7 @@ export const queryKeys = {
   getActivitiesForRoom: (roomId: Room['uuid']) => ['activities', roomId],
   getWinnerNotes: (roomId: Room['uuid']) => ['rooms', 'currentWinner', roomId],
 
-  getNoteIdsByRoomId: (
-    roomId: Room['uuid'],
-    xMin: number | undefined,
-    yMin: number | undefined,
-    xMax: number | undefined,
-    yMax: number | undefined,
-  ) => ['notes', roomId, xMin, yMin, xMax, yMax],
+  getNoteIdsByRoomId: (roomId: Room['uuid']) => ['notes', roomId],
 
   getSingleNote: (noteId: NoteItem['uuid']) => ['notes', noteId],
   getNoteVotes: (noteId: NoteItem['uuid']) => ['notes', 'votes', noteId],

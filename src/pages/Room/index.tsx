@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -9,6 +10,7 @@ import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
+import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 
@@ -18,6 +20,8 @@ export const Room = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const socket = useMemo(() => getSocket(), []);
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!roomId) return;
@@ -50,6 +54,16 @@ export const Room = () => {
         ref={transformRef}
         disabled={transformDisabled}
         disablePadding={true}
+        onPanningStop={() => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+          });
+        }}
+        onWheelStop={() => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+          });
+        }}
         panning={{ velocityDisabled: true }}
       >
         <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>

@@ -30,7 +30,7 @@ export const useGetAllNoteIdsFromRoomQuery = (
   const transformContext = useTransformContext();
 
   return useQuery<AxiosResponse<Pick<NoteItem, 'uuid' | 'xAxis' | 'yAxis'>[]>>({
-    queryKey: queryKeys.getNoteIdsByRoomId(roomId, xMin, yMin, xMax, yMax),
+    queryKey: queryKeys.getNoteIdsByRoomId(roomId),
     queryFn: () => {
       return getAllNoteIdsFromRoom(roomId, xMin, yMin, xMax, yMax);
     },

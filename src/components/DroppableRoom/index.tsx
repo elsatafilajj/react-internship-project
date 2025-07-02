@@ -44,23 +44,9 @@ export const DroppableRoom = ({
   );
 
   useEffect(() => {
-    if (
-      roomId &&
-      bounds?.xMin !== undefined &&
-      bounds?.yMin !== undefined &&
-      bounds?.xMax !== undefined &&
-      bounds?.yMax !== undefined
-    ) {
-      queryClient.refetchQueries({
-        queryKey: queryKeys.getNoteIdsByRoomId(
-          roomId,
-          bounds.xMin,
-          bounds.yMin,
-          bounds.xMax,
-          bounds.yMax,
-        ),
-      });
-    }
+    queryClient.refetchQueries({
+      queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+    });
   }, [bounds?.scale, bounds?.xMin, bounds?.yMin]);
 
   useEffect(() => {
@@ -80,8 +66,6 @@ export const DroppableRoom = ({
       const xAxis = Math.floor(x);
       const yAxis = Math.floor(y);
 
-      const currentBounds = boundsRef.current;
-
       queryClient.setQueryData(
         queryKeys.getSingleNote(uuid || ''),
         (oldData: AxiosResponse | undefined) => {
@@ -92,13 +76,7 @@ export const DroppableRoom = ({
       );
 
       queryClient.setQueryData(
-        queryKeys.getNoteIdsByRoomId(
-          roomId || '',
-          currentBounds.xMin,
-          currentBounds.yMin,
-          currentBounds.xMax,
-          currentBounds.yMax,
-        ),
+        queryKeys.getNoteIdsByRoomId(roomId || ''),
         (oldData: AxiosResponse | undefined) => {
           if (!oldData?.data) return oldData?.data;
 
@@ -140,65 +118,37 @@ export const DroppableRoom = ({
     if (!socket) return;
 
     socket.on(socketEvents.CreatedNote, (newNote) => {
-      const currentBounds = boundsRef.current;
       queryClient.setQueryData(queryKeys.getSingleNote(newNote.uuid), () => {
         return newNote;
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteIdsByRoomId(
-          roomId || '',
-          currentBounds?.xMin,
-          currentBounds?.yMin,
-          currentBounds?.xMax,
-          currentBounds?.yMax,
-        ),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
     });
 
     socket.on(socketEvents.UpdatedNote, (updatedNote) => {
-      console.log('socket response:', updatedNote);
-      const currentBounds = boundsRef.current;
-      queryClient.invalidateQueries({
+      queryClient.refetchQueries({
         queryKey: queryKeys.getSingleNote(updatedNote.uuid),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteIdsByRoomId(
-          roomId || '',
-          currentBounds?.xMin,
-          currentBounds?.yMin,
-          currentBounds?.xMax,
-          currentBounds?.yMax,
-        ),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
     });
 
     socket.on(socketEvents.DeletedNote, (deletedNote) => {
-      const currentBounds = boundsRef.current;
       queryClient.removeQueries({
         queryKey: queryKeys.getSingleNote(deletedNote.resourceId),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteIdsByRoomId(
-          roomId || '',
-          currentBounds?.xMin,
-          currentBounds?.yMin,
-          currentBounds?.xMax,
-          currentBounds?.yMax,
-        ),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
       console.log('add vote', newVote);
-      const currentBounds = boundsRef.current;
+
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteIdsByRoomId(
-          roomId || '',
-          currentBounds?.xMin,
-          currentBounds?.yMin,
-          currentBounds?.xMax,
-          currentBounds?.yMax,
-        ),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteVotes(newVote.switchedFrom),
@@ -218,16 +168,9 @@ export const DroppableRoom = ({
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
-      const currentBounds = boundsRef.current;
       console.log(removedVote);
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteIdsByRoomId(
-          roomId || '',
-          currentBounds?.xMin,
-          currentBounds?.yMin,
-          currentBounds?.xMax,
-          currentBounds?.yMax,
-        ),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
       queryClient.removeQueries({
         queryKey: queryKeys.getNoteVotes(removedVote.removedFrom),
@@ -278,14 +221,7 @@ export const DroppableRoom = ({
     });
 
     return () => {
-      socket.off(socketEvents.CreatedNote);
-      socket.off(socketEvents.UpdatedNote);
-      socket.off(socketEvents.AddedVote);
-      socket.off(socketEvents.RemovedVote);
-      socket.off(socketEvents.DeletedNote);
-      socket.off(socketEvents.ArchivedRoom);
-      socket.off(socketEvents.UserRemove);
-      socket.off('rooms/leftP');
+      Object.values(socketEvents).forEach((eventName) => socket.off(eventName));
     };
   }, []);
 
