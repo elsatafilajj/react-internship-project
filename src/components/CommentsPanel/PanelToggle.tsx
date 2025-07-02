@@ -16,7 +16,7 @@ export const PanelToggle = ({ noteId }: PanelToggleProps) => {
 
       <SheetContent
         side="right"
-        className="w-80 mt-[100px] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
+        className="w-80 top-18 max-h-[92vh] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
       >
         <CommentsPanel noteId={noteId} />
       </SheetContent>

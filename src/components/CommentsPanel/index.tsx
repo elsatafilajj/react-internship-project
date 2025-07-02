@@ -128,7 +128,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   };
 
   return (
-    <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[90vh] rounded-md overflow-hidden shadow-md border">
+    <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[93vh] rounded-md overflow-hidden shadow-md border">
       <ScrollArea className="flex-1 p-4 space-y-4 overflow-y-auto">
         <div className="space-y-4">
           <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">
