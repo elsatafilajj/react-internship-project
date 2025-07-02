@@ -67,10 +67,12 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           to="/"
           className="sm:flex hidden items-center space-x-2 min-w-fit"
         >
-          <Logo className="hidden sm:block w-20 drop-shadow-sm" />
+          <Logo className="hidden sm:block w-23 drop-shadow-sm" />
         </Link>
 
-        {hasEnteredRoom && <hr className="bg-muted-foreground w-[1px] h-6" />}
+        {hasEnteredRoom && (
+          <hr className="bg-muted-foreground w-[1px] h-6 mr-1" />
+        )}
 
         {hasEnteredRoom && (
           <div className="flex items-center gap-2 min-w-0">
@@ -97,7 +99,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         )}
 
         <Tooltip>
-          <TooltipTrigger className="rounded-full cursor-pointer">
+          <TooltipTrigger className="rounded-full cursor-pointer" asChild>
             <div id="profile" className="p-1">
               <CircleUser
                 strokeWidth={1.5}

@@ -2,7 +2,12 @@ import { History } from 'lucide-react';
 
 import { ActivityPanel } from '@/components/ActivityPanel';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 export const ActivityPanelToggle = () => {
   return (
@@ -27,7 +32,9 @@ export const ActivityPanelToggle = () => {
         side="right"
         className="w-80 top-18 max-h-[92vh] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
       >
-        <ActivityPanel />
+        <SheetTitle className="w-full h-full">
+          <ActivityPanel />
+        </SheetTitle>
       </SheetContent>
     </Sheet>
   );
