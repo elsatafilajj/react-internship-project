@@ -91,8 +91,7 @@ export const DroppableRoom = ({
     if (!socket) return;
 
     socket.on(socketEvents.CreatedNote, (newNote) => {
-      console.log(newNote);
-      setNotes((prevNotes) => [...prevNotes, newNote]);
+      setNotes((prevNotes) => [...(prevNotes || ''), newNote]);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
@@ -110,7 +109,6 @@ export const DroppableRoom = ({
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
-      console.log('new vote', newVote);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
@@ -123,7 +121,6 @@ export const DroppableRoom = ({
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
-      console.log('removed note', removedVote);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
@@ -133,7 +130,6 @@ export const DroppableRoom = ({
     });
 
     socket.on(socketEvents.DeletedNote, (deletedNote) => {
-      console.log('note deleted', deletedNote);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNotesByRoomId(roomId || ''),
       });
@@ -153,8 +149,7 @@ export const DroppableRoom = ({
       navigate('/rooms');
     });
 
-    socket.on(socketEvents.UserJoined, ({ userId }) => {
-      console.log(userId, `joined the room`);
+    socket.on(socketEvents.UserJoined, () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.getUsers(),
       });
@@ -167,13 +162,13 @@ export const DroppableRoom = ({
       }
     });
 
-    socket.on(socketEvents.RoomLeftP, ({ userId }) => {
-      console.log(`${userId.id} left the room`);
-
+    socket.on(socketEvents.RoomLeftP, () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.getUsers(),
       });
     });
+
+    socket.on(socketEvents.JoinedRoom, () => {});
 
     return () => {
       socket.off(socketEvents.CreatedNote);
@@ -185,6 +180,7 @@ export const DroppableRoom = ({
       socket.off(socketEvents.DeletedRoom);
       socket.off(socketEvents.UserRemove);
       socket.off(socketEvents.RoomLeftP);
+      socket.off(socketEvents.JoinedRoom);
     };
   }, []);
 

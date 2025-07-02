@@ -3,7 +3,12 @@ import { useParams } from 'react-router-dom';
 
 import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { RoomParticipantsPanel } from '@/components/RoomParticipantsPanel';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const avatarColors = [
@@ -87,7 +92,9 @@ export const ParticipantsToggle = () => {
           side="right"
           className="bg-card w-xs top-18 max-h-[92vh] rounded-s-xl"
         >
-          <RoomParticipantsPanel />
+          <SheetTitle className="w-full h-full">
+            <RoomParticipantsPanel />
+          </SheetTitle>
         </SheetContent>
       </Sheet>
     </div>

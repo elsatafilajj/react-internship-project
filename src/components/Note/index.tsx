@@ -425,7 +425,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
         <div className="flex items-center justify-center gap-3">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <X
                   className="cursor-pointer"
                   size={20}
@@ -439,6 +439,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               <TooltipTrigger
                 onClick={toggleBulletOnCurrentLine}
                 className="cursor-pointer"
+                asChild
               >
                 <List className="h-5 w-5" />
               </TooltipTrigger>
@@ -461,7 +462,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
 
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <div className="flex flex-col items-center">
                   <Toggle
                     size="sm"

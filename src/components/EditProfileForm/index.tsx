@@ -78,6 +78,7 @@ export const EditProfileForm = () => {
           <AvatarImage src="/placeholder-user.jpg" alt="Profile Picture" />
           <AvatarFallback className="capitalize">
             {user?.firstName[0]}
+            {user?.lastName[0]}
           </AvatarFallback>
         </Avatar>
       </div>

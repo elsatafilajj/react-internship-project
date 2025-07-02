@@ -100,7 +100,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         )}
 
         <Tooltip>
-          <TooltipTrigger className="rounded-full cursor-pointer">
+          <TooltipTrigger className="rounded-full cursor-pointer" asChild>
             <div id="profile" className="p-1">
               <CircleUser
                 strokeWidth={1.5}
