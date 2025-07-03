@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
+import { RouteNames } from '@/constants/routeNames';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
 import { ErrorResponseData } from '@/types/ErrorResponse';
@@ -43,7 +44,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       const message =
         axiosError.response?.data?.message ?? 'You were removed from this room';
       toast.error(message);
-      navigate('/rooms');
+      navigate(RouteNames.Rooms);
     } else if (status >= 400 && status < 600) {
       const message =
         axiosError.response?.data?.message ??
@@ -105,7 +106,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
                 strokeWidth={1.5}
                 size={32}
                 className="text-card-revert"
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate(RouteNames.Profile)}
               />
             </div>
           </TooltipTrigger>

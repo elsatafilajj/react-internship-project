@@ -27,12 +27,12 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   const [comments, setComments] = useState<NoteCommentResponse[]>([]);
   const [editingComment, setEditingComment] =
     useState<NoteCommentResponse | null>(null);
-  const queryClient = useQueryClient();
-  const { user } = useAuthContext();
   const [replyComment, setReplyComment] = useState<string | null>(null);
-  const socket = getSocket();
+  const { user } = useAuthContext();
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllCommentsQuery(noteId);
+  const queryClient = useQueryClient();
+  const socket = getSocket();
 
   const createFormik = useForm({
     schema: CommentSchema,
@@ -94,6 +94,9 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
       if (noteId === newComment.note.uuid) {
         setComments((prev) => [...(prev || []), newComment]);
       }
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getCommentsByNoteId(noteId),
+      });
     });
 
     socket.on(socketEvents.UpdatedComment, (newComment) => {
@@ -106,6 +109,9 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
           ),
         );
       }
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getCommentsByNoteId(noteId),
+      });
     });
 
     socket.on(socketEvents.DeletedComment, (deletedComment) =>

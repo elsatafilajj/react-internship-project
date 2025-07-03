@@ -17,35 +17,35 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
 
 export const RoomActionsDropDown = () => {
-  const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const socket = getSocket();
 
-  const { data: room } = useGetRoomByIdQuery(roomId || '');
-  const isRoomActive = room?.data?.isActive;
-
+  const { roomId } = useParams<{ roomId: string }>();
   const { user } = useAuthContext();
-
-  const deleteRoomMutation = useMutation({
-    mutationFn: () => deleteRoom(roomId || ''),
-    onSuccess: () => navigate('/rooms'),
-  });
-
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
   const { data: roomHost } = useGetRoomHostQuery(roomId || '');
+
+  const isRoomActive = room?.data?.isActive;
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
   const handleArchiveRoom = async () => {
     socket.emit(socketEvents.ArchiveRoom, { roomId });
 
     setTimeout(() => {
-      navigate('/rooms/archived');
+      navigate(RouteNames.ArchivedRooms);
     }, 300);
   };
+
+  const deleteRoomMutation = useMutation({
+    mutationFn: () => deleteRoom(roomId || ''),
+    onSuccess: () => navigate(RouteNames.Rooms),
+  });
 
   const handleDelete = async () => {
     try {

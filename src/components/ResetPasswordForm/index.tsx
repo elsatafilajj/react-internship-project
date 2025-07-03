@@ -16,10 +16,10 @@ import { useForm } from '@/hooks/useForm';
 import { ResetPasswordSchema } from '@/schemas/ResetPasswordSchema';
 
 const ResetPasswordForm = () => {
+  const [messageSent, setMessageSent] = useState(false);
   const [params] = useSearchParams();
   const token = params.get('token');
   const name = params.get('name');
-  const [messageSent, setMessageSent] = useState(false);
 
   const resetPasswordMutation = useMutation({
     mutationFn: ({ data, token }: { data: SetPasswordInput; token: string }) =>

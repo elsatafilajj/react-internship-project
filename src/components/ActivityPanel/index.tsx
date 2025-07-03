@@ -15,9 +15,9 @@ export const ActivityPanel = () => {
   const [activities, setActivities] = useState<Partial<ActivityResponse>[]>([]);
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllActivitiesForRoom(roomId || '');
-  const socket = getSocket();
   const { scrollToNote } = useNoteScrollContext();
   const { zoomOut } = useControls();
+  const socket = getSocket();
 
   useEffect(() => {
     if (isFetched && data) {
