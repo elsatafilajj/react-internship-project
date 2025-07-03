@@ -33,7 +33,6 @@ export const useGetRoomByIdQuery = (
     queryKey: queryKeys.getSingleRoom(roomId),
     retry: shouldRetry,
     queryFn: () => getRoomById(roomId),
-    retry: shouldRetry,
     enabled: !!roomId && uuidRegex.test(roomId),
     ...options,
   });
