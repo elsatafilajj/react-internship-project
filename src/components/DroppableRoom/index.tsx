@@ -145,8 +145,6 @@ export const DroppableRoom = ({
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
-      console.log('add vote', newVote);
-
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
@@ -168,7 +166,6 @@ export const DroppableRoom = ({
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
-      console.log(removedVote);
       queryClient.invalidateQueries({
         queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
