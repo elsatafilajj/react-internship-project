@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Circle, Crown, List, MessageSquare, Star, X } from 'lucide-react';
+import { Circle, Crown, List, MessageSquare, Star, Trash2 } from 'lucide-react';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -443,10 +443,8 @@ export const Note = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <X
-                  className="cursor-pointer"
-                  size={20}
-                  strokeWidth={2.5}
+                <Trash2
+                  className="h-5 w-5 cursor-pointer"
                   onClick={() => !isReadOnly && handleDeleteNote(noteId)}
                 />
               </TooltipTrigger>
