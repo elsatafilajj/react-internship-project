@@ -91,7 +91,6 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
 
   useEffect(() => {
     socket.on(socketEvents.CreatedComment, (newComment) => {
-      console.log('Received new comment:', newComment);
       if (noteId === newComment.note.uuid) {
         setComments((prev) => [...(prev || []), newComment]);
       }

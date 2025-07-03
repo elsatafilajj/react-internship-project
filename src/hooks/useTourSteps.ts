@@ -20,6 +20,9 @@ export const useTourSteps = () => {
   const { data } = useGetRoomByIdQuery(roomId || '');
   const isRoomActive = data?.data?.isActive;
 
+  const isInArchivedRoomsDashboard =
+    window.location.pathname === '/rooms/archived';
+
   const { user } = useAuthContext();
   const { data: roomHost } = useGetRoomHostQuery(roomId || '');
   const isHost = roomHost?.data?.uuid === user?.uuid;
@@ -34,8 +37,13 @@ export const useTourSteps = () => {
     ...(!hasEnteredRoom
       ? [
           {
-            intro: 'Here you can manage all of your rooms',
-            element: document.getElementById('rooms'),
+            intro: isInArchivedRoomsDashboard
+              ? 'Here you can see all of your archived rooms'
+              : 'Here you can manage all of your rooms',
+
+            element: isInArchivedRoomsDashboard
+              ? document.getElementById('archived-rooms')
+              : document.getElementById('rooms'),
           },
           {
             element: document.getElementById('sidebar'),

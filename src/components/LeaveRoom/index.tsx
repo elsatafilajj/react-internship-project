@@ -29,7 +29,7 @@ export const LeaveRoom = () => {
 
   return (
     <button
-      className="bg-transparent text-red-600 w-[100px] font-medium self-start ml-0.5 gap-4 flex items-center"
+      className="bg-transparent text-red-600 w-full font-medium self-start ml-0.5 gap-4 flex items-center"
       onClick={() => {
         leaveRoomMutation.mutateAsync(roomId || '');
       }}

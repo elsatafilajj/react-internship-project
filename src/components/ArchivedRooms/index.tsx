@@ -22,7 +22,10 @@ export const ArchivedRooms = () => {
           </h2>
         </div>
 
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 w-full px-4">
+        <div
+          id="archived-rooms"
+          className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 w-full px-4"
+        >
           {hasRooms ? (
             archivedRooms?.data?.map((roomData) => (
               <div

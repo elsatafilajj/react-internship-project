@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 import { editProfile, getUserDetails } from '@/api/User/user.client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -23,6 +24,7 @@ import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const EditProfileForm = () => {
   const { user, setAuthState } = useAuthContext();
+  const navigate = useNavigate();
 
   const editProfileMutation = useMutation({
     mutationFn: editProfile,
@@ -76,6 +78,7 @@ export const EditProfileForm = () => {
           <AvatarImage src="/placeholder-user.jpg" alt="Profile Picture" />
           <AvatarFallback className="capitalize">
             {user?.firstName[0]}
+            {user?.lastName[0]}
           </AvatarFallback>
         </Avatar>
       </div>
@@ -121,6 +124,12 @@ export const EditProfileForm = () => {
           </Button>
         </CardFooter>
       </form>
+      <button
+        onClick={() => navigate(-1)}
+        className="text-sm cursor-pointer transform-cpu"
+      >
+        Go back
+      </button>
     </Card>
   );
 };

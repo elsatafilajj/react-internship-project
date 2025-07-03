@@ -2,7 +2,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { EllipsisVertical } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,9 +39,7 @@ export const CommentsActionsDropDown = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button size="icon" variant="ghost">
-          <EllipsisVertical className="w-5 h-5" />
-        </Button>
+        <EllipsisVertical className="w-5 h-5" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="z-50">

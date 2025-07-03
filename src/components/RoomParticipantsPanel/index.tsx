@@ -71,7 +71,7 @@ export const RoomParticipantsPanel = () => {
             </div>
             {roomHost &&
               roomHost.uuid === user?.uuid &&
-              participant.uuid !== user.uuid && (
+              participant.uuid !== user?.uuid && (
                 <Button
                   size="sm"
                   variant="destructiveSecondary"

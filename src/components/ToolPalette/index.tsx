@@ -46,7 +46,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
     <TooltipProvider>
       <div className="bg-secondary border border-muted-foreground/45 rounded-xl shadow-md px-4 py-3 flex items-center gap-4 w-fit">
         <Tooltip>
-          <TooltipTrigger>
+          <TooltipTrigger asChild>
             <div
               aria-disabled={isDragDisabled}
               className={clsx(
@@ -83,7 +83,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
 
         <Tooltip>
           <div id="zoom-in" className="flex flex-col items-center gap-1.5">
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 size="icon"
                 onClick={() => zoomIn()}
@@ -98,7 +98,7 @@ export const ToolPalette = ({ setTransformDisabled }: ToolPaletteProps) => {
 
         <Tooltip>
           <div id="zoom-out" className="flex flex-col items-center gap-1.5">
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 size="icon"
                 onClick={() => zoomOut()}
