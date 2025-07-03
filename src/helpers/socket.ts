@@ -2,6 +2,7 @@ import { io, Socket } from 'socket.io-client';
 
 import { refreshTokenApi } from '@/api/User/user.client';
 import { Config } from '@/constants/config';
+import { socketEvents } from '@/constants/socketEvents';
 
 let socket: Socket | null = null;
 let isReady = false;
@@ -35,12 +36,12 @@ const setupListeners = () => {
     isReady = true;
     const roomId = localStorage.getItem('lastRoomId');
     if (roomId) {
-      socket?.emit('rooms/join', { roomId });
+      socket?.emit(socketEvents.JoinRoom, { roomId });
     }
   });
 
-  socket.on('notes/created', () => {});
-  socket.on('notes/updated', () => {});
+  socket.on(socketEvents.CreatedNote, () => {});
+  socket.on(socketEvents.UpdateNote, () => {});
 
   socket.on('connect_error', async (err) => {
     if (err.message.includes('jwt expired')) {
@@ -72,7 +73,7 @@ export const updateSocketAuth = (newToken: string) => {
     isReady = true;
     const roomId = localStorage.getItem('lastRoomId');
     if (roomId) {
-      socket?.emit('rooms/join', { roomId });
+      socket?.emit(socketEvents.JoinRoom, { roomId });
     }
   });
 

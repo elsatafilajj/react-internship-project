@@ -30,8 +30,8 @@ export const Sidebar = ({
   const { logout } = useAuthContext();
 
   const { roomId } = useParams<{ roomId: string }>();
-
   const { user } = useAuthContext();
+
   const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
 
   const roomHost = users?.data?.find((user) => user.role === 'host');

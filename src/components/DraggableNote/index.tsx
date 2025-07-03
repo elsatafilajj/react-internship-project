@@ -48,7 +48,6 @@ export const DraggableNote = ({
   return (
     <>
       <DragPreviewImage connect={preview} src={noteDragIcon} />
-
       <div
         ref={noteRef}
         style={{

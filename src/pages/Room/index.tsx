@@ -11,6 +11,7 @@ import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
 import { ToolPalette } from '@/components/ToolPalette';
 import { queryKeys } from '@/constants/queryKeys';
+import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 
@@ -30,7 +31,7 @@ export const Room = () => {
 
     const uuidRegex = /^[0-9a-fA-F-]{36}$/;
     const isUuidValid = uuidRegex.test(roomId);
-    if (!isUuidValid) navigate('/rooms');
+    if (!isUuidValid) navigate(RouteNames.Rooms);
   }, [roomId]);
 
   useEffect(() => {
