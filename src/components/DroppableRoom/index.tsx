@@ -187,12 +187,23 @@ export const DroppableRoom = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.getWinnerNotes(roomId || ''),
       });
+      // queryClient.removeQueries({
+      //   queryKey: queryKeys.getNoteVotes(removedVote.resourceId || ''),
+      // });
     });
 
     socket.on(socketEvents.ArchivedRoom, ({ roomId: archivedRoomId }) => {
       if (archivedRoomId === roomId) {
         navigate('/rooms/archived');
       }
+    });
+
+    socket.on(socketEvents.DeletedRoom, (deleted) => {
+      toast.success(deleted.message || 'Room deleted successfully!');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleRoom(roomId || ''),
+      });
+      navigate('/rooms');
     });
 
     socket.on(socketEvents.UserJoined, ({ userId }) => {

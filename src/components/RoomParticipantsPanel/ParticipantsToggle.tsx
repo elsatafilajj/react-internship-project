@@ -29,7 +29,7 @@ export const ParticipantsToggle = () => {
     <div id="participants">
       <Sheet>
         <SheetTrigger asChild>
-          <div className="-space-x-2 flex cursor-pointer">
+          <div className="-space-x-2 flex ml-3 cursor-pointer py-1.5">
             {isLoading && (
               <div className="flex -space-x-2">
                 {Array.from({ length: 3 }, (_, index) => (
@@ -44,7 +44,7 @@ export const ParticipantsToggle = () => {
               participants.data &&
               participants.data.slice(0, 4).map((participant, index) => (
                 <div
-                  className={`relative sm:flex hidden h-10 w-10 rounded-full text-sm font-medium -ml-0.5 border-2 border-card items-center justify-center shadow ${
+                  className={`relative sm:flex hidden h-8.5  w-8.5 rounded-full text-sm font-medium -ml-0.5 border-2 border-card items-center justify-center shadow ${
                     avatarColors[index % avatarColors.length]
                   }`}
                   key={participant.uuid}
@@ -52,11 +52,9 @@ export const ParticipantsToggle = () => {
                   {roomHost?.uuid === participant.uuid && (
                     <Crown className="absolute h-3 -top-2 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
-                  {participant.firstName && participant.lastName && (
-                    <p className="text-black capitalize">
-                      {participant?.firstName[0] + participant?.lastName[0]}
-                    </p>
-                  )}
+                  <p className="text-black uppercase">
+                    {participant.firstName[0] + participant.lastName[0]}
+                  </p>
                 </div>
               ))}
             {

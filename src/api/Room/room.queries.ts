@@ -5,8 +5,10 @@ import {
   getAllArchivedRooms,
   getAllRooms,
   getRoomById,
+  getRoomHost,
 } from '@/api/Room/room.client';
 import { Room, RoomWithRole } from '@/api/Room/room.types';
+import { User } from '@/api/User/user.types';
 import { queryKeys } from '@/constants/queryKeys';
 
 export const useGetAllRoomsQuery = (
@@ -29,6 +31,7 @@ export const useGetRoomByIdQuery = (
   );
   return useQuery<AxiosResponse<Room>>({
     queryKey: queryKeys.getSingleRoom(roomId),
+    retry: shouldRetry,
     queryFn: () => getRoomById(roomId),
     retry: shouldRetry,
     enabled: !!roomId && uuidRegex.test(roomId),
@@ -44,4 +47,20 @@ export const useGetAllArchivedRoomsQuery = (
     queryFn: getAllArchivedRooms,
     ...options,
   });
+};
+
+export const useGetRoomHostQuery = (
+  roomId: Room['uuid'],
+  options?: UseQueryOptions<
+    AxiosResponse<Pick<User, 'uuid' | 'firstName' | 'lastName'>>
+  >,
+) => {
+  return useQuery<AxiosResponse<Pick<User, 'uuid' | 'firstName' | 'lastName'>>>(
+    {
+      queryKey: queryKeys.getRoomHost(roomId),
+      queryFn: () => getRoomHost(roomId),
+      enabled: !!roomId,
+      ...options,
+    },
+  );
 };

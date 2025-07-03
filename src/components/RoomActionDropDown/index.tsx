@@ -1,12 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import { Archive, EllipsisVertical, Trash2 } from 'lucide-react';
+import { Archive, Settings2, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
-import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { deleteRoom } from '@/api/Room/room.client';
-import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import {
+  useGetRoomByIdQuery,
+  useGetRoomHostQuery,
+} from '@/api/Room/room.queries';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
 import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
 import { LeaveRoom } from '@/components/LeaveRoom';
@@ -17,35 +18,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
-import { cn } from '@/lib/utils';
 
 export const RoomActionsDropDown = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const socket = useMemo(() => getSocket(), []);
 
-  const { data } = useGetRoomByIdQuery(roomId || '');
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
+  const isRoomActive = room?.data?.isActive;
 
   const { user } = useAuthContext();
-  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
 
-  const roomHost = users?.data?.find((user) => user.role === 'host');
-  const isUserHost = roomHost?.uuid === user?.uuid;
-
-  const deleteMutation = useMutation({
-    mutationFn: (roomId: string) => deleteRoom(roomId),
-    onSuccess: () => {
-      toast.success('Room deleted successfully!');
-      navigate(RouteNames.Rooms);
-    },
-    onError: () => {
-      toast.error('Room deletion failed.');
-    },
+  const deleteRoomMutation = useMutation({
+    mutationFn: () => deleteRoom(roomId || ''),
+    onSuccess: () => navigate('/rooms'),
   });
+
+  const { data: roomHost } = useGetRoomHostQuery(roomId || '');
+  const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
   const handleArchiveRoom = async () => {
     socket.emit(socketEvents.ArchiveRoom, { roomId });
@@ -54,9 +47,16 @@ export const RoomActionsDropDown = () => {
       navigate('/rooms/archived');
     }, 300);
   };
+
   const handleDelete = async () => {
     try {
-      await deleteMutation.mutateAsync(roomId || ' ');
+      if (!isRoomActive) {
+        deleteRoomMutation.mutateAsync();
+      } else {
+        socket.emit(socketEvents.DeleteRoom, { roomId: roomId });
+      }
+
+      console.log(roomId);
     } catch (error) {
       console.error('Deletion failed', error);
     }
@@ -65,24 +65,16 @@ export const RoomActionsDropDown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div
-          id="room-actions"
-          className={cn(
-            'rounded',
-            data?.data?.isActive === false
-              ? 'cursor-not-allowed opacity-50 pointer-events-none'
-              : 'cursor-pointer hover:bg-muted',
-          )}
-        >
-          <EllipsisVertical />
+        <div id="room-actions" className="rounded">
+          <Settings2 className="w-5 h-5" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         sideOffset={10}
         className="flex flex-col gap-3 p-4 w-42 mt-4 mr-5"
       >
-        {isUserHost && <CreateEditRoomFormDialog />}
-        {isUserHost && (
+        {isUserHost && isRoomActive && <CreateEditRoomFormDialog />}
+        {isUserHost && isRoomActive && (
           <DropdownMenuItem
             onClick={handleArchiveRoom}
             className="gap-4 ml-0.5"

@@ -1,9 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Circle, Crown, List, MessageSquare, Star, X } from 'lucide-react';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
+import { useGetAllCommentsQuery } from '@/api/Comments/comments.queries';
 import { NoteItem } from '@/api/Note/note.types';
 import {
   useGetNoteByIdQuery,
@@ -23,6 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { queryKeys } from '@/constants/queryKeys';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useNoteScrollContext } from '@/context/NoteScrollContext/NoteScrollContext';
@@ -72,11 +75,17 @@ export const Note = ({
   const [localNoteColor, setLocalNoteColor] = useState<string>(
     noteItem?.color || 'note-background-green',
   );
-
   const [noteContent, setNoteContent] = useState('');
-  const { selectedNoteId } = useNoteScrollContext();
+  const [editingUsers, setEditingUsers] = useState<Record<string, string>>({});
 
   const { user } = useAuthContext();
+
+  const { selectedNoteId } = useNoteScrollContext();
+
+  const queryClient = useQueryClient();
+
+  const { data: comment } = useGetAllCommentsQuery(noteId || '');
+
   const { data: noteVotes } = useGetNoteVotesQuery(noteId || '');
 
   const isUserVoter = Boolean(
@@ -215,6 +224,47 @@ export const Note = ({
   }, [isResizing]);
 
   useEffect(() => {
+    const handleStart = ({
+      editedNoteId,
+      userId,
+      firstName,
+    }: {
+      roomId: string;
+      editedNoteId: string;
+      userId: string;
+      firstName: string;
+    }) => {
+      if (editedNoteId === noteId && userId !== user?.uuid) {
+        setEditingUsers((prev) => ({ ...prev, [userId]: firstName }));
+      }
+    };
+
+    const handleStop = ({
+      noteId,
+      userId,
+    }: {
+      noteId: string;
+      userId: string;
+    }) => {
+      if (noteId === noteId && userId !== user?.uuid) {
+        setEditingUsers((prev) => {
+          const copy = { ...prev };
+          delete copy[userId];
+          return copy;
+        });
+      }
+    };
+
+    socket.on(socketEvents.NotesEditingStarted, handleStart);
+    socket.on(socketEvents.NotesEditingStoped, handleStop);
+
+    return () => {
+      socket.off(socketEvents.NotesEditingStarted, handleStart);
+      socket.off(socketEvents.NotesEditingStoped, handleStop);
+    };
+  }, []);
+
+  useEffect(() => {
     if (noteVotes && user?.uuid) {
       const userHasVoted = noteVotes.data?.some(
         (voter) => voter.uuid === user.uuid,
@@ -237,6 +287,9 @@ export const Note = ({
       noteId: noteId,
       updates: { color: noteColor },
     });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+    });
   };
 
   const handleVote = () => {
@@ -249,6 +302,9 @@ export const Note = ({
       });
       toast.success('Vote removed!');
       setHasVoted(false);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+      });
     } else {
       socket.emit(socketEvents.AddVote, {
         roomId: roomId,
@@ -256,11 +312,18 @@ export const Note = ({
       });
       toast.success('Voted! 🎉');
       setHasVoted(true);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+      });
     }
   };
 
   const handleDeleteNote = (noteId: string) => {
     socket.emit(socketEvents.DeleteNote, { roomId, noteId });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+    });
+    setTransformDisabled(false);
   };
 
   if (!noteId) return null;
@@ -286,27 +349,51 @@ export const Note = ({
               noteColorClassMap[
                 localNoteColor as keyof typeof noteColorClassMap
               ],
-              'relative w-full border p-3 text-xs cursor-move flex flex-col justify-between',
+              'relative w-full p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === noteId &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               !!isWinner && 'ring-1 ring-yellow-400',
             )}
           >
             <textarea
+              onMouseOver={() => setTransformDisabled(true)}
+              onFocus={() => {
+                setTransformDisabled(true);
+
+                socket.emit(socketEvents.NotesEditingStart, {
+                  roomId,
+                  noteId: noteId,
+                  userId: user?.uuid,
+                  firstName: user?.firstName,
+                });
+              }}
+              onBlur={() => {
+                setTransformDisabled(false);
+
+                socket.emit(socketEvents.NotesEditingStop, {
+                  roomId,
+                  noteId: noteId,
+                  userId: user?.uuid,
+                });
+              }}
               ref={textareaRef}
-              onFocus={() => setTransformDisabled(true)}
               onMouseOutCapture={() => setTransformDisabled(false)}
               readOnly={isReadOnly}
               value={noteContent}
               onChange={handleNoteContentChange}
               onKeyDown={handleEnterKey}
               placeholder="Type in your idea..."
-              className="w-full resize-none h-full max-h-[250px] overflow-y-auto p-2 tracking-wide  border-none outline-none text-sm text-black"
+              className="w-full resize-none h-full overflow-y-auto p-2 tracking-wide border-none outline-none text-lg text-black"
               aria-label="Note input"
             />
+            {Object.values(editingUsers).length > 0 && (
+              <div className="absolute top-1 right-2 text-[10px] text-gray-500 italic z-30 bg-white/70 px-1 rounded shadow-sm">
+                {Object.values(editingUsers).join(', ')} is editing...
+              </div>
+            )}
 
             <div className="flex justify-between items-center w-full">
-              <span className="text-gray-700 text-xs ml-[7px] capitalize">
+              <span className="text-black/60 text-s ml-[7px] capitalize">
                 {(noteItem &&
                   noteItem.lastName &&
                   `${noteItem.firstName} ${noteItem.lastName}`) ||
@@ -315,13 +402,14 @@ export const Note = ({
 
               <div className="flex items-center gap-1 -mr-[15px]">
                 <div className="flex items-center gap-1 -mr-[15px]">
-                  <span
-                    className="text-[11px] font-medium text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1"
-                    title="Total comments"
-                  >
-                    <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
-                    3
-                  </span>
+                  {comment?.data && comment?.data?.length !== 0 && (
+                    <span
+                      className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-100 "
+                      title="This note has comments"
+                    >
+                      <MessageSquare className="w-3 h-3 text-blue-500 fill-blue-300" />
+                    </span>
+                  )}
 
                   {noteVotes && totalVotes > 0 && (
                     <span
@@ -334,7 +422,7 @@ export const Note = ({
                   )}
 
                   <div
-                    className="cursor-se-resize w-5 h-5 text-xs -mb-[12px]"
+                    className="cursor-se-resize w-5 h-5 text-xs -mb-[10px] mr-1"
                     onClick={() => setIsResizing(true)}
                   ></div>
                 </div>

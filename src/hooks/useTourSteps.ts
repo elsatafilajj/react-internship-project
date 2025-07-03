@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom';
 
-import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
+import {
+  useGetRoomByIdQuery,
+  useGetRoomHostQuery,
+} from '@/api/Room/room.queries';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
@@ -19,9 +21,8 @@ export const useTourSteps = () => {
   const isRoomActive = data?.data?.isActive;
 
   const { user } = useAuthContext();
-  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
-  const roomHost = users?.data?.find((user) => user.role === 'host');
-  const isHost = roomHost?.uuid === user?.uuid;
+  const { data: roomHost } = useGetRoomHostQuery(roomId || '');
+  const isHost = roomHost?.data?.uuid === user?.uuid;
 
   const getSteps = (): TourStep[] => [
     {
@@ -87,22 +88,13 @@ export const useTourSteps = () => {
             element: document.getElementById('zoom-out'),
             intro: 'And click here to zoom back out.',
           },
-          ...(!isRoomActive
-            ? [
-                {
-                  intro:
-                    'Here you can still export the notes of your archived room in different formats.',
-                  element: document.getElementById('archived-export'),
-                },
-              ]
-            : []),
           {
             element: document.getElementById('participants'),
             intro: isRoomActive
               ? isHost
                 ? 'See and manage all participants here — you can even kick someone if needed.'
                 : 'Here’s the list of everyone in this room. If you want someone to be kicked from the room ask the host to do so!'
-              : 'This is the list of everyone who participated. Since this room is locked, no new members can join or leave.',
+              : 'This is the list of everyone who participated. Since this room is locked, no new members can join.',
           },
           ...(isRoomActive
             ? [
@@ -116,13 +108,17 @@ export const useTourSteps = () => {
             : []),
         ]
       : []),
-    ...(hasEnteredRoom && isRoomActive
+    ...(hasEnteredRoom
       ? [
           {
             element: document.getElementById('room-actions'),
-            intro: isHost
-              ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
-              : 'Here you can export your notes, and leave the room.',
+            intro: isRoomActive
+              ? isHost
+                ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
+                : 'Here you can export your notes, and leave the room.'
+              : isHost
+                ? 'You can also only delete and export it.'
+                : 'You can also only export it or leave.',
           },
         ]
       : []),
@@ -141,7 +137,7 @@ export const useTourSteps = () => {
           {
             intro: isRoomActive
               ? 'Feel free to move notes, change colors, vote on ideas, and share your thoughts. Enjoy!'
-              : 'The room is in view-only mode now — all creativity that happened here is saved for your reference.',
+              : 'The room being in view-only mode now — all creativity that happened here is saved for your reference.',
           },
         ]
       : []),

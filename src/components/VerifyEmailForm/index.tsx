@@ -39,7 +39,14 @@ export const VerifyEmailForm = () => {
       });
 
       toast.success('You are logged in!');
-      navigate(RouteNames.Rooms);
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
+
+      if (redirectUrl) {
+        localStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirectUrl;
+      } else {
+        navigate('/rooms');
+      }
     },
 
     onError: (error) => {

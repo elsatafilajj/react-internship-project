@@ -16,6 +16,8 @@ enum Actions {
   ARCHIVE = 'archive',
   LEAVEP = 'leaveP',
   REMOVE = 'remove',
+  EDITING_START = 'editing-start',
+  EDITING_STOP = 'editing-stop',
 }
 
 enum Listeners {
@@ -28,6 +30,8 @@ enum Listeners {
   REMOVED = 'removed',
   ARCHIVED = 'archived',
   LEFTP = 'leftP',
+  EDITING_STARTED = 'editing-started',
+  EDITING_STOPED = 'editing-stoped',
 }
 
 export enum socketEvents {
@@ -66,6 +70,9 @@ export enum socketEvents {
   ArchiveRoom = `${Namespaces.ROOMS}/${Actions.ARCHIVE}`,
   ArchivedRoom = `${Namespaces.ROOMS}/${Listeners.ARCHIVED}`,
 
+  DeleteRoom = `${Namespaces.ROOMS}/${Actions.DELETE}`,
+  DeletedRoom = `${Namespaces.ROOMS}/${Listeners.DELETED}`,
+
   UserRemove = `${Namespaces.ROOMS}/${Listeners.REMOVED}`,
 
   RoomLeaveP = `${Namespaces.ROOMS}/${Actions.LEAVEP}`,
@@ -74,4 +81,10 @@ export enum socketEvents {
   UserJoined = `${Namespaces.ROOMS}/${Listeners.JOINED}`,
 
   RemoveUser = `${Namespaces.ROOMS}/${Actions.REMOVE}`,
+
+  NotesEditingStart = `${Namespaces.NOTES}/${Actions.EDITING_START}`,
+  NotesEditingStop = `${Namespaces.NOTES}/${Actions.EDITING_STOP}`,
+
+  NotesEditingStarted = `${Namespaces.NOTES}/${Listeners.EDITING_STARTED}`,
+  NotesEditingStoped = `${Namespaces.NOTES}/${Listeners.EDITING_STOPED}`,
 }

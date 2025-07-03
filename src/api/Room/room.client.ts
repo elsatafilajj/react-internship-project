@@ -1,4 +1,5 @@
 import { apiRequest } from '@/api/Api';
+import { User } from '@/api/User/user.types';
 import { DeleteResponse } from '@/types/DeleteResponse';
 
 import {
@@ -72,4 +73,10 @@ export const leaveRoom = async (roomId: string) =>
   apiRequest<undefined, LeaveRoomResponse>({
     method: 'POST',
     url: `rooms/${roomId}/leave`,
+  });
+
+export const getRoomHost = async (roomId: string) =>
+  apiRequest<undefined, Pick<User, 'uuid' | 'firstName' | 'lastName'>>({
+    method: 'GET',
+    url: `rooms/host/${roomId}`,
   });

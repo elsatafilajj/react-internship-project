@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
 import { ParticipantsToggle } from '@/components/RoomParticipantsPanel/ParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
@@ -39,7 +38,6 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
   useEffect(() => {
     if (!error) return;
-
     const axiosError = error as AxiosError<ErrorResponseData>;
 
     const status = axiosError?.response?.status;
@@ -58,60 +56,59 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         'Something went wrong. Please try again.';
       toast.error(message);
     }
-  }, [isError, error, navigate]);
+  }, [error, isError, navigate]);
 
   return (
-    <header className="sticky top-0 z-30 w-full flex items-center h-15 justify-between gap-4 px-4 py-2 border-b bg-secondary shadow-sm">
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-          <div id="sidebar">
-            <PanelLeft className="h-5 w-5 text-muted-foreground" />
-          </div>
+    <div className="absolute w-full">
+      <div className="fixed top-3 left-3 z-10 flex flex-wrap items-center gap-0.5 sm:gap-2 rounded-2xl bg-card sm:px-4 px-2.5 sm:py-0.5 py-2.5 shadow-md text-foreground max-w-full sm:max-w-[60%]">
+        <Button
+          variant="ghost"
+          className="p-2 w-[32px]"
+          onClick={onToggleSidebar}
+        >
+          <PanelLeft className="h-5 w-5 text-card-revert" />
         </Button>
 
-        <Link to="/" className="block">
-          <Logo className="hidden sm:block drop-shadow-sm w-28" />
-          <Logo small className="block sm:hidden drop-shadow-sm w-8" />
+        <Link
+          to="/"
+          className="sm:flex hidden items-center space-x-2 min-w-fit"
+        >
+          <Logo className="hidden sm:block w-20 drop-shadow-sm" />
         </Link>
+
+        {hasEnteredRoom && <hr className="bg-muted-foreground w-[1px] h-6" />}
+
+        {hasEnteredRoom && (
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="sm:text-sm text-xs truncate max-w-[120px] sm:max-w-[200px]">
+              {room?.data?.title}
+            </span>
+            <span
+              className={cn(
+                'w-2.5 h-2.5 rounded-full shadow-md hidden sm:flex',
+                room?.data?.isActive ? 'bg-green-400' : 'bg-red-400',
+              )}
+            />
+          </div>
+        )}
       </div>
 
-      {hasEnteredRoom && (
-        <div className="hidden md:flex items-center gap-4">
-          <div
-            className={cn(
-              'px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm',
-              room?.data?.isActive ? 'bg-green-500' : 'bg-destructive',
-            )}
-          >
-            {room?.data?.isActive ? 'Active Room' : 'Archived Room'}
-          </div>
-
-          <span className="text-sm font-semibold text-foreground">
-            {room?.data?.title}
-          </span>
-        </div>
-      )}
-
-      <div className="flex items-center gap-2">
-        {!room?.data?.isActive && hasEnteredRoom && (
-          <Button size="sm" variant="ghost">
-            <ExportDataFormDialog />
-          </Button>
+      <div className="fixed top-3 right-3 z-10 flex flex-wrap items-center gap-2 justify-end rounded-2xl bg-card px-3 py-1 shadow-md text-foreground max-w-full">
+        {hasEnteredRoom && (
+          <>
+            <ParticipantsToggle />
+            <ShareLinkAlertDialog />
+            <RoomActionsDropDown />
+          </>
         )}
 
-        {hasEnteredRoom && <ParticipantsToggle />}
-
-        {hasEnteredRoom && <ShareLinkAlertDialog />}
-
-        {hasEnteredRoom && room?.data?.isActive && <RoomActionsDropDown />}
-
         <Tooltip>
-          <TooltipTrigger className="rounded-full hover:ring-2 hover:ring-muted">
+          <TooltipTrigger className="rounded-full cursor-pointer">
             <div id="profile" className="p-1">
               <CircleUser
                 strokeWidth={1.5}
                 size={32}
-                className="text-muted-foreground"
+                className="text-card-revert"
                 onClick={() => navigate('/profile')}
               />
             </div>
@@ -121,6 +118,6 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           </TooltipContent>
         </Tooltip>
       </div>
-    </header>
+    </div>
   );
 };

@@ -11,6 +11,7 @@ export const queryKeys = {
   getArchivedRooms: () => ['archivedRooms'],
   getActivitiesForRoom: (roomId: Room['uuid']) => ['activities', roomId],
   getWinnerNotes: (roomId: Room['uuid']) => ['rooms', 'currentWinner', roomId],
+  getRoomHost: (id: string) => ['rooms', id, 'host'],
 
   getNoteIdsByRoomId: (roomId: Room['uuid']) => ['notes', roomId],
 

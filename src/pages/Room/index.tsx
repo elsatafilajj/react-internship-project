@@ -19,17 +19,19 @@ export const Room = () => {
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
   const { roomId } = useParams<{ roomId: string }>();
   const socket = useMemo(() => getSocket(), []);
-  const navigate = useNavigate();
-
   const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!roomId) return;
+    localStorage.setItem('lastRoomId', roomId);
+
     const uuidRegex = new RegExp(
       /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
     );
-
     const isUuidValid = uuidRegex.test(roomId);
+
     if (!isUuidValid) navigate('/rooms');
   }, [roomId]);
 
@@ -37,11 +39,17 @@ export const Room = () => {
     if (!roomId) return;
 
     socket.emit(socketEvents.JoinRoom, { roomId });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getSingleRoom(roomId || ''),
+    });
     toast.success('You joined the room');
 
     return () => {
-      socket.emit(socketEvents.LeaveRoom, roomId);
+      socket.emit(socketEvents.LeaveRoom, { roomId });
       toast.success('You left the room');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleRoom(roomId || ''),
+      });
     };
   }, [roomId]);
 
