@@ -16,8 +16,8 @@ import { ForgotPasswordSchema } from '@/schemas/ForgotPasswordSchema';
 import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const ForgotPasswordForm = () => {
-  const navigate = useNavigate();
   const [messageSent, setMessageSent] = useState(false);
+  const navigate = useNavigate();
 
   const forgotPasswordMutation = useMutation({
     mutationFn: forgotPassword,

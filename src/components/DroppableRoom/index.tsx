@@ -10,6 +10,7 @@ import { useGetAllNoteIdsFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
+import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
@@ -27,7 +28,6 @@ export const DroppableRoom = ({
   setTransformDisabled,
 }: DroppableRoomProps) => {
   const queryClient = useQueryClient();
-  const roomRef = useRef<HTMLDivElement | null>(null);
 
   const { user } = useAuthContext();
   const { roomId } = useParams<{ roomId: string }>();
@@ -56,6 +56,7 @@ export const DroppableRoom = ({
   const socket = useMemo(() => getSocket(), []);
 
   const navigate = useNavigate();
+  const roomRef = useRef<HTMLDivElement | null>(null);
   const { isRoomArchived } = useRoomStatus();
 
   const moveDropRef = useNoteDrop({
@@ -191,7 +192,7 @@ export const DroppableRoom = ({
 
     socket.on(socketEvents.ArchivedRoom, ({ roomId: archivedRoomId }) => {
       if (archivedRoomId === roomId) {
-        navigate('/rooms/archived');
+        navigate(RouteNames.ArchivedRooms);
       }
     });
 
@@ -200,7 +201,7 @@ export const DroppableRoom = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });
-      navigate('/rooms');
+      navigate(RouteNames.Rooms);
     });
 
     socket.on(socketEvents.UserJoined, () => {
@@ -212,7 +213,7 @@ export const DroppableRoom = ({
     socket.on(socketEvents.UserRemove, ({ userId }) => {
       if (userId === user?.uuid) {
         toast.error("You've been removed from this room.");
-        navigate('/rooms');
+        navigate(RouteNames.Rooms);
       }
       queryClient.invalidateQueries({
         queryKey: queryKeys.getUsers(),

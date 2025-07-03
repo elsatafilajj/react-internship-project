@@ -16,9 +16,9 @@ export const ActivityPanel = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllActivitiesForRoom(roomId || '');
 
-  const socket = useMemo(() => getSocket(), []);
   const { scrollToNote } = useNoteScrollContext();
   const { zoomOut } = useControls();
+  const socket = useMemo(() => getSocket(), []);
 
   useEffect(() => {
     if (isFetched && data) {

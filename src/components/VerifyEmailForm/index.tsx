@@ -45,7 +45,7 @@ export const VerifyEmailForm = () => {
         localStorage.removeItem('redirectAfterLogin');
         window.location.href = redirectUrl;
       } else {
-        navigate('/rooms');
+        navigate(RouteNames.Rooms);
       }
     },
 

@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { leaveRoom } from '@/api/Room/room.client';
 import { queryKeys } from '@/constants/queryKeys';
+import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 
@@ -23,7 +24,7 @@ export const LeaveRoom = () => {
         queryKey: queryKeys.getUsers(),
       });
       toast.success('You left the room!');
-      navigate('/rooms');
+      navigate(RouteNames.Rooms);
     },
   });
 

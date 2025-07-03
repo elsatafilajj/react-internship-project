@@ -48,7 +48,7 @@ export const ConfirmActionDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className=" w-full">
-          <AlertDialogCancel className="bg-gray-100 border hover:bg-gray-100 cursor-pointer w-full md:w-[100px]">
+          <AlertDialogCancel className="bg-gray-100 border hover:bg-gray-200 cursor-pointer w-full md:w-[100px]">
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
