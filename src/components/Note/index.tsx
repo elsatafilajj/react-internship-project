@@ -340,6 +340,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
           >
             <textarea
+              name="content"
               onMouseOver={() => setTransformDisabled(true)}
               onFocus={() => {
                 setTransformDisabled(true);
