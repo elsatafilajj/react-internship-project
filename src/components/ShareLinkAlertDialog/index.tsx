@@ -23,8 +23,8 @@ import { queryKeys } from '@/constants/queryKeys';
 
 export const ShareLinkAlertDialog = () => {
   const [code, setCode] = useState('');
-
   const queryClient = useQueryClient();
+
   const { roomId } = useParams<{ roomId: string }>();
   const { data } = useGetRoomByIdQuery(roomId || '');
 
