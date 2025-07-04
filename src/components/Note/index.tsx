@@ -339,7 +339,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               isWinner && 'ring-1 ring-yellow-400',
             )}
           >
-            <span className="absolute flex self-end opacity-30">
+            <span className="absolute flex self-end uppercase opacity-30">
               #{note.uuid?.slice(0, 4)}
             </span>
             <textarea
