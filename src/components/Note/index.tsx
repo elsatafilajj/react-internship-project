@@ -80,7 +80,7 @@ export const Note = ({
 
   const { user } = useAuthContext();
 
-  const { selectedNoteId } = useNoteScrollContext();
+  const { selectedNoteId, bringToFront } = useNoteScrollContext();
 
   const queryClient = useQueryClient();
 
@@ -276,6 +276,7 @@ export const Note = ({
   const handleNoteContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(event.target.value);
     setHasUserEdited(true);
+    setTransformDisabled(true);
   };
 
   const handleNoteColorChange = (noteColor: string) => {
@@ -339,6 +340,7 @@ export const Note = ({
                 (e.target as HTMLElement).tagName.toLowerCase() !== 'textarea'
               ) {
                 setIsOpen(true);
+                bringToFront(noteId);
               }
             }}
             style={{
@@ -351,12 +353,12 @@ export const Note = ({
               ],
               'relative w-full p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === noteId &&
-                'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
+                'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-50 animate-pulse-slow',
               !!isWinner && 'ring-1 ring-yellow-400',
             )}
           >
             <textarea
-              onMouseOver={() => setTransformDisabled(true)}
+              onSelect={() => setTransformDisabled(true)}
               onFocus={() => {
                 setTransformDisabled(true);
 

@@ -25,7 +25,7 @@ export const DraggableNote = ({
   const { uuid, xAxis, yAxis } = note;
   const noteRef = useRef<HTMLDivElement | null>(null);
 
-  const { registerNoteRef } = useNoteScrollContext();
+  const { registerNoteRef, bringToFront } = useNoteScrollContext();
 
   const { isRoomArchived } = useRoomStatus();
 
@@ -60,6 +60,7 @@ export const DraggableNote = ({
         onMouseDown={() => setTransformDisabled(true)}
         onDragEnd={() => {
           setTransformDisabled(false);
+          bringToFront(uuid || '');
         }}
       >
         <Note
