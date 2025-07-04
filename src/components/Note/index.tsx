@@ -340,7 +340,7 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
             )}
           >
             <span className="absolute flex self-end uppercase opacity-30">
-              #{note.uuid?.slice(0, 4)}
+              #{note?.uuid?.slice(0, 4)}
             </span>
             <textarea
               onMouseOver={() => setTransformDisabled(true)}
