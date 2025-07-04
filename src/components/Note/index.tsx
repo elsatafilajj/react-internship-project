@@ -335,11 +335,17 @@ export const Note = ({
         <div className="relative flex flex-col items-center">
           <div
             ref={noteRef}
-            onClick={(e) => {
+            onDoubleClick={(e) => {
               if (
                 (e.target as HTMLElement).tagName.toLowerCase() !== 'textarea'
               ) {
                 setIsOpen(true);
+              }
+            }}
+            onClick={(e) => {
+              if (
+                (e.target as HTMLElement).tagName.toLowerCase() !== 'textarea'
+              ) {
                 bringToFront(noteId);
               }
             }}
@@ -358,7 +364,12 @@ export const Note = ({
             )}
           >
             <textarea
-              onSelect={() => setTransformDisabled(true)}
+              onClick={() => setIsOpen(false)}
+              onSelect={() => {
+                setTransformDisabled(true);
+                bringToFront(noteId);
+              }}
+              onPointerDownCapture={() => setTransformDisabled(true)}
               onFocus={() => {
                 setTransformDisabled(true);
 
