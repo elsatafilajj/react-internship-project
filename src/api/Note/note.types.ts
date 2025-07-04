@@ -24,20 +24,6 @@ export interface NoteItem {
   noteVotes: { user: User }[];
 }
 
-export interface CreateNoteInput {
-  roomId: Room['uuid'];
-  content?: string;
-  xAxis: number;
-  yAxis: number;
-}
-
-export interface UpdateNoteInput {
-  content?: string;
-  color?: NoteColor;
-  xAxis?: number;
-  yAxis?: number;
-}
-
 export type NoteVotesResponse = Pick<User, 'uuid' | 'firstName' | 'lastName'>;
 
 export interface ExportNotesInput {

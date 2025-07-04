@@ -126,7 +126,7 @@ export const EditProfileForm = () => {
       </form>
       <button
         onClick={() => navigate(-1)}
-        className="text-sm cursor-pointer transform-cpu"
+        className="text-sm cursor-pointer transform hover:scale-105 transition-transform"
       >
         Go back
       </button>
