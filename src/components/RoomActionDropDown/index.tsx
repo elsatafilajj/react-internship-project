@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { Archive, Settings2, Trash2 } from 'lucide-react';
+import { Archive, FolderOpenDot, Settings2, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { deleteRoom } from '@/api/Room/room.client';
+import { deleteRoom, updateRoom } from '@/api/Room/room.client';
 import {
   useGetRoomByIdQuery,
   useGetRoomHostQuery,
@@ -18,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { queryKeys } from '@/constants/queryKeys';
 import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
@@ -34,6 +36,20 @@ export const RoomActionsDropDown = () => {
 
   const isRoomActive = room?.data?.isActive;
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
+
+  const activateRoomMutation = useMutation({
+    mutationKey: queryKeys.getRooms(),
+    mutationFn: () => updateRoom(roomId || '', { isActive: true }),
+    onSuccess: () => toast.success('Room has been reactivated!'),
+  });
+
+  const handleActivateRoom = async () => {
+    activateRoomMutation.mutateAsync();
+
+    setTimeout(() => {
+      navigate(RouteNames.Rooms);
+    }, 300);
+  };
 
   const handleArchiveRoom = async () => {
     socket.emit(socketEvents.ArchiveRoom, { roomId });
@@ -105,6 +121,19 @@ export const RoomActionsDropDown = () => {
         {!isUserHost && (
           <DropdownMenuItem>
             <LeaveRoom />
+          </DropdownMenuItem>
+        )}
+        {!isRoomActive && isUserHost && (
+          <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleActivateRoom}
+              className="gap-4 p-0 px-1 cursor-pointer"
+            >
+              <span>
+                <FolderOpenDot className="text-card-revert" />
+              </span>
+              Activate
+            </DropdownMenuItem>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

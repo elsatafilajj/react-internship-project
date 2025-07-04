@@ -125,7 +125,7 @@ export const useTourSteps = () => {
                 ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
                 : 'Here you can export your notes, and leave the room.'
               : isHost
-                ? 'You can also only delete and export it.'
+                ? 'You can also only delete, export it and even reactivate it!'
                 : 'You can also only export it or leave.',
           },
         ]
