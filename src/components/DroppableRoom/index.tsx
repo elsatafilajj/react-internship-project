@@ -175,6 +175,7 @@ export const DroppableRoom = ({
       socket.off(socketEvents.RemovedVote);
       socket.off(socketEvents.DeletedNote);
       socket.off(socketEvents.ArchivedRoom);
+      socket.off(socketEvents.UnarchivedRoom);
       socket.off(socketEvents.DeletedRoom);
       socket.off(socketEvents.UserRemove);
       socket.off(socketEvents.RoomLeftP);
