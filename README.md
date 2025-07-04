@@ -1,44 +1,61 @@
-# Stuck – Real-time Collaborative Brainstorming Platform
+# Stuck – Frontend
 
-**Stuck** is a powerful, real-time collaboration tool that transforms how teams ideate, discuss, and organize ideas. Whether you're planning a product, launching a startup, or running a design sprint — Stuck gives your team the creative space it deserves.
+Welcome to the **frontend** of **Stuck**, a real-time collaborative brainstorming platform designed to help teams ideate, organize, and prioritize ideas visually and interactively.
 
-Built with ❤️ using **React**, **NestJS**, **PostgreSQL**, and **TypeScript**.
+Built with **React**, **TypeScript**, **Socket.IO**, and ❤️ for creative teams.
 
 ---
 
-## Key Features
+  ## What Is Stuck?
 
-**Live Brainstorming Rooms**  
-Invite your team with a shareable link and start generating ideas instantly on a virtual board.
+**Stuck** is a digital sticky-note board where multiple users can:
+- Add and move colorful sticky notes
+- Vote on ideas in real-time
+- Comment directly on each idea
+- Collaborate with zero friction
 
-**Drag & Drop Sticky Notes**  
-A playful yet practical canvas — move, group, and color-code your thoughts.
-
-**Voting System**  
-Let everyone vote on their favorite ideas to see what truly matters.
-
-**Inline Commenting**  
-Discuss ideas directly on sticky notes with threaded conversations.
-
-**Real-Time Collaboration**  
-Built on WebSockets for a smooth, live multi-user experience.
-
-**Role-Based Access**  
-Assign hosts and participants — control who can do what.
-
-**Export & Archive Rooms**  
-Download board data as **CSV** or **PDF** for your reports or retrospectives.
+> This repository contains the React frontend of the project.
 
 ---
 
 ## Tech Stack
-| Layer           | Tech Used                  |
-|------------------|----------------------------|
-| **Frontend**     | React, TypeScript, React DnD, Socket.IO |
-| **Backend**      | NestJS, TypeScript, WebSockets, REST |
-| **Database**     | PostgreSQL + TypeORM       |
-| **Authentication** | JWT, Bcrypt                |
-| **Collaboration** | WebSockets (NestJS Gateway) |
+
+- **React** with **TypeScript**
+- **Socket.IO Client** for real-time updates
+- **React DnD** for drag-and-drop notes
+- **TailwindCSS** (or CSS Modules) for styling
+- **React Router** for routing
+- **Context API** for state & auth
+- Fully responsive design
 
 ---
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/elsatafilajj/react-internship-project.git
+```
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+## Start the Development Server
+
+```bash
+npm run dev
+```
+
+## Environment Variables
+
+```bash
+VITE_API_URL=http://localhost:3000/api/v1
+VITE_SOCKET_URL=http://localhost:3000
+VITE_JOIN_ROOM_URL=http://localhost:8000/rooms/join
+```
+
 
