@@ -39,7 +39,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    socket.on(socketEvents.EditedRoom, () => {
+    socket.on(socketEvents.UpdatedRoom, () => {
       queryClient.refetchQueries({
         queryKey: queryKeys.getSingleRoom(roomId || ''),
       });

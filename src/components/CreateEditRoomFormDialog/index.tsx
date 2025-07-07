@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import { createRoom } from '@/api/Room/room.client';
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { Room } from '@/api/Room/room.types';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -34,11 +35,22 @@ export const CreateEditRoomFormDialog = () => {
 
   const isEditMode = Boolean(roomId);
 
+  const hadleEditRoom = (values: Pick<Room, 'title'>) => {
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { title: values.title },
+    });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getSingleRoom(roomId || ''),
+    });
+    toast.success('Room edited successfully.');
+  };
+
   const createRoomMutation = useMutation({
     mutationFn: createRoom,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.getRooms() });
-      toast.success('Your room is created!');
+      toast.success('Your room has been created!');
     },
     onError: (error) => {
       toast.error(error.message);
@@ -53,11 +65,8 @@ export const CreateEditRoomFormDialog = () => {
     onSubmit: async (values, formikHelpers) => {
       try {
         if (roomId) {
-          socket.emit(socketEvents.EditRoom, { roomId, title: values.title });
-          queryClient.invalidateQueries({
-            queryKey: queryKeys.getSingleRoom(roomId || ''),
-          });
-          toast.success('Room edited successfully.');
+          hadleEditRoom(values);
+          formik.resetForm();
           setOpen(false);
         } else {
           await createRoomMutation.mutateAsync(values);
@@ -108,7 +117,7 @@ export const CreateEditRoomFormDialog = () => {
               id="title"
               name="title"
               type="text"
-              value={formik.values.title}
+              defaultValue={formik.values.title}
               onChange={formik.handleChange}
               error={getFormikError(formik, 'title')}
             />

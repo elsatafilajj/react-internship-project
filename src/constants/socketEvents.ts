@@ -72,8 +72,8 @@ export enum socketEvents {
   ArchiveRoom = `${Namespaces.ROOMS}/${Actions.ARCHIVE}`,
   ArchivedRoom = `${Namespaces.ROOMS}/${Listeners.ARCHIVED}`,
 
-  EditRoom = `${Namespaces.ROOMS}/${Actions.EDIT}`,
-  EditedRoom = `${Namespaces.ROOMS}/${Listeners.EDITED}`,
+  UpdateRoom = `${Namespaces.ROOMS}/${Actions.UPDATE}`,
+  UpdatedRoom = `${Namespaces.ROOMS}/${Listeners.UPDATED}`,
 
   DeleteRoom = `${Namespaces.ROOMS}/${Actions.DELETE}`,
   DeletedRoom = `${Namespaces.ROOMS}/${Listeners.DELETED}`,
