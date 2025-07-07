@@ -1,4 +1,4 @@
-import { StickyNote } from 'lucide-react';
+import { Dot, StickyNote } from 'lucide-react';
 
 import { getFormattedDate } from '@/helpers/getFormattedDate';
 
@@ -6,6 +6,7 @@ interface RoomProps {
   title: string;
   updatedAt: string;
   onClick: () => void;
+  isHost: string;
 }
 
 const backgrounds = [
@@ -21,7 +22,7 @@ const backgrounds = [
   "bg-[url('@/assets/images/background-10.jpg')]",
 ];
 
-export const RoomCard = ({ title, updatedAt, onClick }: RoomProps) => {
+export const RoomCard = ({ title, updatedAt, onClick, isHost }: RoomProps) => {
   const random = Math.floor(Math.random() * backgrounds.length);
 
   const backgroundImg = backgrounds[random];
@@ -41,9 +42,25 @@ export const RoomCard = ({ title, updatedAt, onClick }: RoomProps) => {
           <p className="font-semibold text-foreground text-xl tracking-wide truncate w-full">
             {title}
           </p>
-          <p className="text-xs align-end text-gray-400">
-            Updated at: {getFormattedDate(new Date(updatedAt))}
-          </p>
+          <div className="flex">
+            <p className="text-xs flex items-center text-gray-400">
+              Updated at: {getFormattedDate(new Date(updatedAt))}
+            </p>
+            <div className="text-xs text-gray-500 italic opacity-50">
+              {isHost === 'participant' ? (
+                <p className="flex items-center">
+                  {' '}
+                  <Dot className="w-4 h-4" />
+                  Owned by others
+                </p>
+              ) : (
+                <p className="flex items-center">
+                  <Dot className="w-4 h-4" />
+                  Owned by you
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

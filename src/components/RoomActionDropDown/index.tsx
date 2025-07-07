@@ -54,8 +54,6 @@ export const RoomActionsDropDown = () => {
       } else {
         socket.emit(socketEvents.DeleteRoom, { roomId: roomId });
       }
-
-      console.log(roomId);
     } catch (error) {
       console.error('Deletion failed', error);
     }
