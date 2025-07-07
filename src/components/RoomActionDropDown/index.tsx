@@ -35,7 +35,10 @@ export const RoomActionsDropDown = () => {
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
   const handleUnArchiveRoom = async () => {
-    socket.emit(socketEvents.UnarchiveRoom, { roomId });
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { isActive: true },
+    });
 
     setTimeout(() => {
       navigate(RouteNames.Rooms);
@@ -43,7 +46,10 @@ export const RoomActionsDropDown = () => {
   };
 
   const handleArchiveRoom = async () => {
-    socket.emit(socketEvents.ArchiveRoom, { roomId });
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { isActive: false },
+    });
 
     setTimeout(() => {
       navigate(RouteNames.ArchivedRooms);
