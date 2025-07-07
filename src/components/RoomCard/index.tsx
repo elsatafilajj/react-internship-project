@@ -46,7 +46,7 @@ export const RoomCard = ({ title, updatedAt, onClick, isHost }: RoomProps) => {
             <p className="text-xs flex items-center text-gray-400">
               Updated at: {getFormattedDate(new Date(updatedAt))}
             </p>
-            <div className="text-xs text-gray-500 italic opacity-50">
+            <div className="text-xs text-gray-400 italic">
               {isHost === 'participant' ? (
                 <p className="flex items-center">
                   {' '}
