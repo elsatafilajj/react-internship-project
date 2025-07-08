@@ -16,8 +16,8 @@ import { ForgotPasswordSchema } from '@/schemas/ForgotPasswordSchema';
 import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const ForgotPasswordForm = () => {
-  const navigate = useNavigate();
   const [messageSent, setMessageSent] = useState(false);
+  const navigate = useNavigate();
 
   const forgotPasswordMutation = useMutation({
     mutationFn: forgotPassword,
@@ -40,7 +40,7 @@ export const ForgotPasswordForm = () => {
         formikHelpers.resetForm();
       } catch (error) {
         if (error instanceof AxiosError) {
-          const errorMessage = error.response?.data.message as AxiosError<
+          const errorMessage = error.response?.data?.message as AxiosError<
             ErrorResponseData['message']
           >;
 

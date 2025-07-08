@@ -33,7 +33,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         }
 
         const response = await getUserDetails();
-        setUser(response.data);
+        setUser(response?.data);
       } catch {
         localStorage.removeItem('accessToken');
       } finally {
@@ -75,7 +75,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const createdUserDate = new Date(user.createdAt);
 
     const diffInMilliseconds = now.getTime() - createdUserDate.getTime();
-    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1_000 * 60));
 
     setIsUserNewlyCreated(diffInMinutes <= 5);
   }, [user]);

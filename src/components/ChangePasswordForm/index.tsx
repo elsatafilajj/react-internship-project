@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 import { changePassword } from '@/api/User/user.client';
@@ -13,9 +14,11 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { capitalize } from '@/helpers/capitalize';
 import { getFormikError } from '@/helpers/getFormikError';
 import { useForm } from '@/hooks/useForm';
 import { ChangePasswordSchema } from '@/schemas/ChangePasswordSchema';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 export const ChangePasswordForm = () => {
   const { logout } = useAuthContext();
@@ -38,8 +41,21 @@ export const ChangePasswordForm = () => {
       try {
         await changePasswordMutation.mutateAsync(values);
         formikHelpers.resetForm();
-      } catch {
-        console.error('Change password failed');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const errorMessage = error.response?.data?.message as AxiosError<
+            ErrorResponseData['message']
+          >;
+
+          let capitalizedError;
+          if (Array.isArray(errorMessage)) {
+            capitalizedError = capitalize(errorMessage[0]);
+          } else {
+            capitalizedError = capitalize(errorMessage.toLocaleString());
+          }
+
+          formikHelpers.setFieldError('newPasswordConfirm', capitalizedError);
+        }
       }
     },
   });

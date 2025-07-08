@@ -2,21 +2,23 @@ import { History } from 'lucide-react';
 
 import { ActivityPanel } from '@/components/ActivityPanel';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 export const ActivityPanelToggle = () => {
-  const { activityRef } = useTourRefsContext();
-
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
-          className="group fixed top-[70px] right-5 z-50 bg-card border border-gray-300 text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200"
+          className="group fixed top-18 right-5 z-50 bg-card border border-gray-300 text-foreground shadow-md hover:transform hover:scale-110 transition-transform duration-200"
         >
-          <div className="p-2" ref={activityRef}>
+          <div className="p-2" id="activity">
             <History className="h-5 w-5" />
           </div>
 
@@ -28,9 +30,11 @@ export const ActivityPanelToggle = () => {
 
       <SheetContent
         side="right"
-        className="w-80 mt-[100px] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
+        className="w-80 top-18 max-h-[92vh] rounded-tl-xl rounded-bl-xl shadow-xl border border-gray-200 overflow-y-auto"
       >
-        <ActivityPanel />
+        <SheetTitle className="w-full h-full">
+          <ActivityPanel />
+        </SheetTitle>
       </SheetContent>
     </Sheet>
   );

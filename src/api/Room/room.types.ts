@@ -1,3 +1,4 @@
+import { ResourceType } from '@/api/Activities/activitites.types';
 import { User } from '@/api/User/user.types';
 
 export interface RoomWithRole {
@@ -17,6 +18,17 @@ export interface Room {
   note: Note[];
 }
 
+export interface InviteRoomCodeRepsonse {
+  inviteCode: string;
+}
+
+export interface RoomJoinedResponse {
+  room: Room;
+  user: User;
+  role: string;
+  joined_at: string;
+}
+
 export interface Note {
   uuid: string;
   content: string;
@@ -29,6 +41,14 @@ export interface Note {
 
 export interface CreateRoomInput {
   title: string;
+}
+
+export interface LeaveRoomResponse {
+  success: boolean;
+  message: string;
+  resourceType: ResourceType;
+  resourceId: string;
+  timestamp: string;
 }
 
 export interface UpdateRoomInput {

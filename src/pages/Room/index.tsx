@@ -1,15 +1,17 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import toast from 'react-hot-toast';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { ActivityPanelToggle } from '@/components/ActivityPanel/Toggle';
 import { DroppableRoom } from '@/components/DroppableRoom';
-import { MobileParticipantsToggle } from '@/components/RoomParticipantsPanel/MobileParticipantsToggle';
 import { ToolPalette } from '@/components/ToolPalette';
+import { queryKeys } from '@/constants/queryKeys';
+import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { getSocket } from '@/helpers/socket';
 
@@ -18,17 +20,35 @@ export const Room = () => {
   const transformRef = useRef<ReactZoomPanPinchRef>({} as ReactZoomPanPinchRef);
   const { roomId } = useParams<{ roomId: string }>();
   const socket = useMemo(() => getSocket(), []);
+  const queryClient = useQueryClient();
 
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!roomId) return;
 
-    socket.emit(socketEvents.JoinRoom, roomId);
+    localStorage.setItem('lastRoomId', roomId);
+
+    const uuidRegex = /^[0-9a-fA-F-]{36}$/;
+    const isUuidValid = uuidRegex.test(roomId);
+    if (!isUuidValid) navigate(RouteNames.Rooms);
+  }, [roomId]);
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    socket.emit(socketEvents.JoinRoom, { roomId });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getSingleRoom(roomId || ''),
+    });
     toast.success('You joined the room');
 
     return () => {
-      socket.emit(socketEvents.LeaveRoom, roomId);
+      socket.emit(socketEvents.LeaveRoom, { roomId });
       toast.success('You left the room');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleRoom(roomId || ''),
+      });
     };
   }, [roomId]);
 
@@ -51,16 +71,12 @@ export const Room = () => {
           />
         </TransformComponent>
 
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
           <ToolPalette setTransformDisabled={setTransformDisabled} />
         </div>
 
         <div className="fixed z-50">
           <ActivityPanelToggle />
-        </div>
-
-        <div className="fixed">
-          <MobileParticipantsToggle />
         </div>
       </TransformWrapper>
     </DndProvider>

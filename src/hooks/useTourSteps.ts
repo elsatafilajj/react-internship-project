@@ -1,80 +1,146 @@
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { useParams } from 'react-router-dom';
+
+import {
+  useGetRoomByIdQuery,
+  useGetRoomHostQuery,
+} from '@/api/Room/room.queries';
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 
 export interface TourStep {
   title?: string;
   intro: string;
-  element?: HTMLDivElement | null;
+  element?: HTMLElement | null;
 }
 
 export const useTourSteps = () => {
-  const tourRefs = useTourRefsContext();
   const hasEnteredRoom = useHasEnteredRoom();
-  return [
+
+  const { roomId } = useParams<{ roomId: string }>();
+  const { data } = useGetRoomByIdQuery(roomId || '');
+  const isRoomActive = data?.data?.isActive;
+
+  const { user } = useAuthContext();
+  const { data: roomHost } = useGetRoomHostQuery(roomId || '');
+  const isHost = roomHost?.data?.uuid === user?.uuid;
+
+  const getSteps = (): TourStep[] => [
     {
-      title: 'Welcome to your Stuck Tour!',
-      intro:
-        'Let’s take a quick tour of Stuck — your space for collaboration, brainstorming, and creative problem-solving!',
+      title: !hasEnteredRoom ? 'Welcome to your Stuck Tour!' : '',
+      intro: !hasEnteredRoom
+        ? 'Let’s take a quick tour of Stuck — your space for collaboration, brainstorming, and creative problem-solving!'
+        : "Let's take a further step into your room tour",
     },
-    {
-      element: tourRefs.toggleSidebarIconRef.current,
-      intro: 'Here you can find more and navigate through the application!',
-    },
-    { intro: 'Then in the sidebar' },
-    {
-      element: tourRefs.myRoomsDashboardRef.current,
-      intro:
-        'Here’s where you’ll find all the rooms you’ve joined — your creative hubs!',
-    },
-    {
-      element: tourRefs.createEditRoomRef.current,
-      intro: hasEnteredRoom
-        ? 'Edit your room’s title here to keep things organized and clear.'
-        : 'You can create a brand new room. Just click here!',
-    },
-    {
-      element: tourRefs.archiveRef.current,
-      intro: 'Archived rooms live here — nothing’s ever truly lost!',
-    },
+    ...(!hasEnteredRoom
+      ? [
+          {
+            intro: 'Here you can manage all of your rooms',
+            element: document.getElementById('rooms'),
+          },
+          {
+            element: document.getElementById('sidebar'),
+            intro:
+              'Here you can find more and navigate through the application!',
+          },
+          { intro: 'Then in the sidebar' },
+          {
+            element: document.getElementById('create-edit-room'),
+            intro: hasEnteredRoom
+              ? isHost
+                ? 'Edit your room’s title here to keep things organized and clear.'
+                : 'Only the host can edit the room title. If you need to change it, ask the host to do so.'
+              : 'You can create a brand new room. Just click here!',
+          },
+          {
+            element: document.getElementById('room'),
+            intro:
+              'Here’s where you’ll find all the rooms you’ve joined — your creative hubs!',
+          },
+          {
+            element: document.getElementById('archive'),
+            intro: 'Archived rooms live here — nothing’s ever truly lost!',
+          },
+          {
+            element: document.getElementById('theme'),
+            intro:
+              'Customize your experience by toggling between light and dark themes.',
+          },
+          {
+            element: document.getElementById('tour'),
+            intro:
+              'Want to find out more? Restart the tour anytime from here on any page!',
+          },
+        ]
+      : []),
     ...(hasEnteredRoom
       ? [
           {
-            element: tourRefs.shareLinkRef.current,
-            intro:
-              'Want to collaborate? Share this link to invite others into your room.',
+            element: document.getElementById('note'),
+            intro: isRoomActive
+              ? 'Drag this icon to create a new note and keep the ideas flowing!'
+              : 'Notes can’t be created in a locked room — but you can still browse and reflect on what was discussed.',
+          },
+          {
+            element: document.getElementById('zoom-in'),
+            intro: 'Click here to zoom in, in a centered manner!',
+          },
+          {
+            element: document.getElementById('zoom-out'),
+            intro: 'And click here to zoom back out.',
+          },
+          {
+            element: document.getElementById('participants'),
+            intro: isRoomActive
+              ? isHost
+                ? 'See and manage all participants here — you can even kick someone if needed.'
+                : 'Here’s the list of everyone in this room. If you want someone to be kicked from the room ask the host to do so!'
+              : 'This is the list of everyone who participated. Since this room is locked, no new members can join.',
+          },
+          ...(isRoomActive
+            ? [
+                {
+                  element: document.getElementById('share'),
+                  intro: isRoomActive
+                    ? 'Invite others to collaborate by sharing this room’s link.'
+                    : 'This room is no longer active, so sharing is disabled. But you can revisit what was built here anytime.',
+                },
+              ]
+            : []),
+        ]
+      : []),
+    ...(hasEnteredRoom
+      ? [
+          {
+            element: document.getElementById('room-actions'),
+            intro: isRoomActive
+              ? isHost
+                ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
+                : 'Here you can export your notes, and leave the room.'
+              : isHost
+                ? 'You can also only delete and export it.'
+                : 'You can also only export it or leave.',
           },
         ]
       : []),
     {
-      element: tourRefs.changeThemeRef.current,
-      intro:
-        'Customize your experience by toggling between light and dark themes.',
-    },
-    {
-      element: tourRefs.profileRef.current,
+      element: document.getElementById('profile'),
       intro: 'Update your personal info and preferences anytime from here.',
     },
-    {
-      element: tourRefs.tourRef.current,
-      intro: 'Need a refresher later? Restart the tour anytime from here.',
-    },
-
     ...(hasEnteredRoom
       ? [
           {
-            element: tourRefs.activityRef.current,
-            intro:
-              'Stay in the loop with real-time updates on everything happening in your room.',
+            element: document.getElementById('activity'),
+            intro: isRoomActive
+              ? 'Stay updated with live activities and changes happening in this room.'
+              : 'This room is locked — no more activities will occur, but you can review all past actions here.',
           },
           {
-            element: tourRefs.noteDragRef.current,
-            intro: 'Drag this icon anywhere on the board to create a new note!',
-          },
-          {
-            intro:
-              'You can move notes around, change their colors, vote on the best ones, and most importantly — share your ideas and keep the creativity flowing. Have fun!',
+            intro: isRoomActive
+              ? 'Feel free to move notes, change colors, vote on ideas, and share your thoughts. Enjoy!'
+              : 'The room being in view-only mode now — all creativity that happened here is saved for your reference.',
           },
         ]
       : []),
   ];
+  return getSteps;
 };

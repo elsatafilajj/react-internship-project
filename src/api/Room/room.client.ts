@@ -1,4 +1,5 @@
 import { apiRequest } from '@/api/Api';
+import { User } from '@/api/User/user.types';
 import { DeleteResponse } from '@/types/DeleteResponse';
 
 import {
@@ -6,6 +7,9 @@ import {
   CreateRoomInput,
   UpdateRoomInput,
   RoomWithRole,
+  InviteRoomCodeRepsonse,
+  RoomJoinedResponse,
+  LeaveRoomResponse,
 } from './room.types';
 
 export const getAllRooms = async () =>
@@ -53,14 +57,26 @@ export const removeUserFromRoom = async (roomId: string, userId: string) =>
     params: { userId },
   });
 
-export const joinRoom = async (roomId: string) =>
-  apiRequest<undefined, Room>({
+export const getInviteCodeForRoom = async (roomId: string) =>
+  apiRequest<undefined, InviteRoomCodeRepsonse>({
     method: 'POST',
-    url: `rooms/join/${roomId}`,
+    url: `rooms/${roomId}/invite`,
+  });
+
+export const joinRoom = async (code: string) =>
+  apiRequest<undefined, RoomJoinedResponse>({
+    method: 'POST',
+    url: `rooms/join/${code}`,
   });
 
 export const leaveRoom = async (roomId: string) =>
-  apiRequest<undefined, Room>({
+  apiRequest<undefined, LeaveRoomResponse>({
     method: 'POST',
-    url: `rooms/leave/${roomId}`,
+    url: `rooms/${roomId}/leave`,
+  });
+
+export const getRoomHost = async (roomId: string) =>
+  apiRequest<undefined, Pick<User, 'uuid' | 'firstName' | 'lastName'>>({
+    method: 'GET',
+    url: `rooms/host/${roomId}`,
   });

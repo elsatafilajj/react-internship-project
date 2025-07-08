@@ -27,12 +27,12 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   const [comments, setComments] = useState<NoteCommentResponse[]>([]);
   const [editingComment, setEditingComment] =
     useState<NoteCommentResponse | null>(null);
-  const queryClient = useQueryClient();
-  const { user } = useAuthContext();
   const [replyComment, setReplyComment] = useState<string | null>(null);
-  const socket = getSocket();
+  const { user } = useAuthContext();
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllCommentsQuery(noteId);
+  const queryClient = useQueryClient();
+  const socket = getSocket();
 
   const createFormik = useForm({
     schema: CommentSchema,
@@ -85,16 +85,18 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
 
   useEffect(() => {
     if (isFetched && data) {
-      setComments(data.data);
+      setComments(data?.data);
     }
   }, [data, isFetched]);
 
   useEffect(() => {
     socket.on(socketEvents.CreatedComment, (newComment) => {
-      console.log('Received new comment:', newComment);
       if (noteId === newComment.note.uuid) {
         setComments((prev) => [...(prev || []), newComment]);
       }
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getCommentsByNoteId(noteId),
+      });
     });
 
     socket.on(socketEvents.UpdatedComment, (newComment) => {
@@ -107,6 +109,9 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
           ),
         );
       }
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getCommentsByNoteId(noteId),
+      });
     });
 
     socket.on(socketEvents.DeletedComment, (deletedComment) =>
@@ -128,7 +133,7 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   };
 
   return (
-    <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[90vh] rounded-md overflow-hidden shadow-md border">
+    <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[93vh] rounded-md overflow-hidden shadow-md border">
       <ScrollArea className="flex-1 p-4 space-y-4 overflow-y-auto">
         <div className="space-y-4">
           <div className="border rounded-md p-3 shadow-sm hover:shadow-md transition">

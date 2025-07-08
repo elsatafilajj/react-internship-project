@@ -12,7 +12,12 @@ enum Actions {
   UPDATE = 'update',
   DELETE = 'delete',
   VOTE = 'vote',
-  REMOVEVOTE = 'removeVote',
+  REMOVE_VOTE = 'removeVote',
+  ARCHIVE = 'archive',
+  LEAVEP = 'leaveP',
+  REMOVE = 'remove',
+  EDITING_START = 'editing-start',
+  EDITING_STOP = 'editing-stop',
 }
 
 enum Listeners {
@@ -23,6 +28,10 @@ enum Listeners {
   DELETED = 'deleted',
   VOTED = 'voted',
   REMOVED = 'removed',
+  ARCHIVED = 'archived',
+  LEFTP = 'leftP',
+  EDITING_STARTED = 'editing-started',
+  EDITING_STOPED = 'editing-stoped',
 }
 
 export enum socketEvents {
@@ -53,8 +62,29 @@ export enum socketEvents {
   AddVote = `${Namespaces.NOTES}/${Actions.VOTE}`,
   AddedVote = `${Namespaces.NOTES}/${Listeners.VOTED}`,
 
-  RemoveVote = `${Namespaces.NOTES}/${Actions.REMOVEVOTE}`,
+  RemoveVote = `${Namespaces.NOTES}/${Actions.REMOVE_VOTE}`,
   RemovedVote = `${Namespaces.NOTES}/${Listeners.REMOVED}`,
 
   NewActivity = `${Namespaces.ACTIVITIES}`,
+
+  ArchiveRoom = `${Namespaces.ROOMS}/${Actions.ARCHIVE}`,
+  ArchivedRoom = `${Namespaces.ROOMS}/${Listeners.ARCHIVED}`,
+
+  DeleteRoom = `${Namespaces.ROOMS}/${Actions.DELETE}`,
+  DeletedRoom = `${Namespaces.ROOMS}/${Listeners.DELETED}`,
+
+  UserRemove = `${Namespaces.ROOMS}/${Listeners.REMOVED}`,
+
+  RoomLeaveP = `${Namespaces.ROOMS}/${Actions.LEAVEP}`,
+  RoomLeftP = `${Namespaces.ROOMS}/${Listeners.LEFTP}`,
+
+  UserJoined = `${Namespaces.ROOMS}/${Listeners.JOINED}`,
+
+  RemoveUser = `${Namespaces.ROOMS}/${Actions.REMOVE}`,
+
+  NotesEditingStart = `${Namespaces.NOTES}/${Actions.EDITING_START}`,
+  NotesEditingStop = `${Namespaces.NOTES}/${Actions.EDITING_STOP}`,
+
+  NotesEditingStarted = `${Namespaces.NOTES}/${Listeners.EDITING_STARTED}`,
+  NotesEditingStoped = `${Namespaces.NOTES}/${Listeners.EDITING_STOPED}`,
 }

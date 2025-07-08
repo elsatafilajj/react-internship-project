@@ -1,11 +1,15 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { EllipsisVertical } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useMutation } from '@tanstack/react-query';
+import { Archive, Settings2, Trash2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { deleteRoom, updateRoom } from '@/api/Room/room.client';
-import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
+import { deleteRoom } from '@/api/Room/room.client';
+import {
+  useGetRoomByIdQuery,
+  useGetRoomHostQuery,
+} from '@/api/Room/room.queries';
 import { CreateEditRoomFormDialog } from '@/components/CreateEditRoomFormDialog';
+import { ExportDataFormDialog } from '@/components/ExportDataFormDialog';
+import { LeaveRoom } from '@/components/LeaveRoom';
 import { ConfirmActionDialog } from '@/components/shared/ConfirmActionDialog';
 import {
   DropdownMenu,
@@ -13,52 +17,45 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { queryKeys } from '@/constants/queryKeys';
 import { RouteNames } from '@/constants/routeNames';
-import { cn } from '@/lib/utils';
+import { socketEvents } from '@/constants/socketEvents';
+import { useAuthContext } from '@/context/AuthContext/AuthContext';
+import { getSocket } from '@/helpers/socket';
 
 export const RoomActionsDropDown = () => {
-  const { roomId } = useParams<{ roomId: string }>();
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const socket = getSocket();
 
-  const { data } = useGetRoomByIdQuery(roomId || '');
+  const { roomId } = useParams<{ roomId: string }>();
+  const { user } = useAuthContext();
+  const { data: room } = useGetRoomByIdQuery(roomId || '');
+  const { data: roomHost } = useGetRoomHostQuery(roomId || '');
 
-  const archiveMutation = useMutation({
-    mutationFn: (roomId: string) => updateRoom(roomId, { isActive: false }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleRoom(roomId || ''),
-      });
-      toast.success('Room archived successfully.');
-      navigate(RouteNames.ArchivedRooms);
-    },
-    onError: () => {
-      toast.error('Only host can archive this room!');
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (roomId: string) => deleteRoom(roomId),
-    onSuccess: () => {
-      toast.success('Room deleted successfully!');
-      navigate(RouteNames.Rooms);
-    },
-    onError: () => {
-      toast.error('Room deletion failed.');
-    },
-  });
+  const isRoomActive = room?.data?.isActive;
+  const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
   const handleArchiveRoom = async () => {
-    try {
-      await archiveMutation.mutateAsync(roomId || '');
-    } catch (error) {
-      console.error('Archived failed', error);
-    }
+    socket.emit(socketEvents.ArchiveRoom, { roomId });
+
+    setTimeout(() => {
+      navigate(RouteNames.ArchivedRooms);
+    }, 300);
   };
+
+  const deleteRoomMutation = useMutation({
+    mutationFn: () => deleteRoom(roomId || ''),
+    onSuccess: () => navigate(RouteNames.Rooms),
+  });
+
   const handleDelete = async () => {
     try {
-      await deleteMutation.mutateAsync(roomId || ' ');
+      if (!isRoomActive) {
+        deleteRoomMutation.mutateAsync();
+      } else {
+        socket.emit(socketEvents.DeleteRoom, { roomId: roomId });
+      }
+
+      console.log(roomId);
     } catch (error) {
       console.error('Deletion failed', error);
     }
@@ -67,30 +64,50 @@ export const RoomActionsDropDown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div
-          className={cn(
-            'rounded',
-            data?.data.isActive === false
-              ? 'cursor-not-allowed opacity-50 pointer-events-none'
-              : 'cursor-pointer hover:bg-muted',
-          )}
-        >
-          <EllipsisVertical />
+        <div id="room-actions" className="rounded">
+          <Settings2 className="w-5 h-5" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         sideOffset={10}
-        className="flex flex-col gap-3 p-4 w-42"
+        className="flex flex-col gap-3 p-4 w-42 mt-4 mr-5"
       >
-        <CreateEditRoomFormDialog />
-        <DropdownMenuItem onClick={handleArchiveRoom}>Archive</DropdownMenuItem>
-        <ConfirmActionDialog
-          triggerButtonName="Delete"
-          title="You are about to delete this room."
-          message="This action cannot be undone. This will permanently delete your
+        {isUserHost && isRoomActive && <CreateEditRoomFormDialog />}
+        {isUserHost && isRoomActive && (
+          <DropdownMenuItem
+            onClick={handleArchiveRoom}
+            className="gap-4 ml-0.5"
+          >
+            <span>
+              {' '}
+              <Archive className="text-card-revert" />
+            </span>
+            Archive
+          </DropdownMenuItem>
+        )}
+
+        {isUserHost && (
+          <ConfirmActionDialog
+            className="w-full cursor-pointe flex"
+            triggerButtonName={
+              <div className="ml-0.5 flex gap-4">
+                <Trash2 /> Delete
+              </div>
+            }
+            title="You are about to delete this room."
+            message="This action cannot be undone. This will permanently delete your
           room."
-          onConfirm={handleDelete}
-        />
+            onConfirm={handleDelete}
+          />
+        )}
+
+        <ExportDataFormDialog />
+
+        {!isUserHost && (
+          <DropdownMenuItem>
+            <LeaveRoom />
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

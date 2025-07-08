@@ -1,3 +1,5 @@
+import { ErrorResponseData } from '@/types/ErrorResponse';
+
 import { apiRequest } from '../Api';
 import {
   LoginInput,
@@ -11,7 +13,6 @@ import {
   RefreshTokenResponse,
   SetVerifyEmailCode,
   SetVerifyEmailResponse,
-  UserInRoom,
 } from './user.types';
 
 export const login = async (data: LoginInput) =>
@@ -56,6 +57,12 @@ export const verifyEmail = async (data: SetVerifyEmailCode, email: string) =>
     data,
   });
 
+export const resendVerificationEmail = async (email: string) =>
+  apiRequest<{ email: string }, ErrorResponseData>({
+    method: 'POST',
+    url: `auth/resend-verification/${email}`,
+  });
+
 export const editProfile = async (data: Partial<User>) => {
   return apiRequest<Partial<User>, User>({
     method: 'PATCH',
@@ -88,7 +95,7 @@ export const getUserDetails = async () =>
   apiRequest<undefined, User>({ method: 'GET', url: 'users/me' });
 
 export const getAllUsersInRoom = async (roomId: string) => {
-  return apiRequest<undefined, UserInRoom[]>({
+  return apiRequest<undefined, User[]>({
     method: 'GET',
     url: `users/room/${roomId}`,
   });

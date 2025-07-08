@@ -4,26 +4,30 @@ import { useEffect } from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { TourStep, useTourSteps } from '@/hooks/useTourSteps';
 
 interface TourLauncherProps {
   onToggleSidebar: () => void;
+  setSideBarToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
+export const TourLauncher = ({
+  onToggleSidebar,
+  setSideBarToggle,
+}: TourLauncherProps) => {
   const { isUserNewlyCreated } = useAuthContext();
 
-  const { tourRef } = useTourRefsContext();
+  const hasEnteredRoom = useHasEnteredRoom();
 
-  const tourSteps: TourStep[] = useTourSteps();
+  const getTourSteps: () => TourStep[] = useTourSteps();
 
   const startTour = () => {
     setTimeout(() => {
       const intro = introJs();
 
       intro.setOptions({
-        steps: tourSteps,
+        steps: getTourSteps(),
         tooltipClass: 'custom-intro-tooltip',
         overlayOpacity: 0,
         highlightClass: 'bg-primary/20 shadow-none',
@@ -34,36 +38,43 @@ export const TourLauncher = ({ onToggleSidebar }: TourLauncherProps) => {
       intro.onchange(() => {
         const currentStep = intro._currentStep;
 
-        if (currentStep === 0 || currentStep === 2 || currentStep === 8) {
+        if ((currentStep === 3 || currentStep === 9) && !hasEnteredRoom) {
           onToggleSidebar();
-        }
-
-        if (currentStep === 2) {
-          intro._hintCloseCallback = () => {};
         }
       });
 
       intro.start();
-    }, 1000);
+    }, 300);
   };
 
   useEffect(() => {
-    if (isUserNewlyCreated) {
-      startTour();
+    if (
+      isUserNewlyCreated &&
+      localStorage.getItem('has-started-initial-tour') !== 'true'
+    ) {
+      setTimeout(() => {
+        startTour();
+        setSideBarToggle(false);
+        localStorage.setItem('has-started-initial-tour', 'true');
+        setSideBarToggle(false);
+      }, 1000);
     }
   }, [isUserNewlyCreated]);
 
   return (
-    <Button variant="ghost" onClick={startTour}>
-      <div
-        ref={tourRef}
+    <div id="tour">
+      <Button
+        variant="ghost"
         className="cursor-pointer hover:bg-muted w-full flex justify-start gap-4
-      items-center -ml-2.5"
+      items-center"
+        onClick={() => {
+          startTour();
+          onToggleSidebar();
+        }}
       >
         <Binoculars className="stroke-foreground" />
-
         <p>Stuck Tour</p>
-      </div>
-    </Button>
+      </Button>
+    </div>
   );
 };

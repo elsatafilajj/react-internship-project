@@ -16,10 +16,10 @@ import { useForm } from '@/hooks/useForm';
 import { ResetPasswordSchema } from '@/schemas/ResetPasswordSchema';
 
 const ResetPasswordForm = () => {
+  const [messageSent, setMessageSent] = useState(false);
   const [params] = useSearchParams();
   const token = params.get('token');
-  const firstName = params.get('firstname');
-  const [messageSent, setMessageSent] = useState(false);
+  const name = params.get('name');
 
   const resetPasswordMutation = useMutation({
     mutationFn: ({ data, token }: { data: SetPasswordInput; token: string }) =>
@@ -79,8 +79,7 @@ const ResetPasswordForm = () => {
       ) : (
         <>
           <p className="text-[18px] ">
-            Hello,{' '}
-            {firstName && firstName[0].toUpperCase() + firstName.slice(1)}
+            Hello, {name && name[0].toUpperCase() + name.slice(1)}
           </p>
           <p className="text-[14px] text-stone-400">
             A request has been made to reset your password. If you made this

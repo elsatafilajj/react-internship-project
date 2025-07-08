@@ -4,7 +4,7 @@ import { OTPInput, REGEXP_ONLY_DIGITS } from 'input-otp';
 import toast from 'react-hot-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { verifyEmail } from '@/api/User/user.client';
+import { resendVerificationEmail, verifyEmail } from '@/api/User/user.client';
 import {
   SetVerifyEmailCode,
   SetVerifyEmailResponse,
@@ -39,7 +39,14 @@ export const VerifyEmailForm = () => {
       });
 
       toast.success('You are logged in!');
-      navigate(RouteNames.Rooms);
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
+
+      if (redirectUrl) {
+        localStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirectUrl;
+      } else {
+        navigate(RouteNames.Rooms);
+      }
     },
 
     onError: (error) => {
@@ -53,6 +60,14 @@ export const VerifyEmailForm = () => {
       } else {
         toast.error(message || 'Something went wrong');
       }
+    },
+  });
+
+  const resendVerificationEmailMutation = useMutation({
+    mutationFn: (email: string) => resendVerificationEmail(email),
+
+    onSuccess: () => {
+      toast.success('Check you email!');
     },
   });
 
@@ -86,7 +101,7 @@ export const VerifyEmailForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center justify-center text-center">
       <label className="mb-3 text-md font-medium" htmlFor="code">
         Enter Verification Code
       </label>
@@ -110,6 +125,14 @@ export const VerifyEmailForm = () => {
             <InputOTPSlot index={5} />
           </InputOTPGroup>
         </OTPInput>
+        <button
+          className="underline text-card-revert cursor-pointer hover:text-primary"
+          onClick={() => {
+            resendVerificationEmailMutation.mutateAsync(email || '');
+          }}
+        >
+          Resend code
+        </button>
       </form>
     </div>
   );

@@ -25,11 +25,19 @@ export const Rooms = () => {
       </p>
     );
 
-  const hasRooms = rooms?.data.length;
+  const hasRooms = rooms?.data?.length;
+
+  const sortedRooms = rooms?.data
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.room.createdAt).getTime() -
+        new Date(a.room.createdAt).getTime(),
+    );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary px-6 py-12 text-gray-800">
-      <div className="text-center max-w-3xl mx-auto mb-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary px-6 py-25 text-gray-800">
+      <div className="text-center max-w-3xl mx-auto mb-12 ">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 flex items-center justify-center gap-3 animate-fade-in-down">
           <Sparkles className="text-name animate-bounce" size={32} />
           Welcome{' '}
@@ -41,7 +49,7 @@ export const Rooms = () => {
         </p>
       </div>
 
-      <div className="w-full xl:max-w-[1500px]">
+      <div id="rooms" className="w-full xl:max-w-[1500px]">
         <div className="flex justify-between">
           {' '}
           <h2 className="text-lg md:text-md font-semibold text-foreground  animate-fade-in flex items-center pl-4 gap-2">
@@ -54,7 +62,7 @@ export const Rooms = () => {
         </div>
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 w-full px-4">
           {hasRooms ? (
-            rooms.data?.map((roomData) => (
+            sortedRooms?.map((roomData) => (
               <div
                 key={roomData.room.uuid}
                 className="transform hover:scale-105 transition-transform duration-300 animate-fade-in-up"

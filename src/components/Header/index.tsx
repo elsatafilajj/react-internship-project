@@ -1,10 +1,12 @@
-import { PanelLeft, UserCircle2 } from 'lucide-react';
+import { AxiosError } from 'axios';
+import { CircleUser, PanelLeft } from 'lucide-react';
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { useGetAllUsersByRoomQuery } from '@/api/User/user.query';
 import { RoomActionsDropDown } from '@/components/RoomActionDropDown';
-import { DesktopParticipantsToggle } from '@/components/RoomParticipantsPanel/DesktopParticipantsToggle';
+import { ParticipantsToggle } from '@/components/RoomParticipantsPanel/ParticipantsToggle';
 import { ShareLinkAlertDialog } from '@/components/ShareLinkAlertDialog';
 import { Logo } from '@/components/shared/Logo';
 import { Button } from '@/components/ui/button';
@@ -13,11 +15,10 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
-import { useAuthContext } from '@/context/AuthContext/AuthContext';
-
-import { useTourRefsContext } from '@/context/TourRefsContext/TourRefsContext';
+import { RouteNames } from '@/constants/routeNames';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
+import { ErrorResponseData } from '@/types/ErrorResponse';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -25,77 +26,87 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { roomId } = useParams<{ roomId: string }>();
-  const { toggleSidebarIconRef, profileRef } = useTourRefsContext();
 
   const hasEnteredRoom = useHasEnteredRoom();
-
-  const { data: room } = useGetRoomByIdQuery(roomId || '');
-
+  const { data: room, error } = useGetRoomByIdQuery(roomId || '', false);
 
   const navigate = useNavigate();
 
-  const { user } = useAuthContext();
-  const { data: users } = useGetAllUsersByRoomQuery(roomId || '');
+  useEffect(() => {
+    if (!error) return;
+    const axiosError = error as AxiosError<ErrorResponseData>;
 
-  const roomHost = users?.data.find((user) => user.role === 'host');
-  const isUserHost = roomHost?.uuid === user?.uuid;
+    const status = axiosError?.response?.status;
+
+    if (!status) return;
+
+    if ([403, 404, 500].includes(status)) {
+      const message =
+        axiosError.response?.data?.message ?? 'You were removed from this room';
+      toast.error(message);
+      navigate(RouteNames.Rooms);
+    } else if (status >= 400 && status < 600) {
+      const message =
+        axiosError.response?.data?.message ??
+        'Something went wrong. Please try again.';
+      toast.error(message);
+    }
+  }, [error, navigate]);
 
   return (
-    <header className="sticky top-0 z-30 w-full flex flex-wrap items-center justify-between gap-4 px-2 py-1.5 border-b bg-secondary shadow-sm sm:flex-nowrap">
-      <div className="flex items-center gap-0.5 sm:gap-4">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-          <div ref={toggleSidebarIconRef}>
-            <PanelLeft className="h-5 w-5" />
-          </div>
+    <div className="absolute w-full">
+      <div className="fixed top-3 left-3 z-10 flex flex-wrap items-center gap-0.5 sm:gap-2 rounded-2xl bg-card sm:px-4 px-2.5 sm:py-0.5 py-2.5 shadow-md text-foreground max-w-full sm:max-w-[60%]">
+        <Button
+          variant="ghost"
+          className="p-2 w-[32px]"
+          onClick={onToggleSidebar}
+        >
+          <PanelLeft className="h-5 w-5 text-card-revert" />
         </Button>
 
-        <Link to="/" className="block">
-          <div className="block sm:hidden">
-            <Logo className="drop-shadow-sm h-8" small />
-          </div>
-          <div className="hidden sm:block">
-            <Logo className="drop-shadow-sm w-[120px]" />
-          </div>
+        <Link
+          to="/"
+          className="sm:flex hidden items-center space-x-2 min-w-fit"
+        >
+          <Logo className="hidden sm:block w-23 drop-shadow-sm" />
         </Link>
+
+        {hasEnteredRoom && (
+          <hr className="bg-muted-foreground w-[1px] h-6 mr-1" />
+        )}
+
+        {hasEnteredRoom && (
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="sm:text-sm text-xs truncate max-w-[120px] sm:max-w-[200px]">
+              {room?.data?.title}
+            </span>
+            <span
+              className={cn(
+                'w-2.5 h-2.5 rounded-full shadow-md hidden sm:flex',
+                room?.data?.isActive ? 'bg-green-400' : 'bg-red-400',
+              )}
+            />
+          </div>
+        )}
       </div>
 
-      {hasEnteredRoom && (
-        <div className="hidden md:flex items-center text-center gap-3">
-          <span className="text-xs text-black tracking-wide">
-            <p
-              className={cn(
-                'border px-2 py-1 m-1 rounded-2xl text-foreground',
-                room?.data.isActive ? 'bg-green-500' : 'bg-red-500',
-              )}
-            >
-              {room?.data.isActive ? 'Active Room' : 'Archived Room'}
-            </p>
-          </span>
-
-          <div className="flex items-center gap-3">
-            <div className="sm:flex hidden items-center gap-0 sm:gap-2 flex-wrap justify-center">
-              <span className="text-base font-semibold text-foreground">
-                {room?.data?.title}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="flex items-center gap-1 sm:gap-2">
-        <DesktopParticipantsToggle />
-
-        {hasEnteredRoom && <ShareLinkAlertDialog />}
-
-        {hasEnteredRoom && isUserHost && <RoomActionsDropDown />}
+      <div className="fixed top-3 right-3 z-10 flex flex-wrap items-center gap-2 justify-end rounded-2xl bg-card px-3 py-1 shadow-md text-foreground max-w-full">
+        {hasEnteredRoom && (
+          <>
+            <ParticipantsToggle />
+            <ShareLinkAlertDialog />
+            <RoomActionsDropDown />
+          </>
+        )}
 
         <Tooltip>
-          <TooltipTrigger className="mr-2.5">
-            <div ref={profileRef}>
-              <UserCircle2
+          <TooltipTrigger className="rounded-full cursor-pointer" asChild>
+            <div id="profile" className="p-1">
+              <CircleUser
                 strokeWidth={1.5}
-                size={40}
-                onClick={() => navigate('/profile')}
+                size={32}
+                className="text-card-revert"
+                onClick={() => navigate(RouteNames.Profile)}
               />
             </div>
           </TooltipTrigger>
@@ -104,6 +115,6 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           </TooltipContent>
         </Tooltip>
       </div>
-    </header>
+    </div>
   );
 };

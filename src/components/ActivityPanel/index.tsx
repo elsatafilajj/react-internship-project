@@ -15,13 +15,13 @@ export const ActivityPanel = () => {
   const [activities, setActivities] = useState<Partial<ActivityResponse>[]>([]);
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllActivitiesForRoom(roomId || '');
-  const socket = getSocket();
   const { scrollToNote } = useNoteScrollContext();
   const { zoomOut } = useControls();
+  const socket = getSocket();
 
   useEffect(() => {
     if (isFetched && data) {
-      setActivities(data.data);
+      setActivities(data?.data);
     }
   }, [data, isFetched]);
 
@@ -42,9 +42,15 @@ export const ActivityPanel = () => {
     }
     zoomOut();
   };
+  const sortedActivities = data?.data
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
 
   return (
-    <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[90vh] rounded-md overflow-hidden shadow-md border">
+    <aside className="bg-card text-card-revert pt-5 flex flex-col h-full max-h-[92vh] rounded-md overflow-hidden shadow-md border">
       <ScrollArea className="flex-1 p-4 space-y-4 overflow-y-auto">
         {activities.length === 0 ? (
           <p className="text-gray-500 py-4 flex justify-center gap-3">
@@ -54,7 +60,7 @@ export const ActivityPanel = () => {
             No activities yet
           </p>
         ) : (
-          activities?.map((activity) => (
+          sortedActivities?.map((activity) => (
             <div
               key={activity.uuid}
               className="text-sm text-foreground flex justify-between items-start gap-2 border rounded-md p-3 shadow-sm bg-muted cursor-pointer"
