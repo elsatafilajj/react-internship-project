@@ -34,7 +34,6 @@ export interface UpdateNoteInput {
   xAxis?: number;
   yAxis?: number;
 }
-
 export interface ExportNotesInput {
   roomId: Room['uuid'];
   fileType: 'json' | 'csv' | 'pdf';

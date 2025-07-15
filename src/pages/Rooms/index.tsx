@@ -71,6 +71,7 @@ export const Rooms = () => {
                   title={roomData.room.title}
                   updatedAt={roomData.room.updatedAt}
                   onClick={() => navigate(`${roomData.room.uuid}`)}
+                  isHost={roomData.role}
                 />
               </div>
             ))

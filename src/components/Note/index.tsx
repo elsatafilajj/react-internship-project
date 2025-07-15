@@ -359,11 +359,15 @@ export const Note = ({
               ],
               'relative w-full p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === noteId &&
-                'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-50 animate-pulse-slow',
+                'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               !!isWinner && 'ring-1 ring-yellow-400',
             )}
           >
+            <span className="absolute flex text-black self-end italic uppercase opacity-30">
+              #{noteId.slice(0, 4)}
+            </span>
             <textarea
+              name="content"
               onClick={() => setIsOpen(false)}
               onSelect={() => {
                 setTransformDisabled(true);

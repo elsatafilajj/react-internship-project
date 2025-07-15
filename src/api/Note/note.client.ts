@@ -1,15 +1,11 @@
 import { apiRequest } from '@/api/Api';
 import {
   NoteItem,
-  CreateNoteInput,
-  UpdateNoteInput,
   ExportNotesInput,
-  AddVoteResponse,
   NoteVotesResponse,
   WinnerNoteResponse,
 } from '@/api/Note/note.types';
 import { Room } from '@/api/Room/room.types';
-import { DeleteResponse } from '@/types/DeleteResponse';
 
 export const getAllNoteIdsFromRoom = async (
   roomId: string,
@@ -29,35 +25,6 @@ export const getSingleNoteById = async (noteId: string) =>
     url: `notes/${noteId}`,
     method: 'GET',
   });
-
-export const createNewNote = async (input: CreateNoteInput) =>
-  apiRequest<CreateNoteInput, NoteItem[]>({
-    url: 'notes',
-    method: 'POST',
-    data: input,
-  });
-
-export const updateNote = async (noteId: string, data: UpdateNoteInput) =>
-  apiRequest<UpdateNoteInput, NoteItem[]>({
-    url: `notes/${noteId}`,
-    method: 'PATCH',
-    data,
-  });
-
-export const deleteNote = async (noteId: string) =>
-  apiRequest<undefined, DeleteResponse>({
-    url: `notes/${noteId}`,
-    method: 'DELETE',
-  });
-
-export const addVoteToNote = async (noteId: NoteItem['uuid']) =>
-  apiRequest<undefined, AddVoteResponse>({
-    url: `notes/${noteId}/vote`,
-    method: 'POST',
-  });
-
-export const removeVoteFromNote = async (noteId: NoteItem['uuid']) =>
-  apiRequest({ url: `notes/${noteId}/vote`, method: 'DELETE' });
 
 export const getNoteVotes = async (noteId: NoteItem['uuid']) =>
   apiRequest<undefined, NoteVotesResponse[]>({

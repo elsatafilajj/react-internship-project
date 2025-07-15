@@ -1,10 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { Archive, FolderOpenDot, Settings2, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
-import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { deleteRoom, updateRoom } from '@/api/Room/room.client';
+import { deleteRoom } from '@/api/Room/room.client';
 import {
   useGetRoomByIdQuery,
   useGetRoomHostQuery,
@@ -19,7 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { queryKeys } from '@/constants/queryKeys';
 import { RouteNames } from '@/constants/routeNames';
 import { socketEvents } from '@/constants/socketEvents';
 import { useAuthContext } from '@/context/AuthContext/AuthContext';
@@ -37,14 +35,11 @@ export const RoomActionsDropDown = () => {
   const isRoomActive = room?.data?.isActive;
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
-  const activateRoomMutation = useMutation({
-    mutationKey: queryKeys.getRooms(),
-    mutationFn: () => updateRoom(roomId || '', { isActive: true }),
-    onSuccess: () => toast.success('Room has been reactivated!'),
-  });
-
-  const handleActivateRoom = async () => {
-    activateRoomMutation.mutateAsync();
+  const handleUnArchiveRoom = async () => {
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { isActive: true },
+    });
 
     setTimeout(() => {
       navigate(RouteNames.Rooms);
@@ -52,7 +47,10 @@ export const RoomActionsDropDown = () => {
   };
 
   const handleArchiveRoom = async () => {
-    socket.emit(socketEvents.ArchiveRoom, { roomId });
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { isActive: false },
+    });
 
     setTimeout(() => {
       navigate(RouteNames.ArchivedRooms);
@@ -123,10 +121,11 @@ export const RoomActionsDropDown = () => {
             <LeaveRoom />
           </DropdownMenuItem>
         )}
+
         {!isRoomActive && isUserHost && (
           <DropdownMenuItem>
             <DropdownMenuItem
-              onClick={handleActivateRoom}
+              onClick={handleUnArchiveRoom}
               className="gap-4 p-0 px-1 cursor-pointer"
             >
               <span>

@@ -19,7 +19,7 @@ export const RoomParticipantsPanel = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: participants, isFetching } = useGetAllUsersByRoomQuery(
+  const { data: participants, isLoading } = useGetAllUsersByRoomQuery(
     roomId || '',
   );
 
@@ -37,7 +37,7 @@ export const RoomParticipantsPanel = () => {
     <div className="flex flex-col items-center gap-2 mt-1 p-3">
       <p className="text-sm tracking-wider mb-3">Participants</p>
       <div className="flex flex-col gap-2 overflow-y-scroll w-full h-auto">
-        {isFetching &&
+        {isLoading &&
           Array.from({ length: 10 }, (_, index) => (
             <Skeleton key={index} className="bg-muted-foreground w-full h-12" />
           ))}
