@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PackagePlus, PenLineIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
-import { createRoom, updateRoom } from '@/api/Room/room.client';
+import { createRoom } from '@/api/Room/room.client';
 import { useGetRoomByIdQuery } from '@/api/Room/room.queries';
-import { UpdateRoomInput } from '@/api/Room/room.types';
+import { Room } from '@/api/Room/room.types';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,7 +19,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { queryKeys } from '@/constants/queryKeys';
+import { socketEvents } from '@/constants/socketEvents';
 import { getFormikError } from '@/helpers/getFormikError';
+import { getSocket } from '@/helpers/socket';
 import { useForm } from '@/hooks/useForm';
 import { CreateRoomSchema } from '@/schemas/CreateRoomSchema';
 
@@ -29,24 +31,26 @@ export const CreateEditRoomFormDialog = () => {
   const queryClient = useQueryClient();
   const { data: room } = useGetRoomByIdQuery(roomId || '');
 
+  const socket = useMemo(() => getSocket(), []);
+
   const isEditMode = Boolean(roomId);
 
-  const editMutation = useMutation({
-    mutationFn: ({ roomId, data }: { roomId: string; data: UpdateRoomInput }) =>
-      updateRoom(roomId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getSingleRoom(roomId || ''),
-      });
-      toast.success('Room edited successfully.');
-    },
-  });
+  const hadleEditRoom = (values: Pick<Room, 'title'>) => {
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { title: values.title },
+    });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.getSingleRoom(roomId || ''),
+    });
+    toast.success('Room edited successfully.');
+  };
 
   const createRoomMutation = useMutation({
     mutationFn: createRoom,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.getRooms() });
-      toast.success('Your room is created!');
+      toast.success('Your room has been created!');
     },
     onError: (error) => {
       toast.error(error.message);
@@ -61,10 +65,8 @@ export const CreateEditRoomFormDialog = () => {
     onSubmit: async (values, formikHelpers) => {
       try {
         if (roomId) {
-          await editMutation.mutateAsync({
-            roomId,
-            data: { title: values.title },
-          });
+          hadleEditRoom(values);
+          formik.resetForm();
           setOpen(false);
         } else {
           await createRoomMutation.mutateAsync(values);
@@ -115,7 +117,7 @@ export const CreateEditRoomFormDialog = () => {
               id="title"
               name="title"
               type="text"
-              value={formik.values.title}
+              defaultValue={formik.values.title}
               onChange={formik.handleChange}
               error={getFormikError(formik, 'title')}
             />
