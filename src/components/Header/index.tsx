@@ -1,7 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { CircleUser, PanelLeft } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
@@ -16,10 +15,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
-import { queryKeys } from '@/constants/queryKeys';
 import { RouteNames } from '@/constants/routeNames';
-import { socketEvents } from '@/constants/socketEvents';
-import { getSocket } from '@/helpers/socket';
 import { useHasEnteredRoom } from '@/hooks/useHasEnteredRoom';
 import { cn } from '@/lib/utils';
 import { ErrorResponseData } from '@/types/ErrorResponse';
@@ -33,18 +29,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
   const hasEnteredRoom = useHasEnteredRoom();
   const { data: room, error } = useGetRoomByIdQuery(roomId || '', false);
-  const socket = useMemo(() => getSocket(), []);
 
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    socket.on(socketEvents.UpdatedRoom, () => {
-      queryClient.refetchQueries({
-        queryKey: queryKeys.getSingleRoom(roomId || ''),
-      });
-    });
-  }, []);
 
   useEffect(() => {
     if (!error) return;

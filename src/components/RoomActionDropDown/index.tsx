@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { Archive, Settings2, Trash2 } from 'lucide-react';
+import { Archive, FolderOpenDot, Settings2, Trash2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { deleteRoom } from '@/api/Room/room.client';
@@ -34,8 +34,22 @@ export const RoomActionsDropDown = () => {
   const isRoomActive = room?.data?.isActive;
   const isUserHost = roomHost?.data?.uuid === user?.uuid;
 
+  const handleUnArchiveRoom = async () => {
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { isActive: true },
+    });
+
+    setTimeout(() => {
+      navigate(RouteNames.Rooms);
+    }, 300);
+  };
+
   const handleArchiveRoom = async () => {
-    socket.emit(socketEvents.ArchiveRoom, { roomId });
+    socket.emit(socketEvents.UpdateRoom, {
+      roomId,
+      payload: { isActive: false },
+    });
 
     setTimeout(() => {
       navigate(RouteNames.ArchivedRooms);
@@ -104,6 +118,20 @@ export const RoomActionsDropDown = () => {
         {!isUserHost && (
           <DropdownMenuItem>
             <LeaveRoom />
+          </DropdownMenuItem>
+        )}
+
+        {!isRoomActive && isUserHost && (
+          <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleUnArchiveRoom}
+              className="gap-4 p-0 px-1 cursor-pointer"
+            >
+              <span>
+                <FolderOpenDot className="text-card-revert" />
+              </span>
+              Activate
+            </DropdownMenuItem>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

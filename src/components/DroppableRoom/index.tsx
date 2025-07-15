@@ -133,10 +133,10 @@ export const DroppableRoom = ({
       });
     });
 
-    socket.on(socketEvents.ArchivedRoom, ({ roomId: archivedRoomId }) => {
-      if (archivedRoomId === roomId) {
-        navigate(RouteNames.ArchivedRooms);
-      }
+    socket.on(socketEvents.UpdatedRoom, () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleRoom(roomId || ''),
+      });
     });
 
     socket.on(socketEvents.DeletedRoom, (deleted) => {
@@ -169,17 +169,9 @@ export const DroppableRoom = ({
     socket.on(socketEvents.JoinedRoom, () => {});
 
     return () => {
-      socket.off(socketEvents.CreatedNote);
-      socket.off(socketEvents.UpdatedNote);
-      socket.off(socketEvents.AddedVote);
-      socket.off(socketEvents.RemovedVote);
-      socket.off(socketEvents.DeletedNote);
-      socket.off(socketEvents.ArchivedRoom);
-      socket.off(socketEvents.UpdatedRoom);
-      socket.off(socketEvents.DeletedRoom);
-      socket.off(socketEvents.UserRemove);
-      socket.off(socketEvents.RoomLeftP);
-      socket.off(socketEvents.JoinedRoom);
+      Object.values(socketEvents).forEach((event) => {
+        socket.off(event);
+      });
     };
   }, []);
 

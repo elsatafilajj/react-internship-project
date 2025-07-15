@@ -66,7 +66,6 @@ export const CreateEditRoomFormDialog = () => {
       try {
         if (roomId) {
           hadleEditRoom(values);
-          formik.resetForm();
           setOpen(false);
         } else {
           await createRoomMutation.mutateAsync(values);
