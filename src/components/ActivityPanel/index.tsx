@@ -81,6 +81,9 @@ export const ActivityPanel = () => {
                   })}
                 </span>
               </div>
+              <div className="flex justify-end uppercase italic text-[10px] text-muted-foreground">
+                #{activity?.resourceId?.slice(0, 4)}
+              </div>
             </div>
           ))
         )}

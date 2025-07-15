@@ -333,12 +333,15 @@ export const Note = ({ note, isReadOnly, setTransformDisabled }: NoteProps) => {
               noteColorClassMap[
                 localNoteColor as keyof typeof noteColorClassMap
               ],
-              'relative w-full p-3 text-xs cursor-move flex flex-col justify-between',
+              'relative w-full  p-3 text-xs cursor-move flex flex-col justify-between',
               selectedNoteId === uuid &&
                 'ring-4 ring-primary/60 shadow-xl scale-[1.02] z-20 animate-pulse-slow',
               isWinner && 'ring-1 ring-yellow-400',
             )}
           >
+            <span className="absolute flex text-black self-end italic uppercase opacity-30">
+              #{note?.uuid?.slice(0, 4)}
+            </span>
             <textarea
               name="content"
               onMouseOver={() => setTransformDisabled(true)}
