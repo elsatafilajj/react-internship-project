@@ -26,11 +26,13 @@ export const Room = () => {
 
   useEffect(() => {
     if (!roomId) return;
-
     localStorage.setItem('lastRoomId', roomId);
 
-    const uuidRegex = /^[0-9a-fA-F-]{36}$/;
+    const uuidRegex = new RegExp(
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
+    );
     const isUuidValid = uuidRegex.test(roomId);
+
     if (!isUuidValid) navigate(RouteNames.Rooms);
   }, [roomId]);
 
@@ -61,7 +63,16 @@ export const Room = () => {
         ref={transformRef}
         disabled={transformDisabled}
         disablePadding={true}
-        centerOnInit={true}
+        onPanningStop={() => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+          });
+        }}
+        onWheelStop={() => {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+          });
+        }}
         panning={{ velocityDisabled: true }}
       >
         <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>

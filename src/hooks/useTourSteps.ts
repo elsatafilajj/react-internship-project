@@ -20,6 +20,9 @@ export const useTourSteps = () => {
   const { data } = useGetRoomByIdQuery(roomId || '');
   const isRoomActive = data?.data?.isActive;
 
+  const isInArchivedRoomsDashboard =
+    window.location.pathname === '/rooms/archived';
+
   const { user } = useAuthContext();
   const { data: roomHost } = useGetRoomHostQuery(roomId || '');
   const isHost = roomHost?.data?.uuid === user?.uuid;
@@ -34,8 +37,13 @@ export const useTourSteps = () => {
     ...(!hasEnteredRoom
       ? [
           {
-            intro: 'Here you can manage all of your rooms',
-            element: document.getElementById('rooms'),
+            intro: isInArchivedRoomsDashboard
+              ? 'Here you can see all of your archived rooms'
+              : 'Here you can manage all of your rooms',
+
+            element: isInArchivedRoomsDashboard
+              ? document.getElementById('archived-rooms')
+              : document.getElementById('rooms'),
           },
           {
             element: document.getElementById('sidebar'),
@@ -117,7 +125,7 @@ export const useTourSteps = () => {
                 ? 'As the host, you can manage the room, archive, edit or delete it. And export notes.'
                 : 'Here you can export your notes, and leave the room.'
               : isHost
-                ? 'You can also only delete and export it.'
+                ? 'You can also only delete, export it and even reactivate it!'
                 : 'You can also only export it or leave.',
           },
         ]

@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { SendHorizontal } from 'lucide-react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ export const ReplyCommentForm = ({
   noteId,
 }: ReplyCommentFormProps) => {
   const queryClient = useQueryClient();
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
   const { roomId } = useParams<{ roomId: string }>();
 
   const formikReply = useForm({

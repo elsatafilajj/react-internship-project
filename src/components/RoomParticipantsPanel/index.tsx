@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Crown } from 'lucide-react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { removeUserFromRoom } from '@/api/Room/room.client';
@@ -30,7 +31,7 @@ export const RoomParticipantsPanel = () => {
   });
 
   const roomHost = participants?.data?.find((user) => user.role === 'host');
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
 
   return (
     <div className="flex flex-col items-center gap-2 mt-1 p-3">
@@ -60,7 +61,7 @@ export const RoomParticipantsPanel = () => {
                     <Crown className="absolute h-3 -top-2.5 -left-3 -rotate-40 hover:animate-caret-blink" />
                   )}
                   <p className="text-black uppercase">
-                    {participant.firstName[0] + participant.lastName[0]}
+                    {participant?.firstName[0] + participant?.lastName[0]}
                   </p>
                 </div>
               </div>

@@ -28,7 +28,12 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { roomId } = useParams<{ roomId: string }>();
 
   const hasEnteredRoom = useHasEnteredRoom();
-  const { data: room, error } = useGetRoomByIdQuery(roomId || '', false);
+
+  const {
+    data: room,
+    error,
+    isError,
+  } = useGetRoomByIdQuery(roomId || '', false);
 
   const navigate = useNavigate();
 
@@ -42,7 +47,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
     if ([403, 404, 500].includes(status)) {
       const message =
-        axiosError.response?.data?.message ?? 'You were removed from this room';
+        axiosError.response?.data?.message ??
+        'You were removed from this room.';
       toast.error(message);
       navigate(RouteNames.Rooms);
     } else if (status >= 400 && status < 600) {
@@ -51,12 +57,13 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         'Something went wrong. Please try again.';
       toast.error(message);
     }
-  }, [error, navigate]);
+  }, [error, isError, navigate]);
 
   return (
     <div className="absolute w-full">
       <div className="fixed top-3 left-3 z-10 flex flex-wrap items-center gap-0.5 sm:gap-2 rounded-2xl bg-card sm:px-4 px-2.5 sm:py-0.5 py-2.5 shadow-md text-foreground max-w-full sm:max-w-[60%]">
         <Button
+          id="sidebar"
           variant="ghost"
           className="p-2 w-[32px]"
           onClick={onToggleSidebar}
