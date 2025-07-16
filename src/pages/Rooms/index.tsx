@@ -28,7 +28,7 @@ export const Rooms = () => {
   const hasRooms = rooms?.data?.length;
 
   const sortedRooms = rooms?.data
-    .slice()
+    ?.slice()
     .sort(
       (a, b) =>
         new Date(b.room.createdAt).getTime() -

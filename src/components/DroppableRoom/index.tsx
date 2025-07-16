@@ -1,11 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { AxiosResponse } from 'axios';
+import { useEffect, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 import { NoteItem } from '@/api/Note/note.types';
-import { useGetAllNotesFromRoomQuery } from '@/api/Note/notes.queries';
+import { useGetAllNoteIdsFromRoomQuery } from '@/api/Note/notes.queries';
 import { DraggableNote } from '@/components/DraggableNote';
 import { DragNoteTypes } from '@/constants/dragNoteTypes';
 import { queryKeys } from '@/constants/queryKeys';
@@ -15,6 +16,7 @@ import { useAuthContext } from '@/context/AuthContext/AuthContext';
 import { getSocket } from '@/helpers/socket';
 import { useNoteDrop } from '@/hooks/useNoteDrop';
 import { useRoomStatus } from '@/hooks/useRoomStatus';
+import { useViewportBounds } from '@/hooks/useViewportBounds';
 
 interface DroppableRoomProps {
   setTransformDisabled: (b: boolean) => void;
@@ -25,39 +27,75 @@ export const DroppableRoom = ({
   transformRef,
   setTransformDisabled,
 }: DroppableRoomProps) => {
-  const [notes, setNotes] = useState<Partial<NoteItem>[]>([]);
-  const roomRef = useRef<HTMLDivElement | null>(null);
-  const { user } = useAuthContext();
   const queryClient = useQueryClient();
+
+  const { user } = useAuthContext();
   const { roomId } = useParams<{ roomId: string }>();
-  const { data, isFetched } = useGetAllNotesFromRoomQuery(roomId || '');
-  const { isRoomArchived } = useRoomStatus();
-  const socket = useMemo(() => getSocket(), []);
-  const navigate = useNavigate();
+
+  const bounds = useViewportBounds();
+  const boundsRef = useRef(bounds);
+
+  const { data } = useGetAllNoteIdsFromRoomQuery(
+    roomId || '',
+    bounds?.xMin ?? 0,
+    bounds?.yMin ?? 0,
+    bounds?.xMax ?? 0,
+    bounds?.yMax ?? 0,
+  );
 
   useEffect(() => {
-    if (isFetched && data) {
-      setNotes(data?.data);
-    }
-  }, [data, isFetched]);
+    queryClient.refetchQueries({
+      queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+    });
+  }, [bounds?.scale, bounds?.xMin, bounds?.yMin]);
+
+  useEffect(() => {
+    boundsRef.current = bounds;
+  }, [bounds]);
+
+  const socket = useMemo(() => getSocket(), []);
+
+  const navigate = useNavigate();
+  const roomRef = useRef<HTMLDivElement | null>(null);
+  const { isRoomArchived } = useRoomStatus();
 
   const moveDropRef = useNoteDrop({
     type: DragNoteTypes.Note,
     roomRef,
     transformRef,
     onDrop: (x, y, uuid) => {
-      setNotes((prevNotes) =>
-        prevNotes.map((note) =>
-          note.uuid === uuid ? { ...note, xAxis: x, yAxis: y } : note,
-        ),
+      const xAxis = Math.floor(x);
+      const yAxis = Math.floor(y);
+
+      queryClient.setQueryData(
+        queryKeys.getSingleNote(uuid || ''),
+        (oldData: AxiosResponse | undefined) => {
+          if (!oldData?.data) return oldData?.data;
+
+          return { ...oldData?.data, xAxis, yAxis };
+        },
+      );
+
+      queryClient.setQueryData(
+        queryKeys.getNoteIdsByRoomId(roomId || ''),
+        (oldData: AxiosResponse | undefined) => {
+          if (!oldData?.data) return oldData?.data;
+
+          return {
+            ...oldData,
+            data: oldData?.data?.map((note: NoteItem) =>
+              note.uuid === uuid ? { ...note, xAxis, yAxis } : note,
+            ),
+          };
+        },
       );
 
       socket.emit(socketEvents.UpdateNote, {
         roomId,
         noteId: uuid,
         updates: {
-          xAxis: Math.floor(x),
-          yAxis: Math.floor(y),
+          xAxis,
+          yAxis,
         },
       });
     },
@@ -67,6 +105,7 @@ export const DroppableRoom = ({
     type: DragNoteTypes.NewNote,
     roomRef,
     transformRef,
+
     onDrop: (x, y) => {
       socket.emit(socketEvents.CreateNote, {
         roomId,
@@ -77,59 +116,74 @@ export const DroppableRoom = ({
   });
 
   useEffect(() => {
-    if (isFetched && data) {
-      setNotes(data?.data);
-    }
-  }, [data, isFetched]);
-
-  useEffect(() => {
     if (!socket) return;
 
     socket.on(socketEvents.CreatedNote, (newNote) => {
-      setNotes((prevNotes) => [...(prevNotes || ''), newNote]);
+      queryClient.setQueryData(queryKeys.getSingleNote(newNote.uuid), () => {
+        return newNote;
+      });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
     });
 
     socket.on(socketEvents.UpdatedNote, (updatedNote) => {
-      setNotes((prev) =>
-        prev.map((note) =>
-          note.uuid === updatedNote.uuid ? { ...note, ...updatedNote } : note,
-        ),
-      );
+      queryClient.refetchQueries({
+        queryKey: queryKeys.getSingleNote(updatedNote.uuid),
+      });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
+      });
+    });
+
+    socket.on(socketEvents.DeletedNote, (deletedNote) => {
+      queryClient.removeQueries({
+        queryKey: queryKeys.getSingleNote(deletedNote.resourceId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
     });
 
     socket.on(socketEvents.AddedVote, (newVote) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteVotes(newVote.switchedFrom || ''),
+        queryKey: queryKeys.getNoteVotes(newVote.switchedFrom),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteVotes(newVote.addedTo || ''),
+        queryKey: queryKeys.getNoteVotes(newVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(newVote.switchedFrom),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(newVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getWinnerNotes(roomId || ''),
       });
     });
 
     socket.on(socketEvents.RemovedVote, (removedVote) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getNoteVotes(removedVote.removedFrom || ''),
-      });
-    });
-
-    socket.on(socketEvents.DeletedNote, (deletedNote) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.getNotesByRoomId(roomId || ''),
+        queryKey: queryKeys.getNoteIdsByRoomId(roomId || ''),
       });
       queryClient.removeQueries({
-        queryKey: queryKeys.getNoteVotes(deletedNote.resourceId || ''),
+        queryKey: queryKeys.getNoteVotes(removedVote.removedFrom),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getNoteVotes(removedVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(removedVote.switchedFrom),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleNote(removedVote.addedTo),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getWinnerNotes(roomId || ''),
       });
     });
 
@@ -158,19 +212,22 @@ export const DroppableRoom = ({
         toast.error("You've been removed from this room.");
         navigate(RouteNames.Rooms);
       }
-    });
-
-    socket.on(socketEvents.RoomLeftP, () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.getUsers(),
+      });
+    });
+
+    socket.on(socketEvents.RoomLeftP, ({ userId }) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.getSingleUser(userId.id),
       });
     });
 
     socket.on(socketEvents.JoinedRoom, () => {});
 
     return () => {
-      Object.values(socketEvents).forEach((event) => {
-        socket.off(event);
+      Object.values(socketEvents).forEach((eventName) => {
+        socket.off(eventName);
       });
     };
   }, []);
@@ -182,17 +239,19 @@ export const DroppableRoom = ({
     <div
       id="room"
       ref={roomRef}
-      className="w-[5000px] h-[2813px] relative bg-dot-grid overflow-hidden   p-8 rounded-lg"
+      className="w-[5000px] h-[2813px] relative bg-dot-grid overflow-hidden p-8 rounded-lg"
     >
-      {notes?.map((note: Partial<NoteItem>) => (
-        <DraggableNote
-          key={note.uuid}
-          note={note}
-          setTransformDisabled={setTransformDisabled}
-          transformRef={transformRef}
-          isReadOnly={isRoomArchived}
-        />
-      ))}
+      {data &&
+        data.data &&
+        data.data?.map((note: Partial<NoteItem>) => (
+          <DraggableNote
+            key={note.uuid}
+            note={note}
+            setTransformDisabled={setTransformDisabled}
+            transformRef={transformRef}
+            isReadOnly={isRoomArchived}
+          />
+        ))}
     </div>
   );
 };

@@ -1,20 +1,25 @@
 import { NoteItem } from '@/api/Note/note.types';
+import { Room } from '@/api/Room/room.types';
+import { User } from '@/api/User/user.types';
 
 export const queryKeys = {
   getUsers: () => ['users'],
-  getSingleUser: (id: string) => ['user', id],
+  getSingleUser: (userId: User['uuid']) => ['users', userId],
 
   getRooms: () => ['rooms'],
-  getSingleRoom: (id: string) => ['room', id],
+  getSingleRoom: (roomId: Room['uuid']) => ['rooms', roomId],
   getArchivedRooms: () => ['archivedRooms'],
+  getActivitiesForRoom: (roomId: Room['uuid']) => ['activities', roomId],
+  getWinnerNotes: (roomId: Room['uuid']) => ['rooms', 'currentWinner', roomId],
   getRoomHost: (id: string) => ['rooms', id, 'host'],
 
-  getNotesByRoomId: (roomId: string) => ['notes', roomId],
-  getSingleNote: (noteId: string, roomId: string) => ['note', noteId, roomId],
+  getNoteIdsByRoomId: (roomId: Room['uuid']) => ['notes', roomId],
 
+  getSingleNote: (noteId: NoteItem['uuid']) => ['notes', noteId],
   getNoteVotes: (noteId: NoteItem['uuid']) => ['notes', 'votes', noteId],
-
-  getCommentsByNoteId: (noteId: string) => ['notes', 'comments', noteId],
-
-  getActivitiesForRoom: (roomId: string) => ['activities', roomId],
+  getCommentsByNoteId: (noteId: NoteItem['uuid']) => [
+    'notes',
+    'comments',
+    noteId,
+  ],
 };

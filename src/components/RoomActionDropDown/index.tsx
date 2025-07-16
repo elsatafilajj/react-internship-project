@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { Archive, FolderOpenDot, Settings2, Trash2 } from 'lucide-react';
+import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { deleteRoom } from '@/api/Room/room.client';
@@ -24,7 +25,7 @@ import { getSocket } from '@/helpers/socket';
 
 export const RoomActionsDropDown = () => {
   const navigate = useNavigate();
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
 
   const { roomId } = useParams<{ roomId: string }>();
   const { user } = useAuthContext();

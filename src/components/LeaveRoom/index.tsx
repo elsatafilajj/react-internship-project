@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DoorOpen } from 'lucide-react';
+import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -13,7 +14,7 @@ export const LeaveRoom = () => {
   const queryClient = useQueryClient();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
 
   const leaveRoomMutation = useMutation({
     mutationFn: (roomId: string) => leaveRoom(roomId),

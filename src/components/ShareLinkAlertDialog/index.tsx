@@ -18,6 +18,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Config } from '@/constants/config';
 import { queryKeys } from '@/constants/queryKeys';
 
@@ -66,7 +67,7 @@ export const ShareLinkAlertDialog = () => {
       </DialogTrigger>
 
       {shareLinkMutation.isPending ? (
-        'loading'
+        <Skeleton className="hidden" />
       ) : (
         <DialogContent className="sm:max-w-md space-y-2">
           <DialogHeader>

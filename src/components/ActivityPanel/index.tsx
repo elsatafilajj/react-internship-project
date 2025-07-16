@@ -1,6 +1,6 @@
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { CloudOff } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useControls } from 'react-zoom-pan-pinch';
 
@@ -15,9 +15,10 @@ export const ActivityPanel = () => {
   const [activities, setActivities] = useState<Partial<ActivityResponse>[]>([]);
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllActivitiesForRoom(roomId || '');
+
   const { scrollToNote } = useNoteScrollContext();
   const { zoomOut } = useControls();
-  const socket = getSocket();
+  const socket = useMemo(() => getSocket(), []);
 
   useEffect(() => {
     if (isFetched && data) {
@@ -43,7 +44,7 @@ export const ActivityPanel = () => {
     zoomOut();
   };
   const sortedActivities = data?.data
-    .slice()
+    ?.slice()
     .sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),

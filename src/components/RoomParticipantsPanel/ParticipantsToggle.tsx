@@ -47,7 +47,7 @@ export const ParticipantsToggle = () => {
             )}
             {participants &&
               participants.data &&
-              participants?.data?.slice(0, 4).map((participant, index) => (
+              participants.data.slice(0, 4).map((participant, index) => (
                 <div
                   className={`relative sm:flex hidden h-8.5  w-8.5 rounded-full text-sm font-medium -ml-0.5 border-2 border-card items-center justify-center shadow ${
                     avatarColors[index % avatarColors.length]
@@ -71,8 +71,8 @@ export const ParticipantsToggle = () => {
                 <Crown className="absolute h-3 -top-2 -left-3 -rotate-40 hover:animate-caret-blink" />
 
                 <p className="text-black capitalize">
-                  {roomHost
-                    ? roomHost?.firstName[0] + roomHost?.lastName[0]
+                  {roomHost && roomHost.firstName && roomHost.lastName
+                    ? roomHost.firstName[0] + roomHost.lastName[0]
                     : 'RH'}
                 </p>
               </div>

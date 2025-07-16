@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { SendHorizontal, CornerDownLeft } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useGetAllCommentsQuery } from '@/api/Comments/comments.queries';
@@ -28,11 +28,11 @@ export const CommentsPanel = ({ noteId }: CommentsPanelProps) => {
   const [editingComment, setEditingComment] =
     useState<NoteCommentResponse | null>(null);
   const [replyComment, setReplyComment] = useState<string | null>(null);
+  const socket = useMemo(() => getSocket(), []);
   const { user } = useAuthContext();
   const { roomId } = useParams<{ roomId: string }>();
   const { data, isFetched } = useGetAllCommentsQuery(noteId);
   const queryClient = useQueryClient();
-  const socket = getSocket();
 
   const createFormik = useForm({
     schema: CommentSchema,
